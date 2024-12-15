@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+    <classpathentry kind="src" path="src"/>
+    <classpathentry kind="lib" path="lib/javafx-sdk-23.0.1/lib/*"/>
+    <classpathentry kind="output" path="bin"/>
+</classpath>
