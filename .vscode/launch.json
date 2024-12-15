@@ -5,14 +5,14 @@
             "type": "java",
             "name": "Current File",
             "request": "launch",
-            "vmArgs": "--module-path \"C:/Users/admin/Java/javafx-sdk-23.0.1/lib\" --add-modules javafx.base,javafx.controls,javafx.fxml,javafx.graphics,javafx.media,javafx.swing,javafx.web,javafx-swt",
+            "vmArgs": "--module-path \"C:/Users/admin/Java/javafx-sdk-23.0.1/lib\" --add-modules javafx.base,javafx.controls,javafx.fxml,javafx.graphics,javafx.media,javafx.swing,javafx.web,javafx.swt",
             "mainClass": "${file}"
         },
         {
             "type": "java",
             "name": "App",
             "request": "launch",
-            "vmArgs": "--module-path \"C:/Users/admin/Java/javafx-sdk-23.0.1/lib\" --add-modules javafx.base,javafx.controls,javafx.fxml,javafx.graphics,javafx.media,javafx.swing,javafx.web,javafx-swt",
+            "vmArgs": "--module-path \"C:/Users/admin/Java/javafx-sdk-23.0.1/lib\" --add-modules javafx.base,javafx.controls,javafx.fxml,javafx.graphics,javafx.media,javafx.swing,javafx.web,javafx.swt",
             "mainClass": "App",
             "projectName": "Personal-Daily-Tracker_99ccbe1"
         }
