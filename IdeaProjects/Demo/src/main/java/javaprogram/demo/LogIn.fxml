@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="520.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="javaprogram.demo.LogInController">
+   <children>
+      <AnchorPane prefHeight="400.0" prefWidth="200.0" style="-fx-background-color: #80c8b6;">
+         <children>
+            <ImageView fitHeight="150.0" fitWidth="170.0" layoutX="25.0" layoutY="50.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../../../../../Downloads/project%20LOGO.png" />
+               </image>
+            </ImageView>
+            <Label layoutX="67.0" layoutY="212.0" text="LOG-IN">
+               <font>
+                  <Font name="Bernard MT Condensed" size="26.0" />
+               </font>
+            </Label>
+         </children>
+      </AnchorPane>
+      <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="275.0" layoutY="23.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../../../../../../Downloads/Untitled design.png" />
+         </image>
+      </ImageView>
+      <Label layoutX="261.0" layoutY="200.0" text="Email:" />
+      <TextField fx:id="emailTextField" layoutX="261.0" layoutY="225.0" prefHeight="25.0" prefWidth="226.0" promptText="Type your email here..." />
+      <Label layoutX="261.0" layoutY="259.0" text="Password:" />
+      <TextField fx:id="passTextField" layoutX="261.0" layoutY="287.0" prefHeight="25.0" prefWidth="226.0" promptText="Please enter your password..." />
+      <Button fx:id="loginButton" layoutX="262.0" layoutY="330.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="226.0" style="-fx-background-color: #80c8b6;" text="Log in" onAction="#handleLoginButton" />
+      <Button fx:id="mainmenuButton" layoutX="262.0" layoutY="361.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="226.0" style="-fx-background-color: #80c8b6;" text="Main Menu" onAction="#handleMainMenuButton" />
+
+   </children>
+</AnchorPane>
