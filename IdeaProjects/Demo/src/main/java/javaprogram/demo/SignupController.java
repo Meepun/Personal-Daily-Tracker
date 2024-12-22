@@ -26,7 +26,7 @@ public class SignupController {
 
     private void navigateTo(ActionEvent event, String fxmlFile, String title) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/javaprogram/demo/register.fxml"));
             Parent root = loader.load();
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));

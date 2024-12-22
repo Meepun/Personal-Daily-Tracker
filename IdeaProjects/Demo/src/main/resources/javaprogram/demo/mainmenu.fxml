@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="520.0" style="-fx-background-color: #ffe193;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="javaprogram.demo.MainMenuController">
+   <children>
+      <AnchorPane layoutX="272.0" layoutY="67.0" prefHeight="239.0" prefWidth="200.0" style="-fx-background-color: #fbaa18;">
+         <children>
+            <ImageView fitHeight="239.0" fitWidth="200.0" layoutX="-17.0" layoutY="-3.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../../../../../images/Hi Logo No Text.png" />
+               </image>
+            </ImageView>
+         </children>
+      </AnchorPane>
+      <Label layoutX="35.0" layoutY="116.0" text="WELCOME TO">
+         <font>
+            <Font name="Gill Sans Ultra Bold Condensed" size="36.0" />
+         </font>
+      </Label>
+      <Label layoutX="73.0" layoutY="166.0" text="Hi: Daily Tracker">
+         <font>
+            <Font name="Gill Sans MT" size="18.0" />
+         </font>
+      </Label>
+      <Button fx:id="signupButton" layoutX="99.0" layoutY="248.0" mnemonicParsing="false" onAction="#handleSignupButton" prefHeight="25.0" prefWidth="73.0" style="-fx-background-color: #fbaa18;" text="Sign Up" />
+      <Button fx:id="loginButton" layoutX="98.0" layoutY="212.0" mnemonicParsing="false" onAction="#handleLoginButton" prefHeight="25.0" prefWidth="73.0" style="-fx-background-color: #fbaa18;" text="Log in" />
+
+   </children>
+</AnchorPane>
