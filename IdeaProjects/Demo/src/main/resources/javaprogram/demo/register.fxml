@@ -1,45 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.paint.*?>
-<?import javafx.scene.text.*?>
-<?import javafx.scene.image.*?>
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-
-<AnchorPane prefHeight="384.0" prefWidth="520.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="javaprogram.demo.SignupController">
+<AnchorPane prefHeight="384.0" prefWidth="520.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="javaprogram.demo.SignupController">
    <children>
-      <AnchorPane prefHeight="82.0" prefWidth="520.0" style="-fx-background-color: #80c8b6;">
+      <AnchorPane prefHeight="82.0" prefWidth="520.0" style="-fx-background-color: #fbaa18;">
          <children>
-            <ImageView fitHeight="42.0" fitWidth="69.0" layoutX="32.0" layoutY="20.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="69.0" fitWidth="96.0" layoutX="14.0" layoutY="7.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../../../../../../../images/Hi Logo No Text.png" />
                </image>
             </ImageView>
-            <Label layoutX="90.0" layoutY="33.0" text="User Sign-Up" textFill="#000000f2">
+            <Label layoutX="94.0" layoutY="31.0" text="User Sign-Up" textFill="#000000f2">
                <font>
                   <Font name="Berlin Sans FB" size="20.0" />
                </font>
             </Label>
          </children>
       </AnchorPane>
-      <Label layoutX="92.0" layoutY="100.0" text="Email:" />
-      <TextField fx:id="emailTextField" layoutX="92.0" layoutY="125.0" prefHeight="25.0" prefWidth="336.0" promptText="type your Email..." />
-      <Label layoutX="92.0" layoutY="165.0" text="Password:" />
-      <TextField fx:id="passTextField" layoutX="92.0" layoutY="188.0" prefHeight="25.0" prefWidth="336.0" promptText="Type your password..." />
-      <Label layoutX="92.0" layoutY="226.0" text="Confirm password" />
-      <TextField fx:id="conpassTextField" layoutX="92.0" layoutY="249.0" prefHeight="25.0" prefWidth="336.0" promptText="Confirm your password" />
-      <Button fx:id="signupButton" layoutX="93.0" layoutY="294.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="336.0" style="-fx-background-color: #80c8b6;" text="Sign up">
+      <Label layoutX="92.0" layoutY="104.0" prefHeight="21.0" prefWidth="34.0" text="Email:">
          <font>
-            <Font size="13.0" />
+            <Font name="Berlin Sans FB Demi Bold" size="12.0" />
+         </font></Label>
+      <TextField fx:id="emailTextField" layoutX="92.0" layoutY="125.0" prefHeight="25.0" prefWidth="336.0" promptText="type your Email..." />
+      <Label layoutX="92.0" layoutY="166.0" prefHeight="21.0" prefWidth="54.0" text="Password:">
+         <font>
+            <Font name="Berlin Sans FB Demi Bold" size="12.0" />
+         </font></Label>
+      <TextField fx:id="passTextField" layoutX="92.0" layoutY="188.0" prefHeight="25.0" prefWidth="336.0" promptText="Type your password..." />
+      <Label layoutX="92.0" layoutY="228.0" prefHeight="21.0" prefWidth="130.0" text="Confirm password:">
+         <font>
+            <Font name="Berlin Sans FB Demi Bold" size="12.0" />
+         </font></Label>
+      <TextField fx:id="conpassTextField" layoutX="92.0" layoutY="249.0" prefHeight="25.0" prefWidth="336.0" promptText="Confirm your password" />
+      <Button fx:id="signupButton" layoutX="93.0" layoutY="294.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="336.0" style="-fx-background-color: #fbaa18;" text="Sign up">
+         <font>
+            <Font name="Berlin Sans FB Demi Bold" size="13.0" />
          </font>
       </Button>
-      <Button fx:id="mainmenuButton" layoutX="93.0" layoutY="331.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="336.0" style="-fx-background-color: #80c8b6;" text="Main Menu">
+      <Button fx:id="mainmenuButton" layoutX="93.0" layoutY="331.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="336.0" style="-fx-background-color: #ffc725;" text="Return" textFill="WHITE">
          <font>
-            <Font size="13.0" />
+            <Font name="Berlin Sans FB Demi Bold" size="13.0" />
          </font>
       </Button>
    </children>
