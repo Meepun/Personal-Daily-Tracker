@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="520.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="javaprogram.demo.LogInController">
+   <children>
+      <AnchorPane prefHeight="400.0" prefWidth="200.0" style="-fx-background-color: #ffe193;">
+         <children>
+            <ImageView fitHeight="203.0" fitWidth="200.0" layoutY="63.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../../../../../images/Hi Logo.png" />
+               </image>
+            </ImageView>
+            <Label layoutX="67.0" layoutY="212.0" text="LOG-IN">
+               <font>
+                  <Font name="Bernard MT Condensed" size="26.0" />
+               </font>
+            </Label>
+         </children>
+      </AnchorPane>
+      <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="275.0" layoutY="23.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../../../../../../images/Untitled design.png" />
+         </image>
+      </ImageView>
+      <Label layoutX="260.0" layoutY="192.0" text="Email:" />
+      <TextField fx:id="emailTextField" layoutX="261.0" layoutY="209.0" prefHeight="25.0" prefWidth="226.0" promptText="Type your email here..." />
+      <Label layoutX="260.0" layoutY="240.0" text="Password:" />
+      <TextField fx:id="passTextField" layoutX="261.0" layoutY="257.0" prefHeight="25.0" prefWidth="226.0" promptText="Please enter your password..." />
+      <Button fx:id="loginButton" layoutX="261.0" layoutY="299.0" mnemonicParsing="false" onAction="#handleLoginButton" prefHeight="25.0" prefWidth="226.0" style="-fx-background-color: #ffe193;" text="Log in" />
+      <Button fx:id="mainmenuButton" layoutX="261.0" layoutY="333.0" mnemonicParsing="false" onAction="#handleMainMenuButton" prefHeight="25.0" prefWidth="226.0" style="-fx-background-color: #ffe193;" text="Main Menu" />
+      <AnchorPane layoutX="200.0" prefHeight="176.0" prefWidth="319.0" />
+
+   </children>
+</AnchorPane>
