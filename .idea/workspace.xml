@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="8d020ae9-6b28-49d7-a5d6-9308d086729b" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/CalendarTracker/src/main/java/com/tracker/calendartracker/HelloApplication.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/CalendarTracker/.idea/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/Personal-Daily-Tracker.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/lib.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Calendar_Tracker/CalendarTracker/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/CalendarTracker/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Calendar_Tracker/CalendarTracker/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Calendar_Tracker/CalendarTracker/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/CalendarTracker/.idea/encodings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Calendar_Tracker/CalendarTracker/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/CalendarTracker/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Calendar_Tracker/CalendarTracker/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/CalendarTracker/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Calendar_Tracker/CalendarTracker/.mvn/wrapper/maven-wrapper.jar" beforeDir="false" afterPath="$PROJECT_DIR$/CalendarTracker/.mvn/wrapper/maven-wrapper.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Calendar_Tracker/CalendarTracker/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/CalendarTracker/.mvn/wrapper/maven-wrapper.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Calendar_Tracker/CalendarTracker/mvnw" beforeDir="false" afterPath="$PROJECT_DIR$/CalendarTracker/mvnw" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Calendar_Tracker/CalendarTracker/mvnw.cmd" beforeDir="false" afterPath="$PROJECT_DIR$/CalendarTracker/mvnw.cmd" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Calendar_Tracker/CalendarTracker/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/CalendarTracker/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Calendar_Tracker/CalendarTracker/src/main/java/com/tracker/calendartracker/HelloApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/CalendarTracker/src/main/java/com/tracker/calendartracker/HelloApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Calendar_Tracker/CalendarTracker/src/main/java/com/tracker/calendartracker/HelloController.java" beforeDir="false" afterPath="$PROJECT_DIR$/CalendarTracker/src/main/java/com/tracker/calendartracker/HelloController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Calendar_Tracker/CalendarTracker/src/main/java/module-info.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Calendar_Tracker/CalendarTracker/src/main/resources/com/tracker/calendartracker/hello-view.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/CalendarTracker/src/main/resources/com/tracker/calendartracker/hello-view.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IdeaProjects/Demo/mvnw" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/IdeaProjects/Demo/mvnw.cmd" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/IdeaProjects/Demo/pom.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/IdeaProjects/Demo/src/main/java/javaprogram/demo/HelloApplication.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/IdeaProjects/Demo/src/main/java/javaprogram/demo/HelloController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/IdeaProjects/Demo/src/main/java/javaprogram/demo/LogInController.java" beforeDir="false" afterPath="$PROJECT_DIR$/CalendarTracker/src/main/java/com/tracker/calendartracker/LogInController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IdeaProjects/Demo/src/main/java/javaprogram/demo/MainMenuController.java" beforeDir="false" afterPath="$PROJECT_DIR$/CalendarTracker/src/main/java/com/tracker/calendartracker/MainMenuController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IdeaProjects/Demo/src/main/java/javaprogram/demo/SignupController.java" beforeDir="false" afterPath="$PROJECT_DIR$/CalendarTracker/src/main/java/com/tracker/calendartracker/SignupController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IdeaProjects/Demo/src/main/java/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/CalendarTracker/src/main/java/com/tracker/module-info.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IdeaProjects/Demo/src/main/resources/javaprogram/demo/LogIn.fxml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/IdeaProjects/Demo/src/main/resources/javaprogram/demo/hello-view.fxml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/IdeaProjects/Demo/src/main/resources/javaprogram/demo/mainmenu.fxml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/IdeaProjects/Demo/src/main/resources/javaprogram/demo/register.fxml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/IdeaProjects/Demo/target/classes/javaprogram/demo/HelloApplication.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/IdeaProjects/Demo/target/classes/javaprogram/demo/HelloController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/IdeaProjects/Demo/target/classes/javaprogram/demo/LogIn.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/CalendarTracker/src/main/resources/com/tracker/calendartracker/LogIn.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IdeaProjects/Demo/target/classes/javaprogram/demo/LogInController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/IdeaProjects/Demo/target/classes/javaprogram/demo/MainMenuController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/IdeaProjects/Demo/target/classes/javaprogram/demo/SignupController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/IdeaProjects/Demo/target/classes/javaprogram/demo/hello-view.fxml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/IdeaProjects/Demo/target/classes/javaprogram/demo/mainmenu.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/CalendarTracker/src/main/resources/com/tracker/calendartracker/mainmenu.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IdeaProjects/Demo/target/classes/javaprogram/demo/register.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/CalendarTracker/src/main/resources/com/tracker/calendartracker/register.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IdeaProjects/Demo/target/classes/module-info.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/IdeaProjects/untitled/src/Main.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/IdeaProjects/untitled/untitled.iml" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CompilerWorkspaceConfiguration">
+    <option name="MAKE_PROJECT_ON_SAVE" value="true" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;migwyn&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Meepun/Personal-Daily-Tracker.git&quot;,
+    &quot;accountId&quot;: &quot;e5c74c4b-1379-491e-8b49-20462fd4bdcc&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 3
+}</component>
+  <component name="ProjectId" id="2qcyMyzC3a5mQVi0PfqtzBxjIzO" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+    <option name="showVisibilityIcons" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "Rebuilding",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/admin/Github/daily_tracker/Personal-Daily-Tracker",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "project.propCompiler"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\admin\Github\daily_tracker\Personal-Daily-Tracker" />
+      <recent name="C:\Users\admin\Github\daily_tracker\Personal-Daily-Tracker\Calendar_Tracker\CalendarTracker\src\main\java\com\tracker" />
+      <recent name="C:\Users\admin\Github\daily_tracker\Personal-Daily-Tracker\Calendar_Tracker\CalendarTracker\src\main\java\com\tracker\calendartracker" />
+      <recent name="C:\Users\admin\Github\daily_tracker\Personal-Daily-Tracker\Calendar_Tracker\CalendarTracker\src\main\resources\com\tracker\calendartracker" />
+    </key>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="8d020ae9-6b28-49d7-a5d6-9308d086729b" name="Changes" comment="" />
+      <created>1734976115417</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1734976115417</updated>
+    </task>
+    <servers />
+  </component>
+</project>
