@@ -7,42 +7,38 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="400.0" prefWidth="520.0" style="-fx-background-color: #ffe193;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="javaprogram.demo.MainMenuController">
-   <children>
-      <AnchorPane layoutX="260.0" layoutY="68.0" prefHeight="239.0" prefWidth="200.0" style="-fx-background-color: #fbaa18;">
-         <children>
-            <ImageView fitHeight="173.0" fitWidth="199.0" layoutX="21.0" layoutY="33.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../../../../../../images/Hi Logo.png" />
-               </image>
-            </ImageView>
-         </children>
-         <effect>
-            <InnerShadow>
-               <color>
-                  <Color red="1.0" green="1.0" blue="1.0" />
-               </color>
-            </InnerShadow>
-         </effect>
-      </AnchorPane>
-      <Label layoutX="35.0" layoutY="116.0" text="WELCOME TO" textFill="#f88d00">
-         <font>
-            <Font name="Gill Sans Ultra Bold Condensed" size="36.0" />
-         </font>
-      </Label>
-      <Label layoutX="73.0" layoutY="166.0" text="Hi: Daily Tracker" textFill="#6f5b20">
-         <font>
-            <Font name="Gill Sans MT" size="18.0" />
-         </font>
-      </Label>
-      <Button fx:id="signupButton" layoutX="99.0" layoutY="248.0" mnemonicParsing="false" onAction="#handleSignupButton" prefHeight="25.0" prefWidth="73.0" style="-fx-background-color: #ffc725;" text="Sign Up">
-         <font>
-            <Font name="Berlin Sans FB Demi Bold" size="12.0" />
-         </font></Button>
-      <Button fx:id="loginButton" layoutX="98.0" layoutY="212.0" mnemonicParsing="false" onAction="#handleLoginButton" prefHeight="25.0" prefWidth="73.0" style="-fx-background-color: #fbaa18;" text="Log in">
-         <font>
-            <Font name="Berlin Sans FB Demi Bold" size="12.0" />
-         </font></Button>
+<AnchorPane prefHeight="400.0" prefWidth="520.0" style="-fx-background-color: #ffe193;" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tracker.calendartracker.MainMenuController">
+   <AnchorPane layoutX="260.0" layoutY="68.0" prefHeight="239.0" prefWidth="200.0" style="-fx-background-color: #fbaa18;">
+      <effect>
+         <InnerShadow>
+            <color>
+               <Color red="1.0" green="1.0" blue="1.0" />
+            </color>
+         </InnerShadow>
+      </effect>
+      <ImageView fitHeight="173.0" fitWidth="199.0" layoutX="14.0" layoutY="33.0" pickOnBounds="true" preserveRatio="true">
+         <Image url="@../../../../../../../images/Hi Logo.png" />
+      </ImageView>
+   </AnchorPane>
+   <Label layoutX="35.0" layoutY="116.0" text="WELCOME TO" textFill="#f88d00">
+      <font>
+         <Font name="Gill Sans Ultra Bold Condensed" size="36.0" />
+      </font>
+   </Label>
+   <Label layoutX="73.0" layoutY="166.0" text="Hi: Daily Tracker" textFill="#6f5b20">
+      <font>
+         <Font name="Gill Sans MT" size="18.0" />
+      </font>
+   </Label>
+   <Button fx:id="signupButton" layoutX="99.0" layoutY="248.0" mnemonicParsing="false" onAction="#handleSignupButton" prefHeight="25.0" prefWidth="73.0" style="-fx-background-color: #ffc725;" text="Sign Up">
+      <font>
+         <Font name="Berlin Sans FB Demi Bold" size="12.0" />
+      </font>
+   </Button>
+   <Button fx:id="loginButton" layoutX="98.0" layoutY="212.0" mnemonicParsing="false" onAction="#handleLoginButton" prefHeight="25.0" prefWidth="73.0" style="-fx-background-color: #fbaa18;" text="Log in">
+      <font>
+         <Font name="Berlin Sans FB Demi Bold" size="12.0" />
+      </font>
+   </Button>
 
-   </children>
 </AnchorPane>

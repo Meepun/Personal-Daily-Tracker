@@ -5,9 +5,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8d020ae9-6b28-49d7-a5d6-9308d086729b" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/CalendarTracker/.idea/.name" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CalendarTracker/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CalendarTracker/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/CalendarTracker/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CalendarTracker/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/CalendarTracker/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CalendarTracker/src/main/java/com/tracker/calendartracker/HelloApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/CalendarTracker/src/main/java/com/tracker/calendartracker/HelloApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CalendarTracker/src/main/java/com/tracker/calendartracker/LogInController.java" beforeDir="false" afterPath="$PROJECT_DIR$/CalendarTracker/src/main/java/com/tracker/calendartracker/LogInController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CalendarTracker/src/main/java/com/tracker/calendartracker/MainMenuController.java" beforeDir="false" afterPath="$PROJECT_DIR$/CalendarTracker/src/main/java/com/tracker/calendartracker/MainMenuController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CalendarTracker/src/main/java/com/tracker/calendartracker/SignupController.java" beforeDir="false" afterPath="$PROJECT_DIR$/CalendarTracker/src/main/java/com/tracker/calendartracker/SignupController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CalendarTracker/src/main/java/com/tracker/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/CalendarTracker/src/main/java/module-info.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CalendarTracker/src/main/resources/com/tracker/calendartracker/LogIn.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/CalendarTracker/src/main/resources/com/tracker/calendartracker/LogIn.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CalendarTracker/src/main/resources/com/tracker/calendartracker/mainmenu.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/CalendarTracker/src/main/resources/com/tracker/calendartracker/mainmenu.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CalendarTracker/src/main/resources/com/tracker/calendartracker/register.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/CalendarTracker/src/main/resources/com/tracker/calendartracker/register.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/Hi Logo No Text.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/Hi Logo No Text.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/Hi Logo.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/Hi Logo.png" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,7 +41,7 @@
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/Meepun/Personal-Daily-Tracker.git&quot;,
-    &quot;accountId&quot;: &quot;e5c74c4b-1379-491e-8b49-20462fd4bdcc&quot;
+    &quot;accountId&quot;: &quot;d3d6f90a-deed-4687-9577-37975c8c528d&quot;
   }
 }</component>
   <component name="ProjectColorInfo">{
@@ -48,11 +60,11 @@
     "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "Rebuilding",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/admin/Github/daily_tracker/Personal-Daily-Tracker",
+    "last_opened_file_path": "C:/Users/Administrator/Documents/GitHub/Personal-Daily-Tracker",
     "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "project.propCompiler"
+    "settings.editor.selected.configurable": "promo.database"
   }
 }]]></component>
   <component name="RecentsManager">

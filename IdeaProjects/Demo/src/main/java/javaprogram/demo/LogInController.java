@@ -1,33 +1,31 @@
-package com.tracker.calendartracker;
+package javaprogram.demo;
 
-import java.io.IOException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.stage.Stage;
 
-public class MainMenuController {
+import java.io.IOException;
 
-    public Button signupButton;
-    public Button loginButton;
+public class LogInController {
 
     @FXML
     private void handleLoginButton(ActionEvent event) {
-        navigateTo(event, "LogIn.fxml", "Log In");
+        // Perform login validation here
+        System.out.println("Login button clicked. Validate credentials.");
     }
 
     @FXML
-    private void handleSignupButton(ActionEvent event) {
-        navigateTo(event, "register.fxml", "Sign Up");
+    private void handleMainMenuButton(ActionEvent event) {
+        navigateTo(event, "mainmenu.fxml", "Main Menu");
     }
 
     private void navigateTo(ActionEvent event, String fxmlFile, String title) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/tracker/calendartracker/" + fxmlFile));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/javaprogram/demo/LogIn.fxml"));
             Parent root = loader.load();
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));
