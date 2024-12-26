@@ -10,7 +10,7 @@
    <AnchorPane prefHeight="82.0" prefWidth="520.0" style="-fx-background-color: #fbaa18;">
       <ImageView fitHeight="69.0" fitWidth="96.0" layoutX="14.0" layoutY="7.0" pickOnBounds="true"
                  preserveRatio="true">
-         <Image url="@../../../../../../../images/Hi Logo No Text.png"/>
+         <Image url="@../../../../../../images/Hi Logo No Text.png"/>
       </ImageView>
       <Label layoutX="94.0" layoutY="31.0" text="User Sign-Up" textFill="#000000f2">
          <font>

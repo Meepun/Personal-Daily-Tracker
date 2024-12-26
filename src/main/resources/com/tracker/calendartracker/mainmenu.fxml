@@ -17,7 +17,7 @@
          </InnerShadow>
       </effect>
       <ImageView fitHeight="173.0" fitWidth="199.0" layoutX="14.0" layoutY="33.0" pickOnBounds="true" preserveRatio="true">
-         <Image url="@../../../../../../../images/Hi Logo.png" />
+         <Image url="@../../../../../../images/Hi Logo.png" />
       </ImageView>
    </AnchorPane>
    <Label layoutX="35.0" layoutY="116.0" text="WELCOME TO" textFill="#f88d00">
