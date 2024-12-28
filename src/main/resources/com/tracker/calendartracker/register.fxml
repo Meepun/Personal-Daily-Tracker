@@ -43,8 +43,8 @@
          <Font name="Berlin Sans FB Demi Bold" size="13.0"/>
       </font>
    </Button>
-   <Button fx:id="mainmenuButton" layoutX="93.0" layoutY="331.0" mnemonicParsing="false" prefHeight="25.0"
-           prefWidth="336.0" style="-fx-background-color: #ffc725;" text="Return" textFill="WHITE">
+   <Button fx:id="mainmenuButton" layoutX="93.0" layoutY="331.0" mnemonicParsing="false"
+           onAction="#handleMainMenuButton" prefHeight="25.0" prefWidth="336.0" style="-fx-background-color: #ffc725;" text="Return" textFill="WHITE">
       <font>
          <Font name="Berlin Sans FB Demi Bold" size="13.0"/>
       </font>

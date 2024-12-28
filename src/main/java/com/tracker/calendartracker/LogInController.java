@@ -47,7 +47,7 @@ public class LogInController {
 
     private void navigateTo(ActionEvent event, String fxmlFile, String title) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/tracker/calendartracker/LogIn.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/tracker/calendartracker/mainmenu.fxml"));
             Parent root = loader.load();
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));
