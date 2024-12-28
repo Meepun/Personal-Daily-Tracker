@@ -6,6 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -13,15 +14,22 @@ import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 public class SignupController {
 
-    public TextField passTextField;
-    public TextField conpassTextField;
-    public TextField emailTextField;
-    public Button signupButton;
-    public Button mainmenuButton;
-
+    @FXML
+    private TextField emailTextField;
+    @FXML
+    private TextField passTextField;
+    @FXML
+    private TextField conpassTextField;
+    @FXML
+    private Button signupButton;
+    @FXML
+    private Button mainmenuButton;
     @FXML
     private ImageView hiLogoNoTextImageView;
 
@@ -32,8 +40,38 @@ public class SignupController {
 
     @FXML
     private void handleSignupButton(ActionEvent event) {
-        // Perform sign-up logic here
-        System.out.println("Sign up button clicked. Register user.");
+        String username = emailTextField.getText();
+        String password = passTextField.getText();
+        String confirmedPassword = conpassTextField.getText();
+
+        // Basic input validation
+        if (username.isEmpty() || password.isEmpty() || confirmedPassword.isEmpty()) {
+            showAlert("Error", "Please fill in all fields.");
+            return;
+        }
+
+        if (!password.equals(confirmedPassword)) {
+            showAlert("Error", "Passwords do not match.");
+            return;
+        }
+
+        try (Connection connection = DBConnection.getConnection()) {
+            String sql = "INSERT INTO Users (username, password) VALUES (?, ?)"; // Adjust table and column names if necessary
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, username);
+            statement.setString(2, password); // Consider hashing the password here for security
+            int rowsAffected = statement.executeUpdate();
+
+            if (rowsAffected == 1) {
+                showAlert("Success", "User registered successfully!");
+                // Optionally, navigate to a different scene after successful registration
+            } else {
+                showAlert("Error", "Failed to register user.");
+            }
+        } catch (SQLException e) {
+            showAlert("Error", "Database error: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @FXML
@@ -52,5 +90,13 @@ public class SignupController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }

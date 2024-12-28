@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 
 public class DBConnection {
 
-    private static final String URL = "jdbc:sqlite:src/main/java/com/tracker/calendartracker/tracer.db"; // Adjust path if necessary
+    private static final String URL = "jdbc:sqlite:src/main/java/com/tracker/calendartracker/tracker.db"; // Adjust path if necessary
     private static Connection connection;
     private static final Logger LOGGER = Logger.getLogger(DBConnection.class.getName());
 
