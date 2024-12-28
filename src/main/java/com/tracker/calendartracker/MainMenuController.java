@@ -8,12 +8,22 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
 public class MainMenuController {
 
     public Button signupButton;
     public Button loginButton;
+
+    @FXML
+    private ImageView hiLogoImageView;
+
+    public void initialize() {
+        // Load the logo image
+        hiLogoImageView.setImage(new Image(getClass().getResource("/images/Hi Logo.png").toString()));
+    }
 
     @FXML
     private void handleLoginButton(ActionEvent event) {

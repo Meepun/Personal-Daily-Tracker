@@ -8,6 +8,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -19,6 +21,14 @@ public class SignupController {
     public TextField emailTextField;
     public Button signupButton;
     public Button mainmenuButton;
+
+    @FXML
+    private ImageView hiLogoNoTextImageView;
+
+    public void initialize() {
+        // Load the logo image
+        hiLogoNoTextImageView.setImage(new Image(getClass().getResource("/images/Hi Logo No Text.png").toString()));
+    }
 
     @FXML
     private void handleSignupButton(ActionEvent event) {

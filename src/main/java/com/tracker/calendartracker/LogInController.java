@@ -8,16 +8,31 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 
 public class LogInController {
 
+    // FXML variables for the TextFields and Buttons
     public TextField emailTextField;
     public TextField passTextField;
     public Button loginButton;
     public Button mainmenuButton;
+
+    // FXML ImageView variables for displaying images
+    @FXML
+    private ImageView hiLogoImageView;
+    @FXML
+    private ImageView untitledDesignImageView;
+
+    public void initialize() {
+        // Load the images into ImageViews
+        hiLogoImageView.setImage(new Image(getClass().getResource("/images/Hi Logo.png").toString()));
+        untitledDesignImageView.setImage(new Image(getClass().getResource("/images/Untitled design.png").toString()));
+    }
 
     @FXML
     private void handleLoginButton(ActionEvent event) {
