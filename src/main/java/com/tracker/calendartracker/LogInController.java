@@ -9,6 +9,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
 import java.sql.Connection;
@@ -25,6 +27,17 @@ public class LogInController {
     private PasswordField passTextField; // User's password input field
 
     private static final Logger LOGGER = Logger.getLogger(LogInController.class.getName());
+
+    @FXML
+    private ImageView hiLogoImageView;
+    @FXML
+    private ImageView untitledDesignImageView;
+
+    public void initialize() {
+        // Load the logo image
+        hiLogoImageView.setImage(new Image(getClass().getResource("/images/Hi Logo.png").toString()));
+        untitledDesignImageView.setImage(new Image(getClass().getResource("/images/Untitled design.png").toString()));
+    }
 
     /**
      * Handles the login button click event.
