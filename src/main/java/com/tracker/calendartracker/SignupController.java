@@ -41,7 +41,6 @@ public class SignupController {
         navigateTo(event, "mainmenu.fxml", "Main Menu");
     }
 
-
     private void navigateTo(ActionEvent event, String fxmlFile, String title) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/tracker/calendartracker/mainmenu.fxml"));
