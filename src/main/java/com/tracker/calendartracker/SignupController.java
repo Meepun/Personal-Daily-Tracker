@@ -21,7 +21,7 @@ import java.sql.SQLException;
 public class SignupController {
 
     @FXML
-    private TextField emailTextField;
+    private TextField usernameTextField;
     @FXML
     private TextField passTextField;
     @FXML
@@ -40,7 +40,7 @@ public class SignupController {
 
     @FXML
     private void handleSignupButton(ActionEvent event) {
-        String username = emailTextField.getText();
+        String username = usernameTextField.getText();
         String password = passTextField.getText();
         String confirmedPassword = conpassTextField.getText();
 
@@ -56,10 +56,10 @@ public class SignupController {
         }
 
         try (Connection connection = DBConnection.getConnection()) {
-            String sql = "INSERT INTO Users (username, password) VALUES (?, ?)"; // Adjust table and column names if necessary
+            String sql = "INSERT INTO loginsignup (username, password) VALUES (?, ?)";
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1, username);
-            statement.setString(2, password); // Consider hashing the password here for security
+            statement.setString(2, password);
             int rowsAffected = statement.executeUpdate();
 
             if (rowsAffected == 1) {

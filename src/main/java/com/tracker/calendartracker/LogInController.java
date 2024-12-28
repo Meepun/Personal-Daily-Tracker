@@ -22,7 +22,7 @@ import java.util.logging.Logger;
 public class LogInController {
 
     @FXML
-    private TextField emailTextField; // User's email input field
+    private TextField usernameTextField; // User's username input field
     @FXML
     private PasswordField passTextField; // User's password input field
 
@@ -45,39 +45,39 @@ public class LogInController {
      */
     @FXML
     private void handleLoginButton(ActionEvent event) {
-        String email = emailTextField.getText().trim();
+        String username = usernameTextField.getText().trim();
         String password = passTextField.getText().trim();
 
-        if (email.isEmpty() || password.isEmpty()) {
-            showAlert("Validation Error", "Email and password fields cannot be empty.");
+        if (username.isEmpty() || password.isEmpty()) {
+            showAlert("Validation Error", "username and password fields cannot be empty.");
             return;
         }
 
         // vinavalidate the credentials checking against the database
-        if (validateCredentials(email, password)) {
+        if (validateCredentials(username, password)) {
             System.out.println("Login successful!");
             showAlert("Login Success", "You have logged in successfully!");
 
             // Navigate to the main menu
             navigateTo(event, "/com/tracker/calendartracker/mainmenu.fxml", "Main Menu");
         } else {
-            showAlert("Login Failed", "Invalid email or password. Please try again.");
+            showAlert("Login Failed", "Invalid username or password. Please try again.");
         }
     }
 
     /**
      * Validates the user's credentials against the database.
      *
-     * @param email    User's email input
+     * @param username    User's username input
      * @param password User's password input
      * @return True if credentials are valid, false otherwise
      */
-    private boolean validateCredentials(String email, String password) {
-        String query = "SELECT * FROM loginsignup WHERE email = ? AND password = ?";
+    private boolean validateCredentials(String username, String password) {
+        String query = "SELECT * FROM loginsignup WHERE username = ? AND password = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            stmt.setString(1, email);
+            stmt.setString(1, username);
             stmt.setString(2, password);
 
             ResultSet rs = stmt.executeQuery();

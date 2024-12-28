@@ -45,7 +45,7 @@
             <Font name="Berlin Sans FB Demi Bold" size="12.0" />
          </font>
       </Label>
-      <TextField fx:id="emailTextField" layoutX="48.0" layoutY="64.0" prefHeight="25.0" prefWidth="226.0" promptText="Please enter your username..." />
+      <TextField fx:id="usernameTextField" layoutX="48.0" layoutY="64.0" prefHeight="25.0" prefWidth="226.0" promptText="Please enter your username..." />
       <Label layoutX="47.0" layoutY="113.0" text="Password:">
          <font>
             <Font name="Berlin Sans FB Demi Bold" size="12.0" />
