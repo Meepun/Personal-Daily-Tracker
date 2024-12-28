@@ -36,7 +36,7 @@ public class LogInController {
     public void initialize() {
         // Load the logo image
         hiLogoImageView.setImage(new Image(getClass().getResource("/images/Hi Logo.png").toString()));
-        untitledDesignImageView.setImage(new Image(getClass().getResource("/images/Untitled design.png").toString()));
+        untitledDesignImageView.setImage(new Image(getClass().getResource("/images/Protect.png").toString()));
     }
 
     /**
