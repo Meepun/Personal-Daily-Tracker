@@ -6,9 +6,9 @@
 <?import javafx.scene.text.*?>
 
 <AnchorPane prefHeight="384.0" prefWidth="520.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tracker.calendartracker.SignupController">
-   <AnchorPane prefHeight="82.0" prefWidth="520.0" style="-fx-background-color: #fbaa18;">
+   <AnchorPane prefHeight="82.0" prefWidth="520.0" style="-fx-background-color: #343434;">
       <ImageView fx:id="hiLogoNoTextImageView" fitHeight="69.0" fitWidth="96.0" layoutX="14.0" layoutY="7.0" pickOnBounds="true" preserveRatio="true" />
-      <Label layoutX="94.0" layoutY="31.0" text="User Sign-Up" textFill="#000000f2">
+      <Label layoutX="94.0" layoutY="31.0" text="User Sign-Up" textFill="#ffae14f2">
          <font>
             <Font name="Berlin Sans FB" size="20.0" />
          </font>
@@ -25,14 +25,12 @@
          <Font name="Berlin Sans FB Demi Bold" size="12.0" />
       </font>
    </Label>
-   <TextField fx:id="passTextField" layoutX="92.0" layoutY="188.0" prefHeight="25.0" prefWidth="336.0" promptText="Type your password..." />
    <Label layoutX="92.0" layoutY="228.0" prefHeight="21.0" prefWidth="130.0" text="Confirm password:">
       <font>
          <Font name="Berlin Sans FB Demi Bold" size="12.0" />
       </font>
    </Label>
-   <TextField fx:id="conpassTextField" layoutX="92.0" layoutY="249.0" prefHeight="25.0" prefWidth="336.0" promptText="Confirm your password" />
-   <Button fx:id="signupButton" layoutX="93.0" layoutY="294.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="336.0" style="-fx-background-color: #fbaa18;" text="Sign up" onAction="#handleSignupButton">
+   <Button fx:id="signupButton" layoutX="93.0" layoutY="294.0" mnemonicParsing="false" onAction="#handleSignupButton" prefHeight="25.0" prefWidth="336.0" style="-fx-background-color: #fbaa18;" text="Sign up">
       <font>
          <Font name="Berlin Sans FB Demi Bold" size="13.0" />
       </font>
@@ -42,4 +40,6 @@
          <Font name="Berlin Sans FB Demi Bold" size="13.0" />
       </font>
    </Button>
+   <PasswordField layoutX="93.0" layoutY="188.0" prefHeight="25.0" prefWidth="336.0" promptText="Type your password..." />
+   <PasswordField layoutX="93.0" layoutY="249.0" prefHeight="25.0" prefWidth="336.0" promptText="Confirm your password..." />
 </AnchorPane>

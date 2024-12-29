@@ -59,7 +59,7 @@ public class LogInController {
             showAlert("Login Success", "You have logged in successfully!");
 
             // Navigate to the main menu
-            navigateTo(event, "/com/tracker/calendartracker/mainmenu.fxml", "Main Menu");
+            navigateTo(event, "/com/tracker/calendartracker/Home.fxml", "Home");
         } else {
             showAlert("Login Failed", "Invalid username or password. Please try again.");
         }
