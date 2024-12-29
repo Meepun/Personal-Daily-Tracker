@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tracker.calendartracker.HomeController" stylesheets="@style.css">
+    <!-- Top Navigation Panel -->
+    <top>
+        <HBox spacing="10" alignment="CENTER" styleClass="top-nav">
+            <Button text="Create New Calendar" styleClass="top-nav-button" fx:id="createNewCalendarButton" />
+            <Button text="Manage Your Calendars" styleClass="top-nav-button" fx:id="manageCalendarsButton" />
+        </HBox>
+    </top>
+
+    <!-- Center Panel (Calendar) -->
+    <center>
+        <VBox spacing="10" alignment="TOP_CENTER">
+            <Label text="Calendar" styleClass="calendar-header" />
+            <GridPane hgap="10" vgap="10" alignment="CENTER" styleClass="calendar-grid">
+                <!-- Days Header -->
+                <Label text="Sun" GridPane.columnIndex="0" styleClass="calendar-header" />
+                <Label text="Mon" GridPane.columnIndex="1" styleClass="calendar-header" />
+                <Label text="Tue" GridPane.columnIndex="2" styleClass="calendar-header" />
+                <Label text="Wed" GridPane.columnIndex="3" styleClass="calendar-header" />
+                <Label text="Thu" GridPane.columnIndex="4" styleClass="calendar-header" />
+                <Label text="Fri" GridPane.columnIndex="5" styleClass="calendar-header" />
+                <Label text="Sat" GridPane.columnIndex="6" styleClass="calendar-header" />
+
+                <!-- Calendar Grid (placeholder for dates) -->
+                <Label text="1" GridPane.rowIndex="1" GridPane.columnIndex="0" styleClass="calendar-cell" />
+                <Label text="2" GridPane.rowIndex="1" GridPane.columnIndex="1" styleClass="calendar-cell" />
+            </GridPane>
+        </VBox>
+    </center>
+
+    <!-- Right Panel (Month Navigation) -->
+    <right>
+        <VBox spacing="10" alignment="CENTER" styleClass="month-panel">
+            <Label text="January" styleClass="month-label" fx:id="monthLabel" />
+            <ListView fx:id="monthListView" styleClass="month-list">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="January" />
+                        <String fx:value="February" />
+                        <String fx:value="March" />
+                        <String fx:value="April" />
+                        <String fx:value="May" />
+                        <String fx:value="June" />
+                        <String fx:value="July" />
+                        <String fx:value="August" />
+                        <String fx:value="September" />
+                        <String fx:value="October" />
+                        <String fx:value="November" />
+                        <String fx:value="December" />
+                    </FXCollections>
+                </items>
+            </ListView>
+        </VBox>
+    </right>
+</BorderPane>
