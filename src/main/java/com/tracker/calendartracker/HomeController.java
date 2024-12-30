@@ -3,14 +3,27 @@ package com.tracker.calendartracker;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
+import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+
+import java.time.*;
 
 public class HomeController {
 
+    // for creating new tracker/tab. will fix later. missing return statement.
+    public Button createNewTracker(ActionEvent event) {
+        Tab newTab = new Tab("New Tracker");
+        AnchorPane anchorPane = new AnchorPane();
+        GridPane newCalendarGrid = new GridPane();
+        newCalendarGrid.setHgap(10);
+        newCalendarGrid.setVgap(10);
+        newCalendarGrid.getStyleClass().add("calendar-grid");
+    }
+
+    public SplitPane splitPane;
+
+    private LocalDate today = LocalDate.now();
     @FXML
     private Button createNewTrackerButton;
 
@@ -19,10 +32,6 @@ public class HomeController {
 
     @FXML
     private ListView<String> monthListView;
-
-    private GridPane calendarGrid;
-
-    private int year = 2025; // Start year
 
     @FXML
     public void initialize() {
@@ -45,7 +54,7 @@ public class HomeController {
         showAlert("Create New Tracker", "You clicked on 'Create New Tracker'. Implement the logic here.");
     }
 
-    private void updateMonthLabel(String month) {
+private void updateMonthLabel(String month) {
         monthLabel.setText(month);
     }
 
