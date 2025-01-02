@@ -77,7 +77,7 @@ public class HomeController {
         String[] daysOfWeek = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
         for (int i = 0; i < daysOfWeek.length; i++) {
             Label dayLabel = new Label(daysOfWeek[i]);
-            dayLabel.setStyle("-fx-font-weight: bold; -fx-alignment: center;");
+            dayLabel.getStyleClass().add("calendar-header");
             calendarGrid.add(dayLabel, i, 0);  // Add labels in the first row
         }
 
@@ -90,7 +90,7 @@ public class HomeController {
         // Adjust the first day of the week to Sunday as the first day
         int firstDayOfWeek = firstOfMonth.getDayOfWeek().getValue();
         if (firstDayOfWeek == 7) {
-            firstDayOfWeek = 0;  // If it's Sunday (which is 7), set it to 0 to align with Sunday as the first day
+            firstDayOfWeek = 0;
         }
 
         int lengthOfMonth = firstOfMonth.lengthOfMonth(); // Get the number of days in the month
@@ -101,7 +101,7 @@ public class HomeController {
             int col = (firstDayOfWeek + day - 1) % 7; // Calculate the column
 
             Button dayButton = new Button(String.valueOf(day));
-            dayButton.setPrefSize(50, 50);
+            dayButton.setPrefSize(45, 45);
 
             // Set the initial state to NORMAL
             dayButton.setUserData(ButtonState.NORMAL);
@@ -114,6 +114,7 @@ public class HomeController {
         }
     }
 
+    // checking func
     private void handleDayClick(Button dayButton) {
         // Get the current state of the button
         ButtonState currentState = (ButtonState) dayButton.getUserData();
@@ -160,15 +161,39 @@ public class HomeController {
         tabPane.getTabs().add(newTab); // Add the new tab to the TabPane
     }
 
-    // Method for creating new tracker tabs (not implemented fully yet)
     public Tab createNewTracker() {
         Tab newTab = new Tab("New Tracker");
-        // Code for creating new tab
-        // You can add a Label, TextField, or any other controls to the tab here
+        // lagay ko lng toh as placeholder
         Label label = new Label("New Tracker Content");
         newTab.setContent(label);
         return newTab;
     }
+
+    // ETO UNG GINAWA NI RJ NA INUPDATE KO FOR RETURN STATEMENT PARA MARUN
+    // pinaltan ko lng pero experiment lng so retain ko toh as comment just in case
+    /*
+    // for creating new tracker/tab. will fix later. missing return statement.
+    public Tab createNewTracker(ActionEvent event) {
+        Tab newTab = new Tab("New Tracker");
+
+        // Create content for the tab
+        AnchorPane anchorPane = new AnchorPane();
+        GridPane newCalendarGrid = new GridPane();
+        newCalendarGrid.setHgap(10);
+        newCalendarGrid.setVgap(10);
+        newCalendarGrid.getStyleClass().add("calendar-grid");
+
+        // mema ko lng toh para may something sa new tab
+        Button newButton = new Button("Click Me");
+        newButton.setOnAction(e -> showAlert("Button Clicked", "You clicked the button in the new tracker tab!"));
+        newCalendarGrid.add(newButton, 0, 0);
+
+        anchorPane.getChildren().add(newCalendarGrid);
+        newTab.setContent(anchorPane);
+
+        return newTab;
+    }
+     */
 
     // Event handler for month selection
     @FXML
@@ -177,5 +202,13 @@ public class HomeController {
         if (selectedMonth != null) {
             updateCalendar(selectedMonth);
         }
+    }
+
+    private void showAlert(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 }
