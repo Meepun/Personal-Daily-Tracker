@@ -25,7 +25,7 @@ public class HomeController {
         newCalendarGrid.setVgap(10);
         newCalendarGrid.getStyleClass().add("calendar-grid");
 
-        // mema ko lng toh para may something sa new tab
+        // Add a button to the tab's content
         Button newButton = new Button("Click Me");
         newButton.setOnAction(e -> showAlert("Button Clicked", "You clicked the button in the new tracker tab!"));
         newCalendarGrid.add(newButton, 0, 0);
@@ -36,11 +36,11 @@ public class HomeController {
         return newTab;
     }
 
-    @FXML
-    private SplitPane splitPane;
+    public SplitPane splitPane;
 
     private LocalDate today = LocalDate.now();
     private DateTimeFormatter monthFormatter = DateTimeFormatter.ofPattern("MMMM yyyy");
+
     @FXML
     private Button createNewTrackerButton;
 
@@ -51,14 +51,9 @@ public class HomeController {
     private ListView<String> monthListView;
 
     @FXML
-    private TabPane tabPane;  // This should correspond to the TabPane in your FXML
-
-    @FXML
     private GridPane calendarGrid;
 
-    // FOR EXPERIMENTAL EXPERIMENTAL PURPOSE ONLY
-    // basta eto ung magiistore ng "/" "x" "" (state nung each date)
-    // nilagay ko lng toh para may makita something
+    // This map will store the state of each date ("/", "x", or "")
     private Map<String, String> dateStateMap = new HashMap<>();
 
     @FXML
@@ -69,14 +64,14 @@ public class HomeController {
                 "July", "August", "September", "October", "November", "December"
         ));
 
+        // Initialize the calendar with the current month and year
         updateCalendar(today);
 
         // Add listener to handle month selection changes
         monthListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
-                // Create a LocalDate by adding a default day ("01") to the month name
-                String monthWithDefaultDay = newValue + " 01"; // Adding the default day to the month
-                LocalDate selectedMonth = LocalDate.parse(monthWithDefaultDay, DateTimeFormatter.ofPattern("MMMM dd"));
+                // Load the selected month and year
+                LocalDate selectedMonth = LocalDate.parse(newValue + " 01", DateTimeFormatter.ofPattern("MMMM yyyy"));
                 updateCalendar(selectedMonth);
             }
         });
@@ -84,13 +79,7 @@ public class HomeController {
 
     @FXML
     private void handleCreateNewTracker(ActionEvent event) {
-        // Create a new tracker tab and add it to the TabPane
-        Tab newTab = createNewTracker(event);
-        tabPane.getTabs().add(newTab); // Add the new tab to the TabPane
-    }
-
-    private void updateMonthLabel(String month) {
-        monthLabel.setText(month);
+        showAlert("Create New Tracker", "You clicked on 'Create New Tracker'. Implement the logic here.");
     }
 
     // Update the calendar grid to reflect the correct month
@@ -153,8 +142,6 @@ public class HomeController {
         }
     }
 
-    // FOR EXPERIMENTAL EXPERIMENTAL PURPOSE ONLY
-    // basta eto ung magshoshow ng "/" "x" ""
     private void toggleDateState(String day) {
         // Toggle the state of the clicked date
         String currentState = dateStateMap.getOrDefault(day, "");
