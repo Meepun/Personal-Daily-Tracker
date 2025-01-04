@@ -12,18 +12,22 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormatSymbols;
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class HomeController {
 
@@ -103,8 +107,14 @@ public class HomeController {
 
         // Handle create new tracker button
         createNewTrackerButton.setOnAction(this::handleCreateNewTracker);
-    }
 
+        // Add hover effect on the monthLabel
+        monthLabel.setOnMouseEntered(e -> handleMonthLabelHover(true));
+        monthLabel.setOnMouseExited(e -> handleMonthLabelHover(false));
+
+        // Make monthLabel clickable for year navigation
+        monthLabel.setOnMouseClicked(this::handleMonthLabelClick);
+    }
 
     private void updateCalendar(String month) {
         // Clear the previous grid
@@ -140,7 +150,8 @@ public class HomeController {
             dayButton.setPrefSize(45, 45);
             dayButton.setId(String.valueOf(day)); // Assign the day as the button ID
 
-            String key = month + "-" + day;
+            // Include the year in the key
+            String key = currentMonth.getYear() + "-" + month + "-" + day;
             ButtonState state = loadButtonState(key);
             dayButton.setUserData(state);
             applyButtonState(dayButton, state);
@@ -182,7 +193,7 @@ public class HomeController {
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, userId);  // Use the dynamically set userId
-            pstmt.setString(2, dateKey);  // Date key (e.g., "JANUARY-1")
+            pstmt.setString(2, dateKey);  // Date key (e.g., "2025-JANUARY-1")
             pstmt.setString(3, state.toString()); // Save the state as a string
             pstmt.executeUpdate();
         } catch (SQLException e) {
@@ -190,14 +201,12 @@ public class HomeController {
         }
     }
 
-
-
     private ButtonState loadButtonState(String dateKey) {
         String sql = "SELECT state FROM user_changes WHERE user_id = ? AND datelog = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, userId);
-            pstmt.setString(2, dateKey);
+            pstmt.setString(2, dateKey); // Use the full date key including year
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
                 return ButtonState.valueOf(rs.getString("state"));
@@ -261,6 +270,47 @@ public class HomeController {
         return newTab;
     }
 
+    private void updateYear(int newYear) {
+        // Update the year in the calendar logic
+        Calendar currentCalendar = Calendar.getInstance();
+        currentCalendar.set(Calendar.YEAR, newYear);
+
+        // Refresh the calendar view with the new year
+        refreshCalendar(currentCalendar.get(Calendar.MONTH), newYear);
+    }
+
+    private void refreshCalendar(int month, int year) {
+        // Logic to update the displayed month grid based on the selected year and month
+        // This will refresh the calendar UI based on the new year
+
+        // Example: Update the month label (e.g., "January 2025")
+        monthLabel.setText(new DateFormatSymbols().getMonths()[month] + " " + year);
+        // Update the calendar grid (you will likely need to clear the grid and refill it)
+        populateCalendarGrid(month, year);
+    }
+
+    private void populateCalendarGrid(int month, int year) {
+        // Clear existing calendar cells
+        calendarGrid.getChildren().clear();
+
+        // Set the correct number of days in the month
+        LocalDate firstOfMonth = LocalDate.of(year, month + 1, 1);
+        int firstDayOfWeek = firstOfMonth.getDayOfWeek().getValue(); // 1 = Monday, 7 = Sunday
+        int lastDayOfMonth = firstOfMonth.lengthOfMonth();
+
+        // Populate the calendar with the correct days
+        for (int i = 1; i <= lastDayOfMonth; i++) {
+            int row = (firstDayOfWeek + i - 2) / 7; // Calculate row
+            int col = (firstDayOfWeek + i - 2) % 7; // Calculate column
+
+            Label dayLabel = new Label(String.valueOf(i));
+            dayLabel.getStyleClass().add("calendar-cell");
+
+            // Add the label to the grid
+            calendarGrid.add(dayLabel, col, row);
+        }
+    }
+
     // ETO UNG GINAWA NI RJ NA INUPDATE KO FOR RETURN STATEMENT PARA MARUN
     // pinaltan ko lng pero experiment lng so retain ko toh as comment just in case
     /*
@@ -295,6 +345,67 @@ public class HomeController {
         }
     }
 
+    // Hover effect for monthLabel (change only when hovering over the year portion)
+    private void handleMonthLabelHover(boolean isHovered) {
+        String[] parts = monthLabel.getText().split(" ");
+        if (parts.length > 1) {
+            String month = parts[0];  // e.g., "January"
+            String year = parts[1];   // e.g., "2025"
+            if (isHovered) {
+                monthLabel.setText(month + " " + year);
+                monthLabel.setStyle("-fx-text-fill: #c37b1e; -fx-font-weight: bold; cursor: text;");
+            } else {
+                monthLabel.setText(month + " " + year);
+                monthLabel.setStyle("-fx-text-fill: black;");
+            }
+        }
+    }
+
+    @FXML
+    private void handleMonthLabelClick(MouseEvent event) {
+        // Check if the clicked label text is the current month/year
+        if (monthLabel != null) {
+            String currentText = monthLabel.getText();
+
+            // Extract the year from the text (assuming it's in "Month Year" format)
+            String year = currentText.split(" ")[1];
+
+            // Create a TextField for year editing
+            TextField yearField = new TextField(year);
+            yearField.setStyle("-fx-font-size: 18px; -fx-text-fill: #333333;");
+            yearField.getStyleClass().add("editable-year-field"); // Apply custom CSS for TextField
+
+            // Set the TextField in place of the month label
+            monthLabel.setGraphic(yearField);
+
+            // Focus the field to allow typing immediately
+            yearField.requestFocus();
+
+            // Handle Enter key to save changes
+            yearField.setOnAction(e -> {
+                try {
+                    // Parse the entered year
+                    int newYear = Integer.parseInt(yearField.getText().trim());
+                    updateYear(newYear);
+                    monthLabel.setText(monthLabel.getText().split(" ")[0] + " " + newYear); // Update the label
+                    monthLabel.setGraphic(null); // Remove the TextField after saving
+                } catch (NumberFormatException ex) {
+                    // Handle invalid input (non-numeric value)
+                    System.out.println("Invalid year input.");
+                }
+            });
+
+            // Handle losing focus (e.g., if the user clicks outside the TextField)
+            yearField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+                if (!isNowFocused) {
+                    // Cancel editing if focus is lost
+                    monthLabel.setText(monthLabel.getText().split(" ")[0] + " " + year); // Revert to original year
+                    monthLabel.setGraphic(null);
+                }
+            });
+        }
+    }
+
     private String getUserNameFromDatabase(String userId) {
         String sql = "SELECT username FROM loginsignup WHERE user_id = ?";
         try (Connection conn = DBConnection.getConnection();
@@ -324,11 +435,14 @@ public class HomeController {
             e.printStackTrace();
         }
     }
-    private void showAlert(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+
+    // Helper method to show a simple alert
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
         alert.setHeaderText(null);
-        alert.setContentText(content);
+        alert.setContentText(message);
         alert.showAndWait();
     }
+
 }
