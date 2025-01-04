@@ -341,33 +341,6 @@ public class HomeController {
     }
 
 
-
-    // ETO UNG GINAWA NI RJ NA INUPDATE KO FOR RETURN STATEMENT PARA MARUN
-    // pinaltan ko lng pero experiment lng so retain ko toh as comment just in case
-    /*
-    // for creating new tracker/tab. will fix later. missing return statement.
-    public Tab createNewTracker(ActionEvent event) {
-        Tab newTab = new Tab("New Tracker");
-
-        // Create content for the tab
-        AnchorPane anchorPane = new AnchorPane();
-        GridPane newCalendarGrid = new GridPane();
-        newCalendarGrid.setHgap(10);
-        newCalendarGrid.setVgap(10);
-        newCalendarGrid.getStyleClass().add("calendar-grid");
-
-        // mema ko lng toh para may something sa new tab
-        Button newButton = new Button("Click Me");
-        newButton.setOnAction(e -> showAlert("Button Clicked", "You clicked the button in the new tracker tab!"));
-        newCalendarGrid.add(newButton, 0, 0);
-
-        anchorPane.getChildren().add(newCalendarGrid);
-        newTab.setContent(anchorPane);
-
-        return newTab;
-    }
-     */
-
     @FXML
     public void handleMonthSelection(MouseEvent event) {
         String selectedMonth = monthListView.getSelectionModel().getSelectedItem();
@@ -390,7 +363,6 @@ public class HomeController {
         }
         return "User"; // Fallback value if username is not found
     }
-
 
     @FXML
     private void handleLogout(ActionEvent event) {
