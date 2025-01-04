@@ -103,3 +103,15 @@
     -fx-background-color: #e6e6e6;
     -fx-border-radius: 5;
 }
+
+.logout-button {
+    -fx-background-color: #343434;
+    -fx-text-fill: white;
+    -fx-border-radius: 5;
+    -fx-padding: 10;
+    -fx-font-size: 14px;
+}
+
+.logout-button:hover {
+    -fx-background-color: #f79d12;
+}

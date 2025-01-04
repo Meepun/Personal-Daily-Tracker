@@ -3,9 +3,16 @@ package com.tracker.calendartracker;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
 
 import java.time.LocalDate;
 import java.time.Month;
@@ -19,7 +26,7 @@ public class HomeController {
     @FXML
     private SplitPane splitPane;
 
-    private LocalDate today = LocalDate.now(); // Get the current date
+    private LocalDate today = LocalDate.now();
 
     @FXML
     private Label monthLabel;
@@ -34,32 +41,32 @@ public class HomeController {
     private TabPane tabPane;
 
     @FXML
-    private Button createNewTrackerButton; // Added the button for creating a new tracker
+    private Button createNewTrackerButton;
 
     private List<Button> dayButtons = new ArrayList<>();
-    private LocalDate currentMonth; // This will track the currently displayed month
+    private LocalDate currentMonth;
 
-    private String userId = "exampleUserId"; // This should be dynamically obtained from login
+    private String userId = "exampleUserId";
 
-    // Enum to represent the different states of a button (Normal, Checked, Crossed)
     private enum ButtonState {
         NORMAL,
         CHECKED,
         CROSSED
     }
 
-    // Map to store button states per user and date
     private static final Map<String, Map<String, ButtonState>> userChanges = new HashMap<>();
+
+    private static final String BASE_PATH = "/images/";
+    private static final String CHECKED_IMAGE_PATH = "Check.png";
+    private static final String CROSSED_IMAGE_PATH = "X.png";
 
     @FXML
     public void initialize() {
-        // Initialize currentMonth to the current date
         currentMonth = today.withDayOfMonth(1);
 
-        // Populate the ListView with months
         monthListView.setItems(FXCollections.observableArrayList(
-                "January", "February", "March", "April", "May", "June",
-                "July", "August", "September", "October", "November", "December"
+                "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE",
+                "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"
         ));
 
         // Add listener to handle month selection changes
@@ -75,7 +82,6 @@ public class HomeController {
         // Handle create new tracker button
         createNewTrackerButton.setOnAction(this::handleCreateNewTracker);
     }
-
     private void updateCalendar(String month) {
         // Clear the previous grid
         calendarGrid.getChildren().clear();
@@ -89,7 +95,6 @@ public class HomeController {
             calendarGrid.add(dayLabel, i, 0);  // Add labels in the first row
         }
 
-        // Update the month label
         monthLabel.setText(month + " " + currentMonth.getYear());
 
         // Get the first day of the month
@@ -101,35 +106,30 @@ public class HomeController {
             firstDayOfWeek = 0;
         }
 
-        int lengthOfMonth = firstOfMonth.lengthOfMonth(); // Get the number of days in the month
+        int lengthOfMonth = firstOfMonth.lengthOfMonth();
 
-        // Create the grid with buttons for each day
         for (int day = 1; day <= lengthOfMonth; day++) {
-            int row = (firstDayOfWeek + day - 1) / 7 + 1; // Calculate the row (starting from 1 for the second row)
-            int col = (firstDayOfWeek + day - 1) % 7; // Calculate the column
+            int row = (firstDayOfWeek + day - 1) / 7 + 1;
+            int col = (firstDayOfWeek + day - 1) % 7;
 
             Button dayButton = new Button(String.valueOf(day));
             dayButton.setPrefSize(45, 45);
+            dayButton.setId(String.valueOf(day)); // Assign the day as the button ID
 
-            // Retrieve state from userChanges
             String key = month + "-" + day;
             ButtonState state = loadButtonState(key);
             dayButton.setUserData(state);
             applyButtonState(dayButton, state);
 
             dayButton.setOnAction(e -> handleDayClick(dayButton, key));
-
-            // Add the button to the grid
             calendarGrid.add(dayButton, col, row);
             dayButtons.add(dayButton);
         }
     }
 
     private void handleDayClick(Button dayButton, String key) {
-        // Get the current state of the button
         ButtonState currentState = (ButtonState) dayButton.getUserData();
 
-        // Cycle through the states: NORMAL -> CHECKED -> CROSSED -> NORMAL
         ButtonState nextState;
         switch (currentState) {
             case NORMAL:
@@ -144,11 +144,8 @@ public class HomeController {
                 break;
         }
 
-        // Update state and apply style
         dayButton.setUserData(nextState);
         applyButtonState(dayButton, nextState);
-
-        // Save changes for user
         saveButtonState(key, nextState);
     }
 
@@ -161,16 +158,29 @@ public class HomeController {
     }
 
     private void applyButtonState(Button button, ButtonState state) {
+        double imageSize = 20; // Adjust size as needed for your design
+
         switch (state) {
             case CHECKED:
-                button.setStyle("-fx-background-color: green;"); // Green (checked)
+                ImageView checkedImageView = new ImageView(new Image(getClass().getResourceAsStream(BASE_PATH + CHECKED_IMAGE_PATH)));
+                checkedImageView.setFitWidth(imageSize);
+                checkedImageView.setFitHeight(imageSize);
+                checkedImageView.setPreserveRatio(true);
+                button.setGraphic(checkedImageView);
+                button.setText(""); // Temporarily remove text
                 break;
             case CROSSED:
-                button.setStyle("-fx-background-color: red;"); // Red (crossed)
+                ImageView crossedImageView = new ImageView(new Image(getClass().getResourceAsStream(BASE_PATH + CROSSED_IMAGE_PATH)));
+                crossedImageView.setFitWidth(imageSize);
+                crossedImageView.setFitHeight(imageSize);
+                crossedImageView.setPreserveRatio(true);
+                button.setGraphic(crossedImageView);
+                button.setText(""); // Temporarily remove text
                 break;
             case NORMAL:
             default:
-                button.setStyle("-fx-background-color: transparent;"); // Transparent (normal)
+                button.setGraphic(null);
+                button.setText(button.getId()); // Restore the number as text
                 break;
         }
     }
@@ -190,7 +200,7 @@ public class HomeController {
     @FXML
     private void handleCreateNewTracker(ActionEvent event) {
         Tab newTab = createNewTracker();
-        tabPane.getTabs().add(newTab); // Add the new tab to the TabPane
+        tabPane.getTabs().add(newTab);
     }
 
     public Tab createNewTracker() {
@@ -225,6 +235,7 @@ public class HomeController {
         return newTab;
     }
      */
+
     @FXML
     public void handleMonthSelection(MouseEvent event) {
         String selectedMonth = monthListView.getSelectionModel().getSelectedItem();
@@ -233,6 +244,19 @@ public class HomeController {
         }
     }
 
+    @FXML
+    private void handleLogout(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/tracker/calendartracker/mainmenu.fxml"));
+            Parent root = loader.load();
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Main Menu");
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     private void showAlert(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
