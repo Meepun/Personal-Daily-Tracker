@@ -176,7 +176,6 @@ public class HomeController {
         }
     }
 
-
     private ButtonState loadButtonState(String key) {
         return userChanges.getOrDefault(userId, new HashMap<>()).getOrDefault(key, ButtonState.NORMAL);
     }
