@@ -3,11 +3,16 @@ package com.tracker.calendartracker;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
 
 import java.time.LocalDate;
 import java.time.Month;
@@ -60,34 +65,42 @@ public class HomeController {
         currentMonth = today.withDayOfMonth(1);
 
         monthListView.setItems(FXCollections.observableArrayList(
-                "January", "February", "March", "April", "May", "June",
-                "July", "August", "September", "October", "November", "December"
+                "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE",
+                "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"
         ));
 
+        // Add listener to handle month selection changes
         monthListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 updateCalendar(newValue);
             }
         });
 
+        // Initialize the calendar with the current month
         updateCalendar(currentMonth.getMonth().toString());
+
+        // Handle create new tracker button
         createNewTrackerButton.setOnAction(this::handleCreateNewTracker);
     }
-
     private void updateCalendar(String month) {
+        // Clear the previous grid
         calendarGrid.getChildren().clear();
         dayButtons.clear();
 
+        // Add the row for the days of the week (Sun, Mon, Tue, Wed, Thu, Fri, Sat)
         String[] daysOfWeek = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
         for (int i = 0; i < daysOfWeek.length; i++) {
             Label dayLabel = new Label(daysOfWeek[i]);
             dayLabel.getStyleClass().add("calendar-header");
-            calendarGrid.add(dayLabel, i, 0);
+            calendarGrid.add(dayLabel, i, 0);  // Add labels in the first row
         }
 
         monthLabel.setText(month + " " + currentMonth.getYear());
 
+        // Get the first day of the month
         LocalDate firstOfMonth = LocalDate.of(currentMonth.getYear(), Month.valueOf(month.toUpperCase()), 1);
+
+        // Adjust the first day of the week to Sunday as the first day
         int firstDayOfWeek = firstOfMonth.getDayOfWeek().getValue();
         if (firstDayOfWeek == 7) {
             firstDayOfWeek = 0;
@@ -231,6 +244,19 @@ public class HomeController {
         }
     }
 
+    @FXML
+    private void handleLogout(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/tracker/calendartracker/mainmenu.fxml"));
+            Parent root = loader.load();
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Main Menu");
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     private void showAlert(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
