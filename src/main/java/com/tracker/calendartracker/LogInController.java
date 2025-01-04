@@ -8,6 +8,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -32,6 +33,9 @@ public class LogInController {
     private static final Logger LOGGER = Logger.getLogger(LogInController.class.getName());
 
     @FXML
+    private Label errorLabel;
+
+    @FXML
     private ImageView hiLogoImageView;
     @FXML
     private ImageView untitledDesignImageView;
@@ -51,20 +55,22 @@ public class LogInController {
         String username = usernameTextField.getText().trim();
         String password = passTextField.getText().trim();
 
+        // Clear any previous error messages
+        errorLabel.setVisible(false);
+
         if (username.isEmpty() || password.isEmpty()) {
-            showAlert("Validation Error", "username and password fields cannot be empty.");
+            displayErrorMessage("Username and password fields cannot be empty.");
             return;
         }
 
         // vinavalidate the credentials checking against the database
         if (validateCredentials(username, password)) {
             System.out.println("Login successful!");
-            showAlert("Login Success", "You have logged in successfully!");
 
             // Navigate to the main menu
             navigateTo(event, "/com/tracker/calendartracker/Home.fxml", "Home");
         } else {
-            showAlert("Login Failed", "Invalid username or password. Please try again.");
+            displayErrorMessage("Invalid username or password. Please try again.");
         }
     }
 
@@ -95,6 +101,11 @@ public class LogInController {
             showAlert("Database Error", "Could not connect to the database.");
         }
         return false;
+    }
+
+    private void displayErrorMessage(String message) {
+        errorLabel.setText(message);
+        errorLabel.setVisible(true);
     }
 
     /**
