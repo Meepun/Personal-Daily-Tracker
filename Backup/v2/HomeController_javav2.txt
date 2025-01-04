@@ -1,0 +1,169 @@
+package com.tracker.calendartracker;
+
+import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
+
+import java.time.*;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
+
+public class HomeController {
+
+    // for creating new tracker/tab. will fix later. missing return statement.
+    public Tab createNewTracker(ActionEvent event) {
+        Tab newTab = new Tab("New Tracker");
+
+        // Create content for the tab
+        AnchorPane anchorPane = new AnchorPane();
+        GridPane newCalendarGrid = new GridPane();
+        newCalendarGrid.setHgap(10);
+        newCalendarGrid.setVgap(10);
+        newCalendarGrid.getStyleClass().add("calendar-grid");
+
+        // Add a button to the tab's content
+        Button newButton = new Button("Click Me");
+        newButton.setOnAction(e -> showAlert("Button Clicked", "You clicked the button in the new tracker tab!"));
+        newCalendarGrid.add(newButton, 0, 0);
+
+        anchorPane.getChildren().add(newCalendarGrid);
+        newTab.setContent(anchorPane);
+
+        return newTab;
+    }
+
+    public SplitPane splitPane;
+
+    private LocalDate today = LocalDate.now();
+    private DateTimeFormatter monthFormatter = DateTimeFormatter.ofPattern("MMMM yyyy");
+
+    @FXML
+    private Button createNewTrackerButton;
+
+    @FXML
+    private Label monthLabel;
+
+    @FXML
+    private ListView<String> monthListView;
+
+    @FXML
+    private GridPane calendarGrid;
+
+    // This map will store the state of each date ("/", "x", or "")
+    private Map<String, String> dateStateMap = new HashMap<>();
+
+    @FXML
+    public void initialize() {
+        // Populate the ListView with months
+        monthListView.setItems(FXCollections.observableArrayList(
+                "January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"
+        ));
+
+        // Initialize the calendar with the current month and year
+        updateCalendar(today);
+
+        // Add listener to handle month selection changes
+        monthListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                // Load the selected month and year
+                LocalDate selectedMonth = LocalDate.parse(newValue + " 01", DateTimeFormatter.ofPattern("MMMM yyyy"));
+                updateCalendar(selectedMonth);
+            }
+        });
+    }
+
+    @FXML
+    private void handleCreateNewTracker(ActionEvent event) {
+        showAlert("Create New Tracker", "You clicked on 'Create New Tracker'. Implement the logic here.");
+    }
+
+    // Update the calendar grid to reflect the correct month
+    private void updateCalendar(LocalDate date) {
+        // Set the month label
+        monthLabel.setText(date.format(monthFormatter));
+
+        // Get the first day of the month and the number of days in the month
+        LocalDate firstOfMonth = date.withDayOfMonth(1);
+        int lengthOfMonth = date.lengthOfMonth();
+
+        // Get the day of the week for the first day of the month
+        DayOfWeek startDay = firstOfMonth.getDayOfWeek();
+        int startDayIndex = startDay.getValue() % 7;  // Convert to 0-indexed (Sun=0, Mon=1, ..., Sat=6)
+
+        // Clear the previous calendar content
+        calendarGrid.getChildren().clear();
+
+        // Add the day headers (Sun, Mon, Tue, etc.)
+        String[] daysOfWeek = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+        for (int i = 0; i < 7; i++) {
+            Label dayLabel = new Label(daysOfWeek[i]);
+            dayLabel.getStyleClass().add("calendar-header");
+            calendarGrid.add(dayLabel, i, 2);  // Row 2 for the day headers
+        }
+
+        // Add day numbers to the calendar grid
+        int row = 3;
+        int col = startDayIndex;
+        for (int day = 1; day <= lengthOfMonth; day++) {
+            String dayStr = String.valueOf(day);
+            Label dayLabel = new Label(dayStr);
+            dayLabel.getStyleClass().add("calendar-cell");
+
+            // Highlight today's date
+            if (day == today.getDayOfMonth() && date.getMonth() == today.getMonth()) {
+                dayLabel.getStyleClass().add("today");
+            }
+
+            // Set up the click event to toggle the date status ("/", "x", or empty)
+            dayLabel.setOnMouseClicked(event -> toggleDateState(dayStr));
+
+            // Check if the date has a state ("/", "x", or "")
+            String state = dateStateMap.getOrDefault(dayStr, "");
+            if (!state.isEmpty()) {
+                dayLabel.setText(state);
+            }
+
+            // Add the label to the grid
+            calendarGrid.add(dayLabel, col, row);
+
+            // Move to the next column
+            col++;
+
+            // If we've reached the end of the row (Saturday), move to the next row
+            if (col > 6) {
+                col = 0;
+                row++;
+            }
+        }
+    }
+
+    private void toggleDateState(String day) {
+        // Toggle the state of the clicked date
+        String currentState = dateStateMap.getOrDefault(day, "");
+        String newState = "";
+        if (currentState.equals("")) {
+            newState = "/";  // First click shows "/"
+        } else if (currentState.equals("/")) {
+            newState = "x";  // Second click shows "x"
+        } else if (currentState.equals("x")) {
+            newState = "";   // Third click clears the state
+        }
+
+        // Update the date's state and refresh the calendar
+        dateStateMap.put(day, newState);
+        updateCalendar(today);  // Re-update the calendar to reflect the new state
+    }
+
+    private void showAlert(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+}
