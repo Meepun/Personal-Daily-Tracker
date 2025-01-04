@@ -11,7 +11,9 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 import java.sql.Connection;
@@ -256,10 +258,89 @@ public class HomeController {
 
     public Tab createNewTracker() {
         Tab newTab = new Tab("New Tracker");
-        Label label = new Label("New Tracker Content");
-        newTab.setContent(label);
+
+        // Create root layout for the tab content
+        BorderPane borderPane = new BorderPane();
+        GridPane newCalendarGrid = new GridPane();
+        newCalendarGrid.setHgap(10);
+        newCalendarGrid.setVgap(10);
+        newCalendarGrid.getStyleClass().add("calendar-grid");
+
+        Label monthLabel = new Label();
+        monthLabel.getStyleClass().add("month-label");
+
+        HBox navigationBox = new HBox(10);
+        Button prevMonthButton = new Button("<");
+        Button nextMonthButton = new Button(">");
+
+        // Set default tab calendar to the current month
+        var ref = new Object() {
+            LocalDate tabMonth = LocalDate.now().withDayOfMonth(1);
+        };
+
+        // Generate initial calendar view for the tab
+        generateCalendar(newCalendarGrid, ref.tabMonth, monthLabel);
+
+        // Handle previous/next button clicks to update the calendar
+        prevMonthButton.setOnAction(e -> {
+            ref.tabMonth = ref.tabMonth.minusMonths(1);
+            generateCalendar(newCalendarGrid, ref.tabMonth, monthLabel);
+        });
+
+        nextMonthButton.setOnAction(e -> {
+            ref.tabMonth = ref.tabMonth.plusMonths(1);
+            generateCalendar(newCalendarGrid, ref.tabMonth, monthLabel);
+        });
+
+        navigationBox.getChildren().addAll(prevMonthButton, monthLabel, nextMonthButton);
+        navigationBox.setAlignment(javafx.geometry.Pos.CENTER);
+
+        borderPane.setTop(navigationBox);
+        borderPane.setCenter(newCalendarGrid);
+        newTab.setContent(borderPane);
+
         return newTab;
     }
+
+    private void generateCalendar(GridPane grid, LocalDate currentMonth, Label monthLabel) {
+        grid.getChildren().clear();
+
+        String[] daysOfWeek = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+        for (int i = 0; i < daysOfWeek.length; i++) {
+            Label dayLabel = new Label(daysOfWeek[i]);
+            dayLabel.getStyleClass().add("calendar-header");
+            grid.add(dayLabel, i, 0);  // First row: Days of the week
+        }
+
+        monthLabel.setText(currentMonth.getMonth().toString() + " " + currentMonth.getYear());
+
+        LocalDate firstOfMonth = currentMonth.withDayOfMonth(1);
+        int firstDayOfWeek = firstOfMonth.getDayOfWeek().getValue();
+        if (firstDayOfWeek == 7) {
+            firstDayOfWeek = 0;  // Sunday = 0
+        }
+
+        int lengthOfMonth = firstOfMonth.lengthOfMonth();
+
+        for (int day = 1; day <= lengthOfMonth; day++) {
+            int row = (firstDayOfWeek + day - 1) / 7 + 1;
+            int col = (firstDayOfWeek + day - 1) % 7;
+
+            Button dayButton = new Button(String.valueOf(day));
+            dayButton.setPrefSize(45, 45);
+            dayButton.setId(String.valueOf(day));
+
+            String key = currentMonth.getMonth().toString() + "-" + day;
+            ButtonState state = loadButtonState(key);
+            dayButton.setUserData(state);
+            applyButtonState(dayButton, state);
+
+            dayButton.setOnAction(e -> handleDayClick(dayButton, key));
+            grid.add(dayButton, col, row);
+        }
+    }
+
+
 
     // ETO UNG GINAWA NI RJ NA INUPDATE KO FOR RETURN STATEMENT PARA MARUN
     // pinaltan ko lng pero experiment lng so retain ko toh as comment just in case
