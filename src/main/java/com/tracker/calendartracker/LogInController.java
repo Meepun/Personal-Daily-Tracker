@@ -39,6 +39,7 @@ public class LogInController {
     private ImageView hiLogoImageView;
     @FXML
     private ImageView untitledDesignImageView;
+    private String userId;
 
     public void initialize() {
         // Load the logo image
@@ -81,7 +82,7 @@ public class LogInController {
      * @param password User's password input
      * @return True if credentials are valid, false otherwise
      */
-    private boolean validateCredentials(String username, String password) {
+    public boolean validateCredentials(String username, String password) {
         String query = "SELECT * FROM loginsignup WHERE username = ? AND password = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -91,16 +92,17 @@ public class LogInController {
 
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
+                userId = rs.getString("user_id");  // Store user_id
                 return true;
-            } else {
-                return false;
             }
-
         } catch (SQLException e) {
             LOGGER.severe("Database error during login validation: " + e.getMessage());
-            showAlert("Database Error", "Could not connect to the database.");
         }
         return false;
+    }
+
+    public String getUserId() {
+        return userId;
     }
 
     private void displayErrorMessage(String message) {

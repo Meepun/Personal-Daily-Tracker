@@ -14,6 +14,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
@@ -46,7 +49,13 @@ public class HomeController {
     private List<Button> dayButtons = new ArrayList<>();
     private LocalDate currentMonth;
 
-    private String userId = "exampleUserId";
+    private String userId;
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+    public String getUserId() {
+        return userId;
+    }
 
     private enum ButtonState {
         NORMAL,
@@ -67,10 +76,6 @@ public class HomeController {
         monthListView.setItems(FXCollections.observableArrayList(
                 "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE",
                 "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"
-<<<<<<< HEAD
-=======
-
->>>>>>> b201b793221dbe0642e3bbcf73b8e34b5b4ca5b0
         ));
 
         // Add listener to handle month selection changes
@@ -153,9 +158,24 @@ public class HomeController {
         saveButtonState(key, nextState);
     }
 
-    private void saveButtonState(String key, ButtonState state) {
-        userChanges.computeIfAbsent(userId, k -> new HashMap<>()).put(key, state);
+    private void saveButtonState(String dateKey, ButtonState state) {
+        String sql = "INSERT INTO user_changes (user_id, datelog, state) " +
+                "VALUES (?, ?, ?) " +
+                "ON CONFLICT(user_id, datelog) " +
+                "DO UPDATE SET state = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, userId);  // Use the dynamically set userId
+            pstmt.setString(2, dateKey);
+            pstmt.setString(3, state.toString());
+            pstmt.setString(4, state.toString());
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
+
 
     private ButtonState loadButtonState(String key) {
         return userChanges.getOrDefault(userId, new HashMap<>()).getOrDefault(key, ButtonState.NORMAL);
@@ -253,10 +273,6 @@ public class HomeController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/tracker/calendartracker/mainmenu.fxml"));
             Parent root = loader.load();
-<<<<<<< HEAD
-=======
-
->>>>>>> b201b793221dbe0642e3bbcf73b8e34b5b4ca5b0
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("Main Menu");
@@ -265,11 +281,6 @@ public class HomeController {
             e.printStackTrace();
         }
     }
-<<<<<<< HEAD
-=======
-
-
->>>>>>> b201b793221dbe0642e3bbcf73b8e34b5b4ca5b0
     private void showAlert(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
