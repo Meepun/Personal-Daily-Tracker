@@ -67,6 +67,10 @@ public class HomeController {
         monthListView.setItems(FXCollections.observableArrayList(
                 "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE",
                 "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"
+<<<<<<< HEAD
+=======
+
+>>>>>>> b201b793221dbe0642e3bbcf73b8e34b5b4ca5b0
         ));
 
         // Add listener to handle month selection changes
@@ -249,6 +253,10 @@ public class HomeController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/tracker/calendartracker/mainmenu.fxml"));
             Parent root = loader.load();
+<<<<<<< HEAD
+=======
+
+>>>>>>> b201b793221dbe0642e3bbcf73b8e34b5b4ca5b0
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("Main Menu");
@@ -257,6 +265,11 @@ public class HomeController {
             e.printStackTrace();
         }
     }
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> b201b793221dbe0642e3bbcf73b8e34b5b4ca5b0
     private void showAlert(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
