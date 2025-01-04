@@ -27,6 +27,11 @@ import java.util.Map;
 public class HomeController {
 
     @FXML
+    private Label welcomeUser;
+    public void updateWelcomeUser(String username) {
+        welcomeUser.setText("Welcome, " + username);
+    }
+    @FXML
     private SplitPane splitPane;
 
     private LocalDate today = LocalDate.now();
@@ -280,6 +285,7 @@ public class HomeController {
             e.printStackTrace();
         }
     }
+
     private void showAlert(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);

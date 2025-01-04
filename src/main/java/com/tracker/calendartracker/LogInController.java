@@ -67,9 +67,22 @@ public class LogInController {
         // vinavalidate the credentials checking against the database
         if (validateCredentials(username, password)) {
             System.out.println("Login successful!");
+            // Transition to HomeController
+                try {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/tracker/calendartracker/home.fxml"));
+                    Parent root = loader.load();
 
-            // Navigate to the main menu
-            navigateTo(event, "/com/tracker/calendartracker/Home.fxml", "Home");
+                    HomeController homeController = loader.getController();
+                    homeController.setUserId(getUserId());  // Pass userId to HomeController
+                    homeController.updateWelcomeUser(username);  // Pass username to home screen
+
+                    Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                    stage.setScene(new Scene(root));
+                    stage.setTitle("Home");
+                    stage.show();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
         } else {
             displayErrorMessage("Invalid username or password. Please try again.");
         }
@@ -109,6 +122,7 @@ public class LogInController {
         errorLabel.setText(message);
         errorLabel.setVisible(true);
     }
+
 
     /**
      * Displays an alert with the specified title and message.
