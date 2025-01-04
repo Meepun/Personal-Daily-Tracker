@@ -99,7 +99,8 @@
     <top>
         <HBox prefHeight="57.0" prefWidth="678.0" style="-fx-background-color: #343434;" BorderPane.alignment="CENTER">
             <children>
-                <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="57.0" prefWidth="180.0" text="Welcome, User" textAlignment="CENTER" textFill="#c37b1e">
+                <Label fx:id="welcomeLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="57.0" prefWidth="180.0"
+                       text="Welcome, User" textAlignment="CENTER" textFill="#c37b1e">
                     <font>
                         <Font name="Berlin Sans FB Demi Bold" size="20.0" />
                     </font>
@@ -107,5 +108,6 @@
             </children>
         </HBox>
     </top>
+
 </BorderPane>
 

@@ -16,6 +16,7 @@ import javafx.stage.Stage;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.Month;
@@ -30,6 +31,9 @@ public class HomeController {
     private SplitPane splitPane;
 
     private LocalDate today = LocalDate.now();
+
+    @FXML
+    private Label welcomeLabel;  // Reference to the label in the FXML
 
     @FXML
     private Label monthLabel;
@@ -71,6 +75,15 @@ public class HomeController {
 
     @FXML
     public void initialize() {
+        // Retrieve userId from the session
+        this.userId = SessionHandler.getInstance().getUserId();
+
+        // Retrieve the username from your database or session
+        String username = getUserNameFromDatabase(userId);  // Implement this method as per your logic
+
+        // Set the label text dynamically
+        welcomeLabel.setText("Welcome, " + username);
+
         currentMonth = today.withDayOfMonth(1);
 
         monthListView.setItems(FXCollections.observableArrayList(
@@ -91,6 +104,8 @@ public class HomeController {
         // Handle create new tracker button
         createNewTrackerButton.setOnAction(this::handleCreateNewTracker);
     }
+
+
     private void updateCalendar(String month) {
         // Clear the previous grid
         calendarGrid.getChildren().clear();
@@ -266,6 +281,22 @@ public class HomeController {
             updateCalendar(selectedMonth);
         }
     }
+
+    private String getUserNameFromDatabase(String userId) {
+        String sql = "SELECT username FROM loginsignup WHERE user_id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, userId);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getString("username");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return "User"; // Fallback value if username is not found
+    }
+
 
     @FXML
     private void handleLogout(ActionEvent event) {

@@ -68,7 +68,10 @@ public class LogInController {
         if (validateCredentials(username, password)) {
             System.out.println("Login successful!");
 
-            // Navigate to the main menu
+            // Set user ID in session
+            SessionHandler.getInstance().setUserId(userId);
+
+            // Navigate to home screen
             navigateTo(event, "/com/tracker/calendartracker/Home.fxml", "Home");
         } else {
             displayErrorMessage("Invalid username or password. Please try again.");
@@ -79,7 +82,7 @@ public class LogInController {
      * Validates the user's credentials against the database.
      *
      * @param username    User's username input
-     * @param password User's password input
+     * @param password    User's password input
      * @return True if credentials are valid, false otherwise
      */
     public boolean validateCredentials(String username, String password) {
