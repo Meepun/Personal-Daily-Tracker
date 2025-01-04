@@ -176,24 +176,39 @@ public class HomeController {
     private void saveButtonState(String dateKey, ButtonState state) {
         String sql = "INSERT INTO user_changes (user_id, datelog, state) " +
                 "VALUES (?, ?, ?) " +
-                "ON CONFLICT(user_id, datelog) " +
-                "DO UPDATE SET state = ?";
+                "ON CONFLICT(user_id, datelog) " +  // Ensure conflict on user_id + datelog
+                "DO UPDATE SET state = excluded.state";  // Update the state if conflict occurs
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, userId);  // Use the dynamically set userId
-            pstmt.setString(2, dateKey);
-            pstmt.setString(3, state.toString());
-            pstmt.setString(4, state.toString());
+            pstmt.setString(2, dateKey);  // Date key (e.g., "JANUARY-1")
+            pstmt.setString(3, state.toString()); // Save the state as a string
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    private ButtonState loadButtonState(String key) {
-        return userChanges.getOrDefault(userId, new HashMap<>()).getOrDefault(key, ButtonState.NORMAL);
+
+
+    private ButtonState loadButtonState(String dateKey) {
+        String sql = "SELECT state FROM user_changes WHERE user_id = ? AND datelog = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, userId);
+            pstmt.setString(2, dateKey);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return ButtonState.valueOf(rs.getString("state"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return ButtonState.NORMAL; // Default to NORMAL if no state is found
     }
+
+
 
     private void applyButtonState(Button button, ButtonState state) {
         double imageSize = 20; // Adjust size as needed for your design
