@@ -7,9 +7,12 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 
-import java.time.*;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class HomeController {
 
@@ -36,12 +39,17 @@ public class HomeController {
     private List<Button> dayButtons = new ArrayList<>();
     private LocalDate currentMonth; // This will track the currently displayed month
 
+    private String userId = "exampleUserId"; // This should be dynamically obtained from login
+
     // Enum to represent the different states of a button (Normal, Checked, Crossed)
     private enum ButtonState {
         NORMAL,
         CHECKED,
         CROSSED
     }
+
+    // Map to store button states per user and date
+    private static final Map<String, Map<String, ButtonState>> userChanges = new HashMap<>();
 
     @FXML
     public void initialize() {
@@ -73,7 +81,7 @@ public class HomeController {
         calendarGrid.getChildren().clear();
         dayButtons.clear();
 
-        // Add the row for the days of the week (Sun, Mon, Tue, etc.)
+        // Add the row for the days of the week (Sun, Mon, Tue, Wed, Thu, Fri, Sat)
         String[] daysOfWeek = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
         for (int i = 0; i < daysOfWeek.length; i++) {
             Label dayLabel = new Label(daysOfWeek[i]);
@@ -103,10 +111,13 @@ public class HomeController {
             Button dayButton = new Button(String.valueOf(day));
             dayButton.setPrefSize(45, 45);
 
-            // Set the initial state to NORMAL
-            dayButton.setUserData(ButtonState.NORMAL);
+            // Retrieve state from userChanges
+            String key = month + "-" + day;
+            ButtonState state = loadButtonState(key);
+            dayButton.setUserData(state);
+            applyButtonState(dayButton, state);
 
-            dayButton.setOnAction(e -> handleDayClick(dayButton));
+            dayButton.setOnAction(e -> handleDayClick(dayButton, key));
 
             // Add the button to the grid
             calendarGrid.add(dayButton, col, row);
@@ -114,8 +125,7 @@ public class HomeController {
         }
     }
 
-    // checking func
-    private void handleDayClick(Button dayButton) {
+    private void handleDayClick(Button dayButton, String key) {
         // Get the current state of the button
         ButtonState currentState = (ButtonState) dayButton.getUserData();
 
@@ -124,31 +134,53 @@ public class HomeController {
         switch (currentState) {
             case NORMAL:
                 nextState = ButtonState.CHECKED;
-                dayButton.setStyle("-fx-background-color: green;"); // Green (checked)
                 break;
             case CHECKED:
                 nextState = ButtonState.CROSSED;
-                dayButton.setStyle("-fx-background-color: red;"); // Red (crossed)
                 break;
             case CROSSED:
             default:
                 nextState = ButtonState.NORMAL;
-                dayButton.setStyle("-fx-background-color: transparent;"); // Transparent (normal)
                 break;
         }
 
-        // Set the new state for the button
+        // Update state and apply style
         dayButton.setUserData(nextState);
+        applyButtonState(dayButton, nextState);
+
+        // Save changes for user
+        saveButtonState(key, nextState);
     }
 
-    // Handle clicking the "Previous Month" button
+    private void saveButtonState(String key, ButtonState state) {
+        userChanges.computeIfAbsent(userId, k -> new HashMap<>()).put(key, state);
+    }
+
+    private ButtonState loadButtonState(String key) {
+        return userChanges.getOrDefault(userId, new HashMap<>()).getOrDefault(key, ButtonState.NORMAL);
+    }
+
+    private void applyButtonState(Button button, ButtonState state) {
+        switch (state) {
+            case CHECKED:
+                button.setStyle("-fx-background-color: green;"); // Green (checked)
+                break;
+            case CROSSED:
+                button.setStyle("-fx-background-color: red;"); // Red (crossed)
+                break;
+            case NORMAL:
+            default:
+                button.setStyle("-fx-background-color: transparent;"); // Transparent (normal)
+                break;
+        }
+    }
+
     @FXML
     private void handlePreviousMonth(ActionEvent event) {
         currentMonth = currentMonth.minusMonths(1);
         updateCalendar(currentMonth.getMonth().toString());
     }
 
-    // Handle clicking the "Next Month" button
     @FXML
     private void handleNextMonth(ActionEvent event) {
         currentMonth = currentMonth.plusMonths(1);
@@ -163,7 +195,6 @@ public class HomeController {
 
     public Tab createNewTracker() {
         Tab newTab = new Tab("New Tracker");
-        // lagay ko lng toh as placeholder
         Label label = new Label("New Tracker Content");
         newTab.setContent(label);
         return newTab;
@@ -194,8 +225,6 @@ public class HomeController {
         return newTab;
     }
      */
-
-    // Event handler for month selection
     @FXML
     public void handleMonthSelection(MouseEvent event) {
         String selectedMonth = monthListView.getSelectionModel().getSelectedItem();
