@@ -208,8 +208,6 @@ public class HomeController {
         return ButtonState.NORMAL; // Default to NORMAL if no state is found
     }
 
-
-
     private void applyButtonState(Button button, ButtonState state) {
         double imageSize = 20; // Adjust size as needed for your design
 

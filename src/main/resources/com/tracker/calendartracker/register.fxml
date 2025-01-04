@@ -30,6 +30,7 @@
          <Font name="Berlin Sans FB Demi Bold" size="12.0" />
       </font>
    </Label>
+   <Label fx:id="errorLabel" layoutX="92.0" layoutY="274.0" textFill="red" visible="false" />
    <Button fx:id="signupButton" layoutX="93.0" layoutY="294.0" mnemonicParsing="false" onAction="#handleSignupButton" prefHeight="25.0" prefWidth="336.0" style="-fx-background-color: #fbaa18;" text="Sign up">
       <font>
          <Font name="Berlin Sans FB Demi Bold" size="13.0" />

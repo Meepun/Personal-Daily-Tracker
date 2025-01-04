@@ -6,11 +6,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -32,6 +32,8 @@ public class SignupController {
     private Button mainmenuButton;
     @FXML
     private ImageView hiLogoNoTextImageView;
+    @FXML
+    private Label errorLabel; // Add the error label for displaying error messages
 
     public void initialize() {
         // Load the logo image
@@ -46,12 +48,12 @@ public class SignupController {
 
         // Basic input validation
         if (username.isEmpty() || password.isEmpty() || confirmedPassword.isEmpty()) {
-            showAlert("Error", "Please fill in all fields.");
+            displayErrorMessage("Please fill in all fields.");
             return;
         }
 
         if (!password.equals(confirmedPassword)) {
-            showAlert("Error", "Passwords do not match.");
+            displayErrorMessage("Passwords do not match.");
             return;
         }
 
@@ -63,13 +65,12 @@ public class SignupController {
             int rowsAffected = statement.executeUpdate();
 
             if (rowsAffected == 1) {
-                showAlert("Success", "User registered successfully!");
-                // Optionally, navigate to a different scene after successful registration
+                navigateToHome(event); // Navigate to Home.fxml
             } else {
-                showAlert("Error", "Failed to register user.");
+                displayErrorMessage("Failed to register user.");
             }
         } catch (SQLException e) {
-            showAlert("Error", "Database error: " + e.getMessage());
+            displayErrorMessage("Database error: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -77,6 +78,29 @@ public class SignupController {
     @FXML
     private void handleMainMenuButton(ActionEvent event) {
         navigateTo(event, "mainmenu.fxml", "Main Menu");
+    }
+
+    /**
+     * Displays an error message in the error label.
+     *
+     * @param message The error message to be displayed.
+     */
+    private void displayErrorMessage(String message) {
+        errorLabel.setText(message);
+        errorLabel.setVisible(true);
+    }
+
+    private void navigateToHome(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/tracker/calendartracker/Home.fxml"));
+            Parent root = loader.load();
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Home");
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void navigateTo(ActionEvent event, String fxmlFile, String title) {
@@ -90,13 +114,5 @@ public class SignupController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private void showAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 }
