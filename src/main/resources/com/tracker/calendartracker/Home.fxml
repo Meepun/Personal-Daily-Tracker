@@ -36,6 +36,12 @@
                                 </items>
                             </ListView>
 
+                            <!-- Year Selection -->
+                            <HBox spacing="10" layoutX="-8" layoutY="300">
+                                <Label text="Year:" style="-fx-font-size: 14px;"/>
+                                <ComboBox fx:id="yearDropdown" prefWidth="100"/>
+                            </HBox>
+
                             <!-- Logout Button at the bottom -->
                             <Button alignment="CENTER" layoutX="-2.0" layoutY="330.0" mnemonicParsing="false" onAction="#handleLogout" prefHeight="38.0" prefWidth="105.0" styleClass="logout-button" text="LOG OUT" textAlignment="CENTER" />
                         </children>

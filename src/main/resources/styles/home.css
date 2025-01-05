@@ -125,3 +125,24 @@
 .logout-button:hover {
     -fx-background-color: #f79d12;
 }
+
+.combo-box {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #f79d12;
+    -fx-border-width: 2px;
+    -fx-border-radius: 5px;
+    -fx-font-size: 14px; /* Ensure the font size is consistent */
+    -fx-text-fill: #333333;
+    -fx-margin-top:20px;
+    -fx-layout-x: 0px;  /* Sets x-position */
+    -fx-layout-y: 0px;   /* Sets y-position */
+    /* Dark text for readability */
+}
+.combo-box .list-cell {
+    -fx-background-color: #f0f0f0; /* Light background for list items */
+    -fx-text-fill: #333333; /* Dark text for contrast */
+}
+.combo-box .list-cell:hover {
+    -fx-background-color: #f79d12; /* Highlight color on hover */
+    -fx-text-fill: white; /* White text when highlighted */
+}

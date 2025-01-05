@@ -78,6 +78,9 @@ public class HomeController {
     private static final String CROSSED_IMAGE_PATH = "X.png";
 
     @FXML
+    private ComboBox<Integer> yearDropdown; // Added ComboBox for year selection
+
+    @FXML
     public void initialize() {
         // Retrieve userId from the session
         this.userId = SessionHandler.getInstance().getUserId();
@@ -108,12 +111,37 @@ public class HomeController {
         // Handle create new tracker button
         createNewTrackerButton.setOnAction(this::handleCreateNewTracker);
 
+        // Initialize the year dropdown
+        initializeYearDropdown();
+
         // Add hover effect on the monthLabel
         monthLabel.setOnMouseEntered(e -> handleMonthLabelHover(true));
         monthLabel.setOnMouseExited(e -> handleMonthLabelHover(false));
 
         // Make monthLabel clickable for year navigation
         monthLabel.setOnMouseClicked(this::handleMonthLabelClick);
+    }
+
+    private void initializeYearDropdown() {
+        // Get the current year
+        int currentYear = today.getYear();
+        // Create a list of years (10 years before and after current)
+        List<Integer> years = new ArrayList<>();
+        for (int year = currentYear - 10; year <= currentYear + 10; year++) {
+            years.add(year);
+        }
+        // Populate the ComboBox with years
+        yearDropdown.setItems(FXCollections.observableArrayList(years));
+        yearDropdown.setValue(currentYear); // Set the current year as selected
+        // Add listener for year selection
+        yearDropdown.setOnAction(this::handleYearSelection);
+    }
+    private void handleYearSelection(ActionEvent event) {
+        // Get selected year from dropdown
+        Integer selectedYear = yearDropdown.getValue();
+        // Update currentMonth and refresh calendar view
+        currentMonth = currentMonth.withYear(selectedYear);
+        updateCalendar(currentMonth.getMonth().toString()); // Refresh calendar to display the selected year
     }
 
     private void updateCalendar(String month) {
