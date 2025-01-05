@@ -54,13 +54,18 @@ public class HomeController {
     @FXML
     private Button createNewTrackerButton;
 
+    @FXML
+    private ComboBox<Integer> yearDropdown; // Added ComboBox for year selection
+
     private List<Button> dayButtons = new ArrayList<>();
     private LocalDate currentMonth;
 
     private String userId;
+
     public void setUserId(String userId) {
         this.userId = userId;
     }
+
     public String getUserId() {
         return userId;
     }
@@ -108,12 +113,42 @@ public class HomeController {
         // Handle create new tracker button
         createNewTrackerButton.setOnAction(this::handleCreateNewTracker);
 
+        // Initialize the year dropdown
+        initializeYearDropdown();
+
         // Add hover effect on the monthLabel
         monthLabel.setOnMouseEntered(e -> handleMonthLabelHover(true));
         monthLabel.setOnMouseExited(e -> handleMonthLabelHover(false));
 
         // Make monthLabel clickable for year navigation
         monthLabel.setOnMouseClicked(this::handleMonthLabelClick);
+    }
+
+    private void initializeYearDropdown() {
+        // Get the current year
+        int currentYear = today.getYear();
+
+        // Create a list of years (10 years before and after current)
+        List<Integer> years = new ArrayList<>();
+        for (int year = currentYear - 10; year <= currentYear + 10; year++) {
+            years.add(year);
+        }
+
+        // Populate the ComboBox with years
+        yearDropdown.setItems(FXCollections.observableArrayList(years));
+        yearDropdown.setValue(currentYear); // Set the current year as selected
+
+        // Add listener for year selection
+        yearDropdown.setOnAction(this::handleYearSelection);
+    }
+
+    private void handleYearSelection(ActionEvent event) {
+        // Get selected year from dropdown
+        Integer selectedYear = yearDropdown.getValue();
+
+        // Update currentMonth and refresh calendar view
+        currentMonth = currentMonth.withYear(selectedYear);
+        updateCalendar(currentMonth.getMonth().toString()); // Refresh calendar to display the selected year
     }
 
     private void updateCalendar(String month) {
