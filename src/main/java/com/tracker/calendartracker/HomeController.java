@@ -521,7 +521,4 @@ public class HomeController {
         alert.setContentText(message);
         alert.showAndWait();
     }
-
-
-
 }
