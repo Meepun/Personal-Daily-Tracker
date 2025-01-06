@@ -291,8 +291,8 @@ public class HomeController {
         monthLabel.setAlignment(Pos.BASELINE_CENTER);
 
         HBox navigationBox = new HBox(10);
-        Button prevMonthButton = new Button("previous");
-        Button nextMonthButton = new Button("next");
+        Button prevMonthButton = new Button("<");
+        Button nextMonthButton = new Button(">");
 
         // Set default tab calendar to the current month
         var ref = new Object() {
@@ -355,6 +355,7 @@ public class HomeController {
 
         // Update the month label with the selected month and year
         monthLabel.setText(currentMonth.getMonth().toString() + " " + currentMonth.getYear());
+        monthLabel.setAlignment(Pos.TOP_CENTER);
 
         // Get the first day of the current month and determine its weekday position
         LocalDate firstOfMonth = currentMonth.withDayOfMonth(1);
@@ -364,7 +365,7 @@ public class HomeController {
 
         // Loop through each day of the month and populate the calendar grid
         for (int day = 1; day <= lengthOfMonth; day++) {
-            int row = (firstDayOfWeek + day - 1) / 7 + 1;
+            int row = (firstDayOfWeek + day - 1) / 7 + 2;  // Adjusted row to account for headers and dropdown
             int col = (firstDayOfWeek + day - 1) % 7;
 
             // Create a button for each day
@@ -372,15 +373,15 @@ public class HomeController {
             dayButton.setPrefSize(45, 45);
             dayButton.setId(String.valueOf(day));
 
-            // Generate a unique key for tracking the state of each day
-            String key = currentMonth.getMonth().toString() + "-" + day;
+            // Generate a unique key with day, month, and year
+            String key = currentMonth.getMonth().toString() + "-" + day + "-" + currentMonth.getYear();
 
             // Load the button state (e.g., checked or unchecked)
             ButtonState state = loadButtonState(key);
             dayButton.setUserData(state);
             applyButtonState(dayButton, state);
 
-            // Handle click events to toggle state
+            // Handle click events to toggle state for the specific date
             dayButton.setOnAction(e -> handleDayClick(dayButton, key));
 
             // Add the day button to the grid
