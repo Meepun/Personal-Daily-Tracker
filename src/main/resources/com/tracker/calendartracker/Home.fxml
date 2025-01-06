@@ -36,7 +36,7 @@
                                        </FXCollections>
                                    </items>
                                </ListView>
-   
+
                                <!-- Year Selection -->
                                <HBox layoutX="3" layoutY="310" spacing="10">
       <children>
@@ -48,7 +48,7 @@
                                       </VBox>
       </children>
                                </HBox>
-   
+
                                <!-- Logout Button at the bottom -->
                                <Button alignment="CENTER" layoutX="-2.0" layoutY="374.0" mnemonicParsing="false" onAction="#handleLogout" prefHeight="38.0" prefWidth="105.0" styleClass="logout-button" text="LOG OUT" textAlignment="CENTER" />
                            </children>
@@ -94,7 +94,7 @@
                                                <RowConstraints minHeight="-Infinity" prefHeight="40.0" />
                                            </rowConstraints>
                                        </GridPane>
-   
+
                                        <!-- Month Label -->
                                        <Label fx:id="monthLabel" alignment="CENTER" layoutX="171.0" layoutY="-4.0" onMouseClicked="#handleMonthLabelClick" prefHeight="20.0" prefWidth="180.0" styleClass="month-label" text="JANUARY 2025" />
    
