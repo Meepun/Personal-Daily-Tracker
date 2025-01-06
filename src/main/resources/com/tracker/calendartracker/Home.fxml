@@ -6,18 +6,18 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane prefHeight="532.0" prefWidth="690.0" stylesheets="@../../../styles/home.css" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tracker.calendartracker.HomeController">
+<BorderPane prefHeight="532.0" prefWidth="722.0" stylesheets="@../../../styles/home.css" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tracker.calendartracker.HomeController">
 
     <!-- Right Panel (Month Navigation) -->
     <right>
-        <VBox alignment="CENTER" prefHeight="474.0" prefWidth="122.0" spacing="10" styleClass="month-panel">
+        <VBox alignment="CENTER" prefHeight="475.0" prefWidth="160.0" spacing="10" styleClass="month-panel">
             <SplitPane fx:id="splitPane" dividerPositions="0.07" orientation="VERTICAL" prefHeight="518.0" prefWidth="85.0">
                 <items>
-                    <Button fx:id="createNewTrackerButton" alignment="CENTER" layoutX="-1.0" layoutY="-4.0" onAction="#handleCreateNewTracker" prefHeight="38.0" prefWidth="101.0" styleClass="top-nav-button" text="+" textAlignment="CENTER" />
+                    <Button fx:id="createNewTrackerButton" alignment="CENTER" layoutX="-1.0" layoutY="-4.0" onAction="#handleCreateNewTracker" prefHeight="36.0" prefWidth="144.0" styleClass="top-nav-button" text="+" textAlignment="CENTER" />
                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="400.0" prefWidth="100.0">
                         <children>
-                            <Label layoutX="12.0" layoutY="14.0" styleClass="calendar-header" text="Calendar" />
-                            <ListView fx:id="monthListView" editable="true" layoutX="-4.0" layoutY="43.0" onMouseClicked="#handleMonthSelection" prefHeight="258.0" prefWidth="122.0" styleClass="month-list">
+                            <Label layoutX="36.0" layoutY="14.0" styleClass="calendar-header" text="Calendar" />
+                            <ListView fx:id="monthListView" editable="true" layoutX="-4.0" layoutY="43.0" onMouseClicked="#handleMonthSelection" prefHeight="258.0" prefWidth="143.0" styleClass="month-list">
                                 <items>
                                     <FXCollections fx:factory="observableArrayList">
                                         <String fx:value="JANUARY" />
@@ -37,13 +37,13 @@
                             </ListView>
 
                             <!-- Year Selection -->
-                            <HBox spacing="10" layoutX="-8" layoutY="300">
-                                <Label text="Year:" style="-fx-font-size: 14px;"/>
-                                <ComboBox fx:id="yearDropdown" prefWidth="100"/>
+                            <HBox layoutX="3.0" layoutY="301.0" prefHeight="30.0" prefWidth="136.0" spacing="10">
+                                <Label alignment="CENTER" style="-fx-font-size: 14px;" text="Year:" />
+                                <ComboBox fx:id="yearDropdown" prefHeight="30.0" prefWidth="93.0" />
                             </HBox>
 
                             <!-- Logout Button at the bottom -->
-                            <Button alignment="CENTER" layoutX="-2.0" layoutY="330.0" mnemonicParsing="false" onAction="#handleLogout" prefHeight="38.0" prefWidth="105.0" styleClass="logout-button" text="LOG OUT" textAlignment="CENTER" />
+                            <Button alignment="CENTER" layoutX="-2.0" layoutY="330.0" mnemonicParsing="false" onAction="#handleLogout" prefHeight="38.0" prefWidth="141.0" styleClass="logout-button" text="LOG OUT" textAlignment="CENTER" />
                         </children>
                     </AnchorPane>
                 </items>
@@ -85,7 +85,7 @@
                                     </GridPane>
 
                                     <!-- Month Label -->
-                                    <Label fx:id="monthLabel" alignment="CENTER" layoutX="171.0" layoutY="-4.0" prefHeight="20.0" prefWidth="180.0" styleClass="month-label" text="JANUARY 2025"/>
+                                    <Label fx:id="monthLabel" alignment="CENTER" layoutX="171.0" layoutY="-4.0" onMouseClicked="#handleMonthLabelClick" prefHeight="20.0" prefWidth="180.0" styleClass="month-label" text="JANUARY 2025" />
 
                                     <!-- Navigation Buttons -->
                                     <HBox alignment="CENTER" layoutY="350.0" spacing="10" />
@@ -104,8 +104,7 @@
     <top>
         <HBox prefHeight="57.0" prefWidth="678.0" style="-fx-background-color: #343434;" BorderPane.alignment="CENTER">
             <children>
-                <Label fx:id="welcomeLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="57.0" prefWidth="180.0"
-                       text="Welcome, User" textAlignment="CENTER" textFill="#c37b1e">
+                <Label fx:id="welcomeLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="57.0" prefWidth="180.0" text="Welcome, User" textAlignment="CENTER" textFill="#c37b1e">
                     <font>
                         <Font name="Berlin Sans FB Demi Bold" size="20.0" />
                     </font>
@@ -115,4 +114,3 @@
     </top>
 
 </BorderPane>
-
