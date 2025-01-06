@@ -111,13 +111,6 @@ public class HomeController {
 
         // Initialize the year dropdown
         initializeYearDropdown();
-
-        // Add hover effect on the monthLabel
-        monthLabel.setOnMouseEntered(e -> handleMonthLabelHover(true));
-        monthLabel.setOnMouseExited(e -> handleMonthLabelHover(false));
-
-        // Make monthLabel clickable for year navigation
-        monthLabel.setOnMouseClicked(this::handleMonthLabelClick);
     }
 
     private void initializeYearDropdown() {
@@ -382,67 +375,6 @@ public class HomeController {
         }
     }
 
-    // Hover effect for monthLabel (change only when hovering over the year portion)
-    private void handleMonthLabelHover(boolean isHovered) {
-        String[] parts = monthLabel.getText().split(" ");
-        if (parts.length > 1) {
-            String month = parts[0];  // e.g., "January"
-            String year = parts[1];   // e.g., "2025"
-            if (isHovered) {
-                monthLabel.setText(month + " " + year);
-                monthLabel.setStyle("-fx-text-fill: #c37b1e; -fx-font-weight: bold; cursor: text;");
-            } else {
-                monthLabel.setText(month + " " + year);
-                monthLabel.setStyle("-fx-text-fill: black;");
-            }
-        }
-    }
-
-    @FXML
-    private void handleMonthLabelClick(MouseEvent event) {
-        // Check if the clicked label text is the current month/year
-        if (monthLabel != null) {
-            String currentText = monthLabel.getText();
-
-            // Extract the year from the text (assuming it's in "Month Year" format)
-            String year = currentText.split(" ")[1];
-
-            // Create a TextField for year editing
-            TextField yearField = new TextField(year);
-            yearField.setStyle("-fx-font-size: 18px; -fx-text-fill: #333333;");
-            yearField.getStyleClass().add("editable-year-field"); // Apply custom CSS for TextField
-
-            // Set the TextField in place of the month label
-            monthLabel.setGraphic(yearField);
-
-            // Focus the field to allow typing immediately
-            yearField.requestFocus();
-
-            // Handle Enter key to save changes
-            yearField.setOnAction(e -> {
-                try {
-                    // Parse the entered year
-                    int newYear = Integer.parseInt(yearField.getText().trim());
-                    updateYear(newYear);
-                    monthLabel.setText(monthLabel.getText().split(" ")[0] + " " + newYear); // Update the label
-                    monthLabel.setGraphic(null); // Remove the TextField after saving
-                } catch (NumberFormatException ex) {
-                    // Handle invalid input (non-numeric value)
-                    System.out.println("Invalid year input.");
-                }
-            });
-
-            // Handle losing focus (e.g., if the user clicks outside the TextField)
-            yearField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
-                if (!isNowFocused) {
-                    // Cancel editing if focus is lost
-                    monthLabel.setText(monthLabel.getText().split(" ")[0] + " " + year); // Revert to original year
-                    monthLabel.setGraphic(null);
-                }
-            });
-        }
-    }
-
     private String getUserNameFromDatabase(String userId) {
         String sql = "SELECT username FROM loginsignup WHERE user_id = ?";
         try (Connection conn = DBConnection.getConnection();
@@ -511,14 +443,5 @@ public class HomeController {
             // Add the label to the grid
             calendarGrid.add(dayLabel, col, row);
         }
-    }
-
-    // Helper method to show a simple alert
-    private void showAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 }

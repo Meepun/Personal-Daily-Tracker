@@ -85,7 +85,7 @@
                                     </GridPane>
 
                                     <!-- Month Label -->
-                                    <Label fx:id="monthLabel" alignment="CENTER" layoutX="171.0" layoutY="-4.0" prefHeight="20.0" prefWidth="180.0" styleClass="month-label" text="JANUARY 2025" onMouseClicked="#handleMonthLabelClick"/>
+                                    <Label fx:id="monthLabel" alignment="CENTER" layoutX="171.0" layoutY="-4.0" prefHeight="20.0" prefWidth="180.0" styleClass="month-label" text="JANUARY 2025"/>
 
                                     <!-- Navigation Buttons -->
                                     <HBox alignment="CENTER" layoutY="350.0" spacing="10" />
