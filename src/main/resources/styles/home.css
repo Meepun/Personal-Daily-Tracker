@@ -147,8 +147,7 @@
     -fx-text-fill: white; /* White text when highlighted */
 }
 
-.custom-alert .dialog-pane {
-    -fx-background-color: #C37B1EFF;
-    -fx-font-size: 14px;
-    -fx-text-fill: white; /* Optional for text color */
+.month-list {
+    -fx-background-color: #f79d12;
+
 }
