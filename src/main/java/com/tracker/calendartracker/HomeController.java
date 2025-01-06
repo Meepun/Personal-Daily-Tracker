@@ -5,6 +5,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.HPos;
+import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -464,17 +465,50 @@ public class HomeController {
 
     @FXML
     private void handleLogout(ActionEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/tracker/calendartracker/mainmenu.fxml"));
-            Parent root = loader.load();
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.setTitle("Main Menu");
-            stage.show();
-        } catch (Exception e) {
-            e.printStackTrace();
+        // Create a confirmation dialog
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirm Logout");
+        alert.setHeaderText(null);
+        alert.setContentText("Are you sure you want to log out?");
+
+        // Style the dialog pane
+        DialogPane dialogPane = alert.getDialogPane();
+        dialogPane.setStyle("-fx-background-color: #C37B1EFF; -fx-font-size: 14px; -fx-text-fill: white;");
+        dialogPane.lookupAll(".label").forEach(node -> node.setStyle("-fx-text-fill: white;"));
+
+        // Add Yes and No buttons
+        ButtonType yesButton = new ButtonType("Yes", ButtonBar.ButtonData.OK_DONE);
+        ButtonType noButton = new ButtonType("No", ButtonBar.ButtonData.CANCEL_CLOSE);
+        alert.getButtonTypes().setAll(yesButton, noButton);
+
+        // Center-align the buttons
+        Node buttonBar = dialogPane.lookup(".button-bar");
+        if (buttonBar instanceof HBox) {
+            ((HBox) buttonBar).setAlignment(Pos.CENTER); // Center the buttons
+            ((HBox) buttonBar).setSpacing(10);          // Add spacing between buttons
+        }
+
+        // Wait for the user's response
+        Optional<ButtonType> result = alert.showAndWait();
+
+        if (result.isPresent() && result.get() == yesButton) {
+            // Proceed with logout
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/tracker/calendartracker/mainmenu.fxml"));
+                Parent root = loader.load();
+                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                stage.setScene(new Scene(root));
+                stage.setTitle("Main Menu");
+                stage.show();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            // Do nothing, stay on the current page
+            alert.close();
         }
     }
+
 
     private void updateYear(int newYear) {
         // Update the year in the calendar logic
