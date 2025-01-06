@@ -50,9 +50,11 @@ public class HomeController {
     private LocalDate currentMonth;
 
     private String userId;
+
     public void setUserId(String userId) {
         this.userId = userId;
     }
+
     public String getUserId() {
         return userId;
     }
@@ -64,7 +66,6 @@ public class HomeController {
     }
 
     private static final Map<String, Map<String, ButtonState>> userChanges = new HashMap<>();
-
     private static final String BASE_PATH = "/images/";
     private static final String CHECKED_IMAGE_PATH = "Check.png";
     private static final String CROSSED_IMAGE_PATH = "X.png";
@@ -78,7 +79,7 @@ public class HomeController {
         this.userId = SessionHandler.getInstance().getUserId();
 
         // Retrieve the username from your database or session
-        String username = getUserNameFromDatabase(userId);  // Implement this method as per your logic
+        String username = getUserNameFromDatabase(userId);
 
         // Set the label text dynamically
         welcomeLabel.setText("Welcome, " + username);
@@ -108,46 +109,36 @@ public class HomeController {
     }
 
     private void initializeYearDropdown() {
-        // Get the current year
         int currentYear = today.getYear();
-        // Create a list of years (10 years before and after current)
         List<Integer> years = new ArrayList<>();
         for (int year = currentYear - 10; year <= currentYear + 10; year++) {
             years.add(year);
         }
-        // Populate the ComboBox with years
         yearDropdown.setItems(FXCollections.observableArrayList(years));
-        yearDropdown.setValue(currentYear); // Set the current year as selected
-        // Add listener for year selection
+        yearDropdown.setValue(currentYear);
         yearDropdown.setOnAction(this::handleYearSelection);
     }
+
     private void handleYearSelection(ActionEvent event) {
-        // Get selected year from dropdown
         Integer selectedYear = yearDropdown.getValue();
-        // Update currentMonth and refresh calendar view
         currentMonth = currentMonth.withYear(selectedYear);
-        updateCalendar(currentMonth.getMonth().toString()); // Refresh calendar to display the selected year
+        updateCalendar(currentMonth.getMonth().toString());
     }
 
     private void updateCalendar(String month) {
-        // Clear the previous grid
         calendarGrid.getChildren().clear();
         dayButtons.clear();
 
-        // Add the row for the days of the week (Sun, Mon, Tue, Wed, Thu, Fri, Sat)
         String[] daysOfWeek = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
         for (int i = 0; i < daysOfWeek.length; i++) {
             Label dayLabel = new Label(daysOfWeek[i]);
             dayLabel.getStyleClass().add("calendar-header");
-            calendarGrid.add(dayLabel, i, 0);  // Add labels in the first row
+            calendarGrid.add(dayLabel, i, 0);
         }
 
         monthLabel.setText(month + " " + currentMonth.getYear());
 
-        // Get the first day of the month
         LocalDate firstOfMonth = LocalDate.of(currentMonth.getYear(), Month.valueOf(month.toUpperCase()), 1);
-
-        // Adjust the first day of the week to Sunday as the first day
         int firstDayOfWeek = firstOfMonth.getDayOfWeek().getValue();
         if (firstDayOfWeek == 7) {
             firstDayOfWeek = 0;
@@ -161,7 +152,7 @@ public class HomeController {
 
             Button dayButton = new Button(String.valueOf(day));
             dayButton.setPrefSize(45, 45);
-            dayButton.setId(String.valueOf(day)); // Assign the day as the button ID
+            dayButton.setId(String.valueOf(day));
 
             String key = currentMonth.getYear() + "-" + month + "-" + day;
             ButtonState state = loadButtonState(key);
@@ -176,7 +167,6 @@ public class HomeController {
 
     private void handleDayClick(Button dayButton, String key) {
         ButtonState currentState = (ButtonState) dayButton.getUserData();
-
         ButtonState nextState;
         switch (currentState) {
             case NORMAL:
@@ -199,14 +189,14 @@ public class HomeController {
     private void saveButtonState(String dateKey, ButtonState state) {
         String sql = "INSERT INTO user_changes (user_id, datelog, state) " +
                 "VALUES (?, ?, ?) " +
-                "ON CONFLICT(user_id, datelog) " +  // Ensure conflict on user_id + datelog
-                "DO UPDATE SET state = excluded.state";  // Update the state if conflict occurs
+                "ON CONFLICT(user_id, datelog) " +
+                "DO UPDATE SET state = excluded.state";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, userId);  // Use the dynamically set userId
-            pstmt.setString(2, dateKey);  // Date key (e.g., "2025-JANUARY-1")
-            pstmt.setString(3, state.toString()); // Save the state as a string
+            pstmt.setString(1, userId);
+            pstmt.setString(2, dateKey);
+            pstmt.setString(3, state.toString());
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -218,7 +208,7 @@ public class HomeController {
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, userId);
-            pstmt.setString(2, dateKey); // Use the full date key including year
+            pstmt.setString(2, dateKey);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
                 return ButtonState.valueOf(rs.getString("state"));
@@ -226,11 +216,11 @@ public class HomeController {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return ButtonState.NORMAL; // Default to NORMAL if no state is found
+        return ButtonState.NORMAL;
     }
 
     private void applyButtonState(Button button, ButtonState state) {
-        double imageSize = 20; // Adjust size as needed for your design
+        double imageSize = 20;
 
         switch (state) {
             case CHECKED:
@@ -239,7 +229,7 @@ public class HomeController {
                 checkedImageView.setFitHeight(imageSize);
                 checkedImageView.setPreserveRatio(true);
                 button.setGraphic(checkedImageView);
-                button.setText(""); // Temporarily remove text
+                button.setText("");
                 break;
             case CROSSED:
                 ImageView crossedImageView = new ImageView(new Image(getClass().getResourceAsStream(BASE_PATH + CROSSED_IMAGE_PATH)));
@@ -247,12 +237,12 @@ public class HomeController {
                 crossedImageView.setFitHeight(imageSize);
                 crossedImageView.setPreserveRatio(true);
                 button.setGraphic(crossedImageView);
-                button.setText(""); // Temporarily remove text
+                button.setText("");
                 break;
             case NORMAL:
             default:
                 button.setGraphic(null);
-                button.setText(button.getId()); // Restore the number as text
+                button.setText(button.getId());
                 break;
         }
     }
@@ -266,7 +256,6 @@ public class HomeController {
     public Tab createNewTracker() {
         Tab newTab = new Tab("New Tracker");
 
-        // Create root layout for the tab content
         BorderPane borderPane = new BorderPane();
         GridPane newCalendarGrid = new GridPane();
         newCalendarGrid.setHgap(10);
@@ -276,98 +265,14 @@ public class HomeController {
         Label monthLabel = new Label();
         monthLabel.getStyleClass().add("month-label");
 
-        HBox navigationBox = new HBox(10);
-        Button prevMonthButton = new Button("<");
-        Button nextMonthButton = new Button(">");
+        HBox navigation = new HBox(10);
 
-        // Set default tab calendar to the current month
-        var ref = new Object() {
-            LocalDate tabMonth = LocalDate.now().withDayOfMonth(1);
-        };
-
-        // Generate initial calendar view for the tab
-        generateCalendar(newCalendarGrid, ref.tabMonth, monthLabel);
-
-        // Handle previous/next button clicks to update the calendar
-        prevMonthButton.setOnAction(e -> {
-            ref.tabMonth = ref.tabMonth.minusMonths(1);
-            generateCalendar(newCalendarGrid, ref.tabMonth, monthLabel);
-        });
-
-        nextMonthButton.setOnAction(e -> {
-            ref.tabMonth = ref.tabMonth.plusMonths(1);
-            generateCalendar(newCalendarGrid, ref.tabMonth, monthLabel);
-        });
-
-        navigationBox.getChildren().addAll(prevMonthButton, monthLabel, nextMonthButton);
-        navigationBox.setAlignment(javafx.geometry.Pos.CENTER);
-
-        borderPane.setTop(navigationBox);
+        // Add elements to new tab
         borderPane.setCenter(newCalendarGrid);
+        borderPane.setTop(navigation);
         newTab.setContent(borderPane);
 
         return newTab;
-    }
-
-    private void generateCalendar(GridPane grid, LocalDate currentMonth, Label monthLabel) {
-        grid.getChildren().clear();
-
-        String[] daysOfWeek = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
-        for (int i = 0; i < daysOfWeek.length; i++) {
-            Label dayLabel = new Label(daysOfWeek[i]);
-            dayLabel.getStyleClass().add("calendar-header");
-            grid.add(dayLabel, i, 0);  // First row: Days of the week
-        }
-
-        monthLabel.setText(currentMonth.getMonth().toString() + " " + currentMonth.getYear());
-
-        LocalDate firstOfMonth = currentMonth.withDayOfMonth(1);
-        int firstDayOfWeek = firstOfMonth.getDayOfWeek().getValue();
-        if (firstDayOfWeek == 7) {
-            firstDayOfWeek = 0;  // Sunday = 0
-        }
-
-        int lengthOfMonth = firstOfMonth.lengthOfMonth();
-
-        for (int day = 1; day <= lengthOfMonth; day++) {
-            int row = (firstDayOfWeek + day - 1) / 7 + 1;
-            int col = (firstDayOfWeek + day - 1) % 7;
-
-            Button dayButton = new Button(String.valueOf(day));
-            dayButton.setPrefSize(45, 45);
-            dayButton.setId(String.valueOf(day));
-
-            String key = currentMonth.getMonth().toString() + "-" + day;
-            ButtonState state = loadButtonState(key);
-            dayButton.setUserData(state);
-            applyButtonState(dayButton, state);
-
-            dayButton.setOnAction(e -> handleDayClick(dayButton, key));
-            grid.add(dayButton, col, row);
-        }
-    }
-
-    @FXML
-    private void handlePreviousMonth(ActionEvent event) {
-        currentMonth = currentMonth.minusMonths(1);
-        updateCalendar(currentMonth.getMonth().toString());
-    }
-
-    @FXML
-    private void handleNextMonth(ActionEvent event) {
-        currentMonth = currentMonth.plusMonths(1);
-        updateCalendar(currentMonth.getMonth().toString());
-    }
-
-
-    @FXML
-    public void handleMonthSelection(MouseEvent event) {
-        String selectedMonth = monthListView.getSelectionModel().getSelectedItem();
-        if (selectedMonth != null) {
-            // Update currentMonth based on the selected month
-            currentMonth = LocalDate.now().withMonth(Month.valueOf(selectedMonth.toUpperCase()).getValue()).withDayOfMonth(1);
-            updateCalendar(selectedMonth);
-        }
     }
 
     private String getUserNameFromDatabase(String userId) {
@@ -382,20 +287,6 @@ public class HomeController {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return "User"; // Fallback value if username is not found
-    }
-
-    @FXML
-    private void handleLogout(ActionEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/tracker/calendartracker/mainmenu.fxml"));
-            Parent root = loader.load();
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.setTitle("Main Menu");
-            stage.show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        return "Unknown User";
     }
 }
