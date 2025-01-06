@@ -125,7 +125,7 @@ public class HomeController {
         int currentYear = today.getYear();
         // Create a list of years (10 years before and after current)
         List<Integer> years = new ArrayList<>();
-        for (int year = currentYear - 10; year <= currentYear + 10; year++) {
+        for (int year = currentYear - 25; year <= currentYear + 50; year++) {
             years.add(year);
         }
         // Populate the ComboBox with years
