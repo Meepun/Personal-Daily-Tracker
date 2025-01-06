@@ -270,18 +270,6 @@ public class HomeController {
     }
 
     @FXML
-    private void handlePreviousMonth(ActionEvent event) {
-        currentMonth = currentMonth.minusMonths(1);
-        updateCalendar(currentMonth.getMonth().toString());
-    }
-
-    @FXML
-    private void handleNextMonth(ActionEvent event) {
-        currentMonth = currentMonth.plusMonths(1);
-        updateCalendar(currentMonth.getMonth().toString());
-    }
-
-    @FXML
     private void handleCreateNewTracker(ActionEvent event) {
         Tab newTab = createNewTracker();
         tabPane.getTabs().add(newTab);
