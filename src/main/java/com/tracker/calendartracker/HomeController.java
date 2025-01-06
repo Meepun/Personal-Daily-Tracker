@@ -13,8 +13,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.control.Alert;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
@@ -22,15 +20,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.DateFormatSymbols;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.*;
 
 public class HomeController {
-
-    @FXML
-    private SplitPane splitPane;
 
     private LocalDate today = LocalDate.now();
 
@@ -169,7 +163,6 @@ public class HomeController {
             dayButton.setPrefSize(45, 45);
             dayButton.setId(String.valueOf(day)); // Assign the day as the button ID
 
-            // Include the year in the key
             String key = currentMonth.getYear() + "-" + month + "-" + day;
             ButtonState state = loadButtonState(key);
             dayButton.setUserData(state);
@@ -265,18 +258,6 @@ public class HomeController {
     }
 
     @FXML
-    private void handlePreviousMonth(ActionEvent event) {
-        currentMonth = currentMonth.minusMonths(1);
-        updateCalendar(currentMonth.getMonth().toString());
-    }
-
-    @FXML
-    private void handleNextMonth(ActionEvent event) {
-        currentMonth = currentMonth.plusMonths(1);
-        updateCalendar(currentMonth.getMonth().toString());
-    }
-
-    @FXML
     private void handleCreateNewTracker(ActionEvent event) {
         Tab newTab = createNewTracker();
         tabPane.getTabs().add(newTab);
@@ -366,11 +347,25 @@ public class HomeController {
         }
     }
 
+    @FXML
+    private void handlePreviousMonth(ActionEvent event) {
+        currentMonth = currentMonth.minusMonths(1);
+        updateCalendar(currentMonth.getMonth().toString());
+    }
+
+    @FXML
+    private void handleNextMonth(ActionEvent event) {
+        currentMonth = currentMonth.plusMonths(1);
+        updateCalendar(currentMonth.getMonth().toString());
+    }
+
 
     @FXML
     public void handleMonthSelection(MouseEvent event) {
         String selectedMonth = monthListView.getSelectionModel().getSelectedItem();
         if (selectedMonth != null) {
+            // Update currentMonth based on the selected month
+            currentMonth = LocalDate.now().withMonth(Month.valueOf(selectedMonth.toUpperCase()).getValue()).withDayOfMonth(1);
             updateCalendar(selectedMonth);
         }
     }
@@ -401,47 +396,6 @@ public class HomeController {
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-    private void updateYear(int newYear) {
-        // Update the year in the calendar logic
-        Calendar currentCalendar = Calendar.getInstance();
-        currentCalendar.set(Calendar.YEAR, newYear);
-
-        // Refresh the calendar view with the new year
-        refreshCalendar(currentCalendar.get(Calendar.MONTH), newYear);
-    }
-
-    private void refreshCalendar(int month, int year) {
-        // Logic to update the displayed month grid based on the selected year and month
-        // This will refresh the calendar UI based on the new year
-
-        // Example: Update the month label (e.g., "January 2025")
-        monthLabel.setText(new DateFormatSymbols().getMonths()[month] + " " + year);
-        // Update the calendar grid (you will likely need to clear the grid and refill it)
-        populateCalendarGrid(month, year);
-    }
-
-    private void populateCalendarGrid(int month, int year) {
-        // Clear existing calendar cells
-        calendarGrid.getChildren().clear();
-
-        // Set the correct number of days in the month
-        LocalDate firstOfMonth = LocalDate.of(year, month + 1, 1);
-        int firstDayOfWeek = firstOfMonth.getDayOfWeek().getValue(); // 1 = Monday, 7 = Sunday
-        int lastDayOfMonth = firstOfMonth.lengthOfMonth();
-
-        // Populate the calendar with the correct days
-        for (int i = 1; i <= lastDayOfMonth; i++) {
-            int row = (firstDayOfWeek + i - 2) / 7; // Calculate row
-            int col = (firstDayOfWeek + i - 2) % 7; // Calculate column
-
-            Label dayLabel = new Label(String.valueOf(i));
-            dayLabel.getStyleClass().add("calendar-cell");
-
-            // Add the label to the grid
-            calendarGrid.add(dayLabel, col, row);
         }
     }
 }

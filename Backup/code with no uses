@@ -1,0 +1,40 @@
+private void updateYear(int newYear) {
+        // Update the year in the calendar logic
+        Calendar currentCalendar = Calendar.getInstance();
+        currentCalendar.set(Calendar.YEAR, newYear);
+
+        // Refresh the calendar view with the new year
+        refreshCalendar(currentCalendar.get(Calendar.MONTH), newYear);
+    }
+
+    private void refreshCalendar(int month, int year) {
+        // Logic to update the displayed month grid based on the selected year and month
+        // This will refresh the calendar UI based on the new year
+
+        // Example: Update the month label (e.g., "January 2025")
+        monthLabel.setText(new DateFormatSymbols().getMonths()[month] + " " + year);
+        // Update the calendar grid (you will likely need to clear the grid and refill it)
+        populateCalendarGrid(month, year);
+    }
+
+    private void populateCalendarGrid(int month, int year) {
+        // Clear existing calendar cells
+        calendarGrid.getChildren().clear();
+
+        // Set the correct number of days in the month
+        LocalDate firstOfMonth = LocalDate.of(year, month + 1, 1);
+        int firstDayOfWeek = firstOfMonth.getDayOfWeek().getValue(); // 1 = Monday, 7 = Sunday
+        int lastDayOfMonth = firstOfMonth.lengthOfMonth();
+
+        // Populate the calendar with the correct days
+        for (int i = 1; i <= lastDayOfMonth; i++) {
+            int row = (firstDayOfWeek + i - 2) / 7; // Calculate row
+            int col = (firstDayOfWeek + i - 2) % 7; // Calculate column
+
+            Label dayLabel = new Label(String.valueOf(i));
+            dayLabel.getStyleClass().add("calendar-cell");
+
+            // Add the label to the grid
+            calendarGrid.add(dayLabel, col, row);
+        }
+    }
