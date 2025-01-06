@@ -6,48 +6,56 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane prefHeight="532.0" prefWidth="690.0" stylesheets="@../../../styles/home.css" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tracker.calendartracker.HomeController">
+<BorderPane prefHeight="532.0" prefWidth="690.0" stylesheets="@../../../styles/home.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tracker.calendartracker.HomeController">
 
     <!-- Right Panel (Month Navigation) -->
     <right>
         <VBox alignment="CENTER" prefHeight="474.0" prefWidth="122.0" spacing="10" styleClass="month-panel">
-            <SplitPane fx:id="splitPane" dividerPositions="0.07" orientation="VERTICAL" prefHeight="518.0" prefWidth="85.0">
-                <items>
-                    <Button fx:id="createNewTrackerButton" alignment="CENTER" layoutX="-1.0" layoutY="-4.0" onAction="#handleCreateNewTracker" prefHeight="38.0" prefWidth="101.0" styleClass="top-nav-button" text="+" textAlignment="CENTER" />
-                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="400.0" prefWidth="100.0">
-                        <children>
-                            <Label layoutX="12.0" layoutY="14.0" styleClass="calendar-header" text="Calendar" />
-                            <ListView fx:id="monthListView" editable="true" layoutX="-4.0" layoutY="43.0" onMouseClicked="#handleMonthSelection" prefHeight="258.0" prefWidth="122.0" styleClass="month-list">
-                                <items>
-                                    <FXCollections fx:factory="observableArrayList">
-                                        <String fx:value="JANUARY" />
-                                        <String fx:value="FEBRUARY" />
-                                        <String fx:value="MARCH" />
-                                        <String fx:value="APRIL" />
-                                        <String fx:value="MAY" />
-                                        <String fx:value="JUNE" />
-                                        <String fx:value="JULY" />
-                                        <String fx:value="AUGUST" />
-                                        <String fx:value="SEPTEMBER" />
-                                        <String fx:value="OCTOBER" />
-                                        <String fx:value="NOVEMBER" />
-                                        <String fx:value="DECEMBER" />
-                                    </FXCollections>
-                                </items>
-                            </ListView>
-
-                            <!-- Year Selection -->
-                            <HBox spacing="10" layoutX="-8" layoutY="330">
-                                <Label text="Year:" style="-fx-font-size: 14px;"/>
-                                <ComboBox fx:id="yearDropdown" prefWidth="100"/>
-                            </HBox>
-
-                            <!-- Logout Button at the bottom -->
-                            <Button alignment="CENTER" layoutX="-2.0" layoutY="374.0" mnemonicParsing="false" onAction="#handleLogout" prefHeight="38.0" prefWidth="105.0" styleClass="logout-button" text="LOG OUT" textAlignment="CENTER" />
-                        </children>
-                    </AnchorPane>
-                </items>
-            </SplitPane>
+           <children>
+               <SplitPane fx:id="splitPane" dividerPositions="0.07" orientation="VERTICAL" prefHeight="518.0" prefWidth="85.0">
+                   <items>
+                       <Button fx:id="createNewTrackerButton" alignment="CENTER" layoutX="-1.0" layoutY="-4.0" onAction="#handleCreateNewTracker" prefHeight="38.0" prefWidth="101.0" styleClass="top-nav-button" text="+" textAlignment="CENTER" />
+                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="400.0" prefWidth="100.0">
+                           <children>
+                               <Label layoutX="12.0" layoutY="14.0" styleClass="calendar-header" text="Calendar" />
+                               <ListView fx:id="monthListView" editable="true" layoutX="-4.0" layoutY="43.0" onMouseClicked="#handleMonthSelection" prefHeight="258.0" prefWidth="122.0" styleClass="month-list">
+                                   <items>
+                                       <FXCollections fx:factory="observableArrayList">
+                                           <String fx:value="JANUARY" />
+                                           <String fx:value="FEBRUARY" />
+                                           <String fx:value="MARCH" />
+                                           <String fx:value="APRIL" />
+                                           <String fx:value="MAY" />
+                                           <String fx:value="JUNE" />
+                                           <String fx:value="JULY" />
+                                           <String fx:value="AUGUST" />
+                                           <String fx:value="SEPTEMBER" />
+                                           <String fx:value="OCTOBER" />
+                                           <String fx:value="NOVEMBER" />
+                                           <String fx:value="DECEMBER" />
+                                       </FXCollections>
+                                   </items>
+                               </ListView>
+   
+                               <!-- Year Selection -->
+                               <HBox layoutX="3" layoutY="310" spacing="10">
+      <children>
+                                      <VBox spacing="5">
+                                         <children>
+                                             <Label style="-fx-font-size: 14px;" text="Year:" />
+                                             <ComboBox fx:id="yearDropdown" prefWidth="100" />
+                                         </children>
+                                      </VBox>
+      </children>
+                               </HBox>
+   
+                               <!-- Logout Button at the bottom -->
+                               <Button alignment="CENTER" layoutX="-2.0" layoutY="374.0" mnemonicParsing="false" onAction="#handleLogout" prefHeight="38.0" prefWidth="105.0" styleClass="logout-button" text="LOG OUT" textAlignment="CENTER" />
+                           </children>
+                       </AnchorPane>
+                   </items>
+               </SplitPane>
+           </children>
         </VBox>
     </right>
 
@@ -56,45 +64,57 @@
         <HBox prefHeight="518.0" prefWidth="555.0" BorderPane.alignment="CENTER">
             <children>
                 <TabPane fx:id="tabPane" minWidth="-Infinity" prefHeight="517.0" prefWidth="566.0" stylesheets="@../../../styles/style.css" tabClosingPolicy="UNAVAILABLE">
-                    <Tab text="Tracker 1">
-                        <content>
-                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="425.0" prefWidth="516.0">
-                                <children>
-                                    <!-- Calendar Grid with Weekday Headers -->
-                                    <GridPane fx:id="calendarGrid" alignment="TOP_CENTER" hgap="10" layoutX="3.0" layoutY="28.0" prefHeight="362.0" prefWidth="525.0" styleClass="calendar-grid" vgap="10">
-                                        <!-- Weekday Headers (Add these manually in SceneBuilder) -->
-                                        <Label style="-fx-font-weight: bold;" text="Sun" GridPane.columnIndex="0" />
-                                        <Label style="-fx-font-weight: bold;" text="Mon" GridPane.columnIndex="1" />
-                                        <Label style="-fx-font-weight: bold;" text="Tue" GridPane.columnIndex="2" />
-                                        <Label style="-fx-font-weight: bold;" text="Wed" GridPane.columnIndex="3" />
-                                        <Label style="-fx-font-weight: bold;" text="Thu" GridPane.columnIndex="4" />
-                                        <Label style="-fx-font-weight: bold;" text="Fri" GridPane.columnIndex="5" />
-                                        <Label style="-fx-font-weight: bold;" text="Sat" GridPane.columnIndex="6" />
-                                        <columnConstraints>
-                                            <ColumnConstraints />
-                                            <ColumnConstraints />
-                                            <ColumnConstraints />
-                                            <ColumnConstraints />
-                                            <ColumnConstraints />
-                                            <ColumnConstraints />
-                                            <ColumnConstraints />
-                                        </columnConstraints>
-                                        <rowConstraints>
-                                            <RowConstraints minHeight="-Infinity" prefHeight="40.0" />
-                                        </rowConstraints>
-                                    </GridPane>
-
-                                    <!-- Month Label -->
-                                    <Label fx:id="monthLabel" alignment="CENTER" layoutX="171.0" layoutY="-4.0" prefHeight="20.0" prefWidth="180.0" styleClass="month-label" text="JANUARY 2025" onMouseClicked="#handleMonthLabelClick"/>
-
-                                    <!-- Navigation Buttons -->
-                                    <HBox alignment="CENTER" layoutY="350.0" spacing="10" />
-                                    <Button fx:id="previousMonthButton" layoutX="82.0" layoutY="-4.0" onAction="#handlePreviousMonth" text="previous" />
-                                    <Button fx:id="nextMonthButton" layoutX="400.0" layoutY="-4.0" onAction="#handleNextMonth" text="next" />
-                                </children>
-                            </AnchorPane>
-                        </content>
-                    </Tab>
+                   <tabs>
+                       <Tab text="Tracker 1">
+                           <content>
+                               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="425.0" prefWidth="516.0">
+                                   <children>
+                                       <!-- Calendar Grid with Weekday Headers -->
+                                       <GridPane fx:id="calendarGrid" alignment="TOP_CENTER" hgap="10" layoutX="3.0" layoutY="28.0" prefHeight="362.0" prefWidth="525.0" styleClass="calendar-grid" vgap="10">
+                                          <children>
+                                              <!-- Weekday Headers (Add these manually in SceneBuilder) -->
+                                              <Label style="-fx-font-weight: bold;" text="Sun" GridPane.columnIndex="0" />
+                                              <Label style="-fx-font-weight: bold;" text="Mon" GridPane.columnIndex="1" />
+                                              <Label style="-fx-font-weight: bold;" text="Tue" GridPane.columnIndex="2" />
+                                              <Label style="-fx-font-weight: bold;" text="Wed" GridPane.columnIndex="3" />
+                                              <Label style="-fx-font-weight: bold;" text="Thu" GridPane.columnIndex="4" />
+                                              <Label style="-fx-font-weight: bold;" text="Fri" GridPane.columnIndex="5" />
+                                              <Label style="-fx-font-weight: bold;" text="Sat" GridPane.columnIndex="6" />
+                                          </children>
+                                           <columnConstraints>
+                                               <ColumnConstraints />
+                                               <ColumnConstraints />
+                                               <ColumnConstraints />
+                                               <ColumnConstraints />
+                                               <ColumnConstraints />
+                                               <ColumnConstraints />
+                                               <ColumnConstraints />
+                                           </columnConstraints>
+                                           <rowConstraints>
+                                               <RowConstraints minHeight="-Infinity" prefHeight="40.0" />
+                                           </rowConstraints>
+                                       </GridPane>
+   
+                                       <!-- Month Label -->
+                                       <Label fx:id="monthLabel" alignment="CENTER" layoutX="171.0" layoutY="-4.0" onMouseClicked="#handleMonthLabelClick" prefHeight="20.0" prefWidth="180.0" styleClass="month-label" text="JANUARY 2025" />
+   
+                                       <!-- Navigation Buttons -->
+                                       <HBox alignment="CENTER" layoutY="350.0" spacing="10" />
+                                       <Button fx:id="previousMonthButton" layoutX="113.0" layoutY="-4.0" onAction="#handlePreviousMonth" text="&lt;">
+                                 <font>
+                                    <Font name="Yu Gothic Regular" size="12.0" />
+                                 </font>
+                              </Button>
+                                       <Button fx:id="nextMonthButton" layoutX="384.0" layoutY="-4.0" onAction="#handleNextMonth" text="&gt;">
+                                 <font>
+                                    <Font name="Yu Gothic Regular" size="12.0" />
+                                 </font>
+                              </Button>
+                                   </children>
+                               </AnchorPane>
+                           </content>
+                       </Tab>
+                   </tabs>
                 </TabPane>
             </children>
         </HBox>
@@ -104,8 +124,7 @@
     <top>
         <HBox prefHeight="57.0" prefWidth="678.0" style="-fx-background-color: #343434;" BorderPane.alignment="CENTER">
             <children>
-                <Label fx:id="welcomeLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="57.0" prefWidth="180.0"
-                       text="Welcome, User" textAlignment="CENTER" textFill="#c37b1e">
+                <Label fx:id="welcomeLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="57.0" prefWidth="180.0" text="Welcome, User" textAlignment="CENTER" textFill="#c37b1e">
                     <font>
                         <Font name="Berlin Sans FB Demi Bold" size="20.0" />
                     </font>
@@ -115,4 +134,3 @@
     </top>
 
 </BorderPane>
-

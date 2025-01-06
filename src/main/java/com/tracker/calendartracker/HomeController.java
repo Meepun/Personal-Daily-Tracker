@@ -4,6 +4,8 @@ import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.HPos;
+import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -152,6 +154,8 @@ public class HomeController {
         for (int i = 0; i < daysOfWeek.length; i++) {
             Label dayLabel = new Label(daysOfWeek[i]);
             dayLabel.getStyleClass().add("calendar-header");
+            GridPane.setHalignment(dayLabel, HPos.CENTER); // Center horizontally
+            GridPane.setValignment(dayLabel, VPos.CENTER);
             calendarGrid.add(dayLabel, i, 0);  // Add labels in the first row
         }
 
