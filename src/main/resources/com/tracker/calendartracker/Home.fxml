@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane prefHeight="532.0" prefWidth="690.0" stylesheets="@../../../styles/home.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tracker.calendartracker.HomeController">
+<BorderPane prefHeight="551.0" prefWidth="690.0" stylesheets="@../../../styles/home.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tracker.calendartracker.HomeController">
 
     <!-- Right Panel (Month Navigation) -->
     <right>
@@ -70,7 +70,7 @@
                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="425.0" prefWidth="516.0">
                                    <children>
                                        <!-- Calendar Grid with Weekday Headers -->
-                                       <GridPane fx:id="calendarGrid" alignment="TOP_CENTER" hgap="10" layoutX="3.0" layoutY="28.0" prefHeight="362.0" prefWidth="525.0" styleClass="calendar-grid" vgap="10">
+                                       <GridPane fx:id="calendarGrid" alignment="TOP_CENTER" hgap="10" layoutX="3.0" layoutY="28.0" prefHeight="384.0" prefWidth="525.0" styleClass="calendar-grid" vgap="10">
                                           <children>
                                               <!-- Weekday Headers (Add these manually in SceneBuilder) -->
                                               <Label style="-fx-font-weight: bold;" text="Sun" GridPane.columnIndex="0" />
