@@ -4,6 +4,8 @@ import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.HPos;
+import javafx.geometry.VPos;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -14,6 +16,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.control.Alert;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
@@ -21,11 +25,15 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormatSymbols;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.*;
 
 public class HomeController {
+
+    @FXML
+    private SplitPane splitPane;
 
     private LocalDate today = LocalDate.now();
 
@@ -113,7 +121,7 @@ public class HomeController {
         int currentYear = today.getYear();
         // Create a list of years (10 years before and after current)
         List<Integer> years = new ArrayList<>();
-        for (int year = currentYear - 10; year <= currentYear + 10; year++) {
+        for (int year = currentYear - 25; year <= currentYear + 50; year++) {
             years.add(year);
         }
         // Populate the ComboBox with years
@@ -141,6 +149,8 @@ public class HomeController {
         for (int i = 0; i < daysOfWeek.length; i++) {
             Label dayLabel = new Label(daysOfWeek[i]);
             dayLabel.getStyleClass().add("calendar-header");
+            GridPane.setHalignment(dayLabel, HPos.CENTER); // Center horizontally
+            GridPane.setValignment(dayLabel, VPos.CENTER);
             calendarGrid.add(dayLabel, i, 0);  // Add labels in the first row
         }
 
@@ -257,6 +267,18 @@ public class HomeController {
                 button.setText(button.getId()); // Restore the number as text
                 break;
         }
+    }
+
+    @FXML
+    private void handlePreviousMonth(ActionEvent event) {
+        currentMonth = currentMonth.minusMonths(1);
+        updateCalendar(currentMonth.getMonth().toString());
+    }
+
+    @FXML
+    private void handleNextMonth(ActionEvent event) {
+        currentMonth = currentMonth.plusMonths(1);
+        updateCalendar(currentMonth.getMonth().toString());
     }
 
     @FXML
