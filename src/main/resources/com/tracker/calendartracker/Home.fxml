@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane prefHeight="551.0" prefWidth="690.0" stylesheets="@../../../styles/home.css" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tracker.calendartracker.HomeController">
+<BorderPane prefHeight="573.0" prefWidth="690.0" stylesheets="@../../../styles/home.css" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tracker.calendartracker.HomeController">
     <!-- Sidebar -->
     <right>
         <VBox alignment="CENTER" prefHeight="474.0" prefWidth="122.0" spacing="10" styleClass="month-panel">
@@ -62,12 +62,12 @@
     <left>
         <HBox prefHeight="518.0" prefWidth="555.0" BorderPane.alignment="CENTER">
             <children>
-                <TabPane fx:id="tabPane" prefHeight="494.0" prefWidth="971.0" stylesheets="@../../../styles/style.css" tabClosingPolicy="UNAVAILABLE">
+                <TabPane fx:id="tabPane" prefHeight="494.0" prefWidth="971.0" stylesheets="@../../../styles/style.css" tabClosingPolicy="ALL_TABS">
                     <tabs>
                         <!-- Initial Tracker Tab will be added dynamically -->
                         <Tab text="Tracker 1">
                             <content>
-                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="425.0" prefWidth="516.0">
+                                <AnchorPane fx:id="navBar" minHeight="0.0" minWidth="0.0" prefHeight="425.0" prefWidth="516.0">
                                     <children>
                                         <!-- Month Label -->
                                         <Label fx:id="monthLabel" alignment="CENTER" layoutX="171.0" layoutY="-4.0" prefHeight="20.0" prefWidth="180.0" styleClass="month-label" text="JANUARY 2025" />

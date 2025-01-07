@@ -16,7 +16,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -127,22 +126,53 @@ public class HomeController {
     }
 
     private void addTrackerTab(Tracker tracker) {
+        // Create a new tab for the tracker
         Tab tab = new Tab(tracker.getTrackerName());
-        tab.setContent(createCalendarContent(tracker, String.valueOf(currentMonth)));
+
+        // Create a new navigation bar for the tab
+        AnchorPane tabNavBar = createTabNavBar();
+
+        // Create the calendar content for this tab
+        AnchorPane calendarContent = createCalendarContent(tracker);
+
+        // Create an AnchorPane to hold both the nav bar and the calendar content
+        AnchorPane tabContent = new AnchorPane();
+
+        // Position the navigation bar at the top of the tab content
+        AnchorPane.setTopAnchor(tabNavBar, 0.0);
+        AnchorPane.setLeftAnchor(tabNavBar, 0.0);
+        AnchorPane.setRightAnchor(tabNavBar, 0.0);
+
+        // Position the calendar content below the navigation bar
+        AnchorPane.setTopAnchor(calendarContent, 50.0); // Adjust the value as necessary
+        AnchorPane.setLeftAnchor(calendarContent, 0.0);
+        AnchorPane.setRightAnchor(calendarContent, 0.0);
+
+        // Add both the nav bar and the calendar content to the tab content
+        tabContent.getChildren().addAll(tabNavBar, calendarContent);
+
+        // Set the content of the tab
+        tab.setContent(tabContent);
+
+        // Add the tab to the TabPane
         tabPane.getTabs().add(tab);
     }
 
-    @FXML
-    private AnchorPane createCalendarContent(Tracker tracker, String month) {
-        AnchorPane calendarPane = new AnchorPane();
+    private AnchorPane createTabNavBar() {
+        // Create a new AnchorPane for the navigation bar
+        AnchorPane navBar = new AnchorPane();
 
-        HBox navigationBox = new HBox(10);
-        navigationBox.setAlignment(Pos.CENTER);
-        navigationBox.getChildren().addAll(previousMonthButton, monthLabel, nextMonthButton);
+        navBar.getChildren().addAll(previousMonthButton, monthLabel, nextMonthButton);
+        return navBar;
+    }
+
+    // Updated to no longer require the `navBar` parameter
+    private AnchorPane createCalendarContent(Tracker tracker) {
+        AnchorPane calendarPane = new AnchorPane();
 
         GridPane calendarGrid = new GridPane();
         calendarGrid.setLayoutX(3.0);
-        calendarGrid.setLayoutY(35.0);
+        calendarGrid.setLayoutY(14.0);
         calendarGrid.setHgap(10);
         calendarGrid.setVgap(10);
         calendarGrid.getStyleClass().add("calendar-grid");
@@ -196,7 +226,9 @@ public class HomeController {
         }
 
         // Add the calendar grid to the calendar pane
-        calendarPane.getChildren().addAll(calendarGrid, navigationBox);
+        calendarPane.getChildren().addAll(calendarGrid);
+
+        // No need to pass the navBar anymore, it is added directly to the calendarPane
         return calendarPane;
     }
 
