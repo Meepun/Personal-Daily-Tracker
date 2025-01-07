@@ -61,7 +61,7 @@ public class Tracker {
                 while (rs.next()) {
                     int trackerId = rs.getInt("tracker_id");
                     String trackerName = rs.getString("tracker_name");
-                    trackers.add(new Tracker(trackerId, trackerName)); // Create Tracker objects
+                    trackers.add(new Tracker(userId, trackerName, trackerId));  // Use constructor with trackerId
                 }
             }
         } catch (SQLException e) {
@@ -71,25 +71,59 @@ public class Tracker {
     }
 
     public boolean deleteTracker() {
+        // Queries to delete tracker-related data
         String deleteUserChangesQuery = "DELETE FROM user_changes WHERE tracker_id = ?";
         String deleteTrackerQuery = "DELETE FROM trackers WHERE tracker_id = ?";
 
+        // Use a connection to execute deletion
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt1 = conn.prepareStatement(deleteUserChangesQuery);
              PreparedStatement pstmt2 = conn.prepareStatement(deleteTrackerQuery)) {
 
+            // Ensure foreign key constraints are enabled
+            Statement stmt = conn.createStatement();
+            stmt.execute("PRAGMA foreign_keys = ON");
+
+            // Log tracker id before attempting deletion
+            System.out.println("Attempting to delete tracker with ID: " + this.trackerId);
+
+            if (this.trackerId == -1) {
+                System.out.println("Tracker ID is invalid: " + this.trackerId);
+                return false;
+            }
+
             // First, delete any entries related to this tracker in the user_changes table
             pstmt1.setInt(1, this.trackerId);
             int rowsAffectedChanges = pstmt1.executeUpdate();
+            System.out.println("Deleted " + rowsAffectedChanges + " related records from 'user_changes'.");
+
+            // Log the state of tracker reference in user_changes
+            String checkUserChanges = "SELECT COUNT(*) FROM user_changes WHERE tracker_id = ?";
+            try (PreparedStatement pstmtCheck = conn.prepareStatement(checkUserChanges)) {
+                pstmtCheck.setInt(1, this.trackerId);
+                try (ResultSet rs = pstmtCheck.executeQuery()) {
+                    if (rs.next()) {
+                        int count = rs.getInt(1);
+                        System.out.println("Found " + count + " records in 'user_changes' referencing this tracker.");
+                    }
+                }
+            }
 
             // Then, delete the tracker from the trackers table
             pstmt2.setInt(1, this.trackerId);
             int rowsAffectedTracker = pstmt2.executeUpdate();
+            System.out.println("Rows affected in 'trackers' table: " + rowsAffectedTracker);
 
-            // If both deletions are successful, return true
-            return rowsAffectedChanges >= 0 && rowsAffectedTracker > 0;
+            if (rowsAffectedTracker > 0) {
+                System.out.println("Successfully deleted tracker with ID: " + this.trackerId);
+                return true;
+            } else {
+                System.out.println("Failed to delete the tracker.");
+            }
 
         } catch (SQLException e) {
+            // Log detailed error
+            System.err.println("SQL Error while deleting tracker: " + e.getMessage());
             e.printStackTrace();
         }
         return false;

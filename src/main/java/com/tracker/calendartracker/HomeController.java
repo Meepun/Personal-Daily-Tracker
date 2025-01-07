@@ -125,11 +125,15 @@ public class HomeController {
         // Load trackers from the database
         List<Tracker> trackers = Tracker.getUserTrackers(userId);
 
+        // Debug log to check if trackers are loaded correctly
+        System.out.println("Loaded " + trackers.size() + " trackers.");
+
         // Add each tracker as a new tab
         for (Tracker tracker : trackers) {
             addTrackerTab(tracker);
         }
     }
+
 
     private void addTrackerTab(Tracker tracker) {
         // Create a new tab for the tracker
@@ -305,18 +309,10 @@ public class HomeController {
                     // Delete the tracker from the database
                     boolean success = trackerToDelete.deleteTracker();
                     if (success) {
-                        // Remove the corresponding tab from the TabPane
-                        Tab tabToRemove = trackerMap.entrySet()
-                                .stream()
-                                .filter(entry -> entry.getValue().equals(trackerToDelete))
-                                .map(Map.Entry::getKey)
-                                .findFirst()
-                                .orElse(null);
-
-                        if (tabToRemove != null) {
-                            tabPane.getTabs().remove(tabToRemove);
-                            trackerMap.remove(tabToRemove);
-                        }
+                        // After deletion, clear all tabs
+                        tabPane.getTabs().clear();
+                        // Reload user trackers and update the UI
+                        loadUserTrackers();  // Re-populate the TabPane with the remaining trackers
                     } else {
                         showAlert("Error", "Unable to delete tracker. It might have related changes or issues.");
                     }
@@ -324,6 +320,7 @@ public class HomeController {
             }
         });
     }
+
 
     @FXML
     private void handleMonthYearSelection(MouseEvent event) {
@@ -380,6 +377,7 @@ public class HomeController {
         // Show a dialog for the user to input the new tracker name
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("New Tracker");
+        dialog.setHeaderText("Create a new tracker");
         dialog.setContentText("Enter tracker name:");
 
         Optional<String> result = dialog.showAndWait();
@@ -440,8 +438,6 @@ public class HomeController {
             e.printStackTrace();
         }
     }
-
-
 
     private void applyButtonState(Button button, ButtonState state) {
         double imageSize = 20;
