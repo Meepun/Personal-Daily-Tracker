@@ -65,11 +65,23 @@ public class HomeController {
                 "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"
         ));
 
+        // Apply styling to the ListView
+        monthListView.setStyle(
+                "-fx-background-color: orange;" +        // Set background color for the list
+                        "-fx-text-fill: white;" +               // Set text color
+                        "-fx-font-weight: bold;" +              // Make text bold
+                        "-fx-selection-bar: orange;" +          // Set selected item's background color
+                        "-fx-selection-bar-text: white;"        // Set selected item's text color
+        );
+
+        // Add listener to handle month selection changes
         monthListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 updateCalendar(newValue);
             }
         });
+
+        yearDropdown.setOnMouseClicked(this::handleMonthYearSelection);
 
         // Initialize the calendar with the current month
         updateCalendar(currentMonth.getMonth().toString());
@@ -119,7 +131,7 @@ public class HomeController {
         }
         yearDropdown.setItems(FXCollections.observableArrayList(years));
         yearDropdown.setValue(currentYear);
-        yearDropdown.setOnMouseClicked(this::handleMonthYearSelection);
+        yearDropdown.setOnAction(this::handleYearSelection);
     }
 
     // Set up the month list and load initial tracker tabs
@@ -351,26 +363,25 @@ public class HomeController {
         });
     }
 
-
     @FXML
-    private void handleMonthYearSelection(MouseEvent event) {
-        // Check if the event is from the year dropdown or the month list view
-        if (event.getSource() == yearDropdown) {
-            // Handle year selection
+    private void handleYearSelection(ActionEvent event) {
+        Integer selectedYear = yearDropdown.getValue();
+        currentMonth = currentMonth.withYear(selectedYear);
+        updateCalendar(currentMonth.getMonth().toString());
+    }
+
+    // Handles the month selection from the ListView
+    @FXML
+    public void handleMonthYearSelection(MouseEvent event) {
+        String selectedMonth = monthListView.getSelectionModel().getSelectedItem();
+        if (selectedMonth != null) {
+            currentMonth = LocalDate.now().withMonth(Month.valueOf(selectedMonth.toUpperCase()).getValue()).withDayOfMonth(1);
+
             Integer selectedYear = yearDropdown.getValue();
             currentMonth = currentMonth.withYear(selectedYear);
-        } else if (event.getSource() == monthListView) {
-            // Handle month selection
-            String selectedMonth = monthListView.getSelectionModel().getSelectedItem();
-            if (selectedMonth != null) {
-                currentMonth = LocalDate.now()
-                        .withMonth(Month.valueOf(selectedMonth.toUpperCase()).getValue())
-                        .withDayOfMonth(1);
-            }
-        }
 
-        // After handling both selections, update the calendar
-        updateCalendar(currentMonth.getMonth().toString());
+            updateCalendar(currentMonth.getMonth().toString());
+        }
     }
 
     @FXML
@@ -412,7 +423,6 @@ public class HomeController {
             AnchorPane.setRightAnchor(newCalendarContent, 0.0);
         }
     }
-
 
     @FXML
     private void handleLogout(ActionEvent event) {
