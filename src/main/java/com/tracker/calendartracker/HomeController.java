@@ -16,6 +16,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -134,11 +135,19 @@ public class HomeController {
     @FXML
     private AnchorPane createCalendarContent(Tracker tracker, String month) {
         AnchorPane calendarPane = new AnchorPane();
+
+        HBox navigationBox = new HBox(10);
+        navigationBox.setAlignment(Pos.CENTER);
+        navigationBox.getChildren().addAll(previousMonthButton, monthLabel, nextMonthButton);
+
         GridPane calendarGrid = new GridPane();
+        calendarGrid.setLayoutX(3.0);
+        calendarGrid.setLayoutY(35.0);
         calendarGrid.setHgap(10);
         calendarGrid.setVgap(10);
         calendarGrid.getStyleClass().add("calendar-grid");
-        calendarGrid.setAlignment(Pos.CENTER);
+        calendarGrid.setPrefSize(525.0, 374.0);
+        calendarGrid.setAlignment(Pos.TOP_CENTER);
 
         // Update the calendar label
         updateCalendar(currentMonth.getMonth().toString());
@@ -152,8 +161,6 @@ public class HomeController {
             GridPane.setValignment(dayLabel, VPos.CENTER);
             calendarGrid.add(dayLabel, i, 0);  // Add labels in the first row
         }
-
-        monthLabel.setText(month + " " + currentMonth.getYear());
 
         // Get the first day of the month
         LocalDate firstOfMonth = LocalDate.of(currentMonth.getYear(), currentMonth.getMonth(), 1);
@@ -189,9 +196,10 @@ public class HomeController {
         }
 
         // Add the calendar grid to the calendar pane
-        calendarPane.getChildren().add(calendarGrid);
+        calendarPane.getChildren().addAll(calendarGrid, navigationBox);
         return calendarPane;
     }
+
     @FXML
     public void handleCreateNewTracker(ActionEvent event) {
         // Create a new tracker
@@ -220,11 +228,15 @@ public class HomeController {
 
     // Handles the month selection from the ListView
     @FXML
-    public void handleMonthSelection(MouseEvent event) {
+    public void handleMonthYearSelection(MouseEvent event) {
         String selectedMonth = monthListView.getSelectionModel().getSelectedItem();
         if (selectedMonth != null) {
             currentMonth = LocalDate.now().withMonth(Month.valueOf(selectedMonth.toUpperCase()).getValue()).withDayOfMonth(1);
-            updateCalendar(selectedMonth);
+
+            Integer selectedYear = yearDropdown.getValue();
+            currentMonth = currentMonth.withYear(selectedYear);
+
+            updateCalendar(currentMonth.getMonth().toString());
         }
     }
 
