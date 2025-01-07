@@ -53,8 +53,6 @@ public class HomeController {
     private TabPane tabPane;
 
     @FXML
-    private Button createNewTrackerButton;
-
     private List<Button> dayButtons = new ArrayList<>();
     private LocalDate currentMonth;
 
@@ -108,9 +106,6 @@ public class HomeController {
 
         // Initialize the calendar with the current month
         updateCalendar(currentMonth.getMonth().toString());
-
-        // Handle create new tracker button
-        createNewTrackerButton.setOnAction(this::handleCreateNewTracker);
 
         // Initialize the year dropdown
         initializeYearDropdown();
@@ -266,126 +261,6 @@ public class HomeController {
                 button.setGraphic(null);
                 button.setText(button.getId()); // Restore the number as text
                 break;
-        }
-    }
-
-    @FXML
-    private void handleCreateNewTracker(ActionEvent event) {
-        Tab newTab = createNewTracker();
-        tabPane.getTabs().add(newTab);
-    }
-
-    public Tab createNewTracker() {
-        Tab newTab = new Tab("New Tracker");
-
-        // Root layout for the tab content
-        BorderPane borderPane = new BorderPane();
-        GridPane newCalendarGrid = new GridPane();
-        newCalendarGrid.setHgap(10);
-        newCalendarGrid.setVgap(10);
-        newCalendarGrid.getStyleClass().add("calendar-grid");
-        newCalendarGrid.setAlignment(Pos.CENTER);
-
-        Label monthLabel = new Label();
-        monthLabel.getStyleClass().add("month-label");
-        monthLabel.setAlignment(Pos.BASELINE_CENTER);
-
-        HBox navigationBox = new HBox(10);
-        Button prevMonthButton = new Button("<");
-        Button nextMonthButton = new Button(">");
-
-        // Set default tab calendar to the current month
-        var ref = new Object() {
-            LocalDate tabMonth = LocalDate.now().withDayOfMonth(1);
-        };
-
-        // Generate initial calendar view for the tab
-        generateCalendar(newCalendarGrid, ref.tabMonth, monthLabel);
-
-        // Previous month button action
-        prevMonthButton.setOnAction(e -> {
-            ref.tabMonth = ref.tabMonth.minusMonths(1);
-            generateCalendar(newCalendarGrid, ref.tabMonth, monthLabel);
-        });
-
-        // Next month button action
-        nextMonthButton.setOnAction(e -> {
-            ref.tabMonth = ref.tabMonth.plusMonths(1);
-            generateCalendar(newCalendarGrid, ref.tabMonth, monthLabel);
-        });
-
-        // Sync yearDropdown with tab calendar
-        yearDropdown.setOnAction(event -> {
-            Integer selectedYear = yearDropdown.getValue();
-            if (selectedYear != null) {
-                ref.tabMonth = ref.tabMonth.withYear(selectedYear);
-                generateCalendar(newCalendarGrid, ref.tabMonth, monthLabel);
-            }
-        });
-
-        // Sync with monthListView selection
-        monthListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) {
-                ref.tabMonth = ref.tabMonth.withMonth(Month.valueOf(newValue.toUpperCase()).getValue());
-                generateCalendar(newCalendarGrid, ref.tabMonth, monthLabel);
-            }
-        });
-
-        // Set up navigation and add to the tab layout
-        navigationBox.getChildren().addAll(prevMonthButton, monthLabel, nextMonthButton);
-        navigationBox.setAlignment(Pos.TOP_CENTER);
-
-        borderPane.setTop(navigationBox);
-        borderPane.setCenter(newCalendarGrid);
-        newTab.setContent(borderPane);
-
-        return newTab;
-    }
-
-    private void generateCalendar(GridPane grid, LocalDate currentMonth, Label monthLabel) {
-        grid.getChildren().clear();
-
-        // Add headers for days of the week
-        String[] daysOfWeek = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
-        for (int i = 0; i < daysOfWeek.length; i++) {
-            Label dayLabel = new Label(daysOfWeek[i]);
-            dayLabel.getStyleClass().add("calendar-header");
-            grid.add(dayLabel, i, 0);  // Place day labels in the first row
-        }
-
-        // Update the month label with the selected month and year
-        monthLabel.setText(currentMonth.getMonth().toString() + " " + currentMonth.getYear());
-        monthLabel.setAlignment(Pos.TOP_CENTER);
-
-        // Get the first day of the current month and determine its weekday position
-        LocalDate firstOfMonth = currentMonth.withDayOfMonth(1);
-        int firstDayOfWeek = firstOfMonth.getDayOfWeek().getValue() % 7;  // Ensure Sunday = 0
-
-        int lengthOfMonth = firstOfMonth.lengthOfMonth();
-
-        // Loop through each day of the month and populate the calendar grid
-        for (int day = 1; day <= lengthOfMonth; day++) {
-            int row = (firstDayOfWeek + day - 1) / 7 + 2;  // Adjusted row to account for headers and dropdown
-            int col = (firstDayOfWeek + day - 1) % 7;
-
-            // Create a button for each day
-            Button dayButton = new Button(String.valueOf(day));
-            dayButton.setPrefSize(45, 45);
-            dayButton.setId(String.valueOf(day));
-
-            // Generate a unique key with day, month, and year
-            String key = currentMonth.getMonth().toString() + "-" + day + "-" + currentMonth.getYear();
-
-            // Load the button state (e.g., checked or unchecked)
-            ButtonState state = loadButtonState(key);
-            dayButton.setUserData(state);
-            applyButtonState(dayButton, state);
-
-            // Handle click events to toggle state for the specific date
-            dayButton.setOnAction(e -> handleDayClick(dayButton, key));
-
-            // Add the day button to the grid
-            grid.add(dayButton, col, row);
         }
     }
 
