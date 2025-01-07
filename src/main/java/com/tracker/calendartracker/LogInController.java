@@ -96,6 +96,10 @@ public class LogInController {
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 userId = rs.getString("user_id");  // Store user_id
+
+                // After login, check if the user has any trackers
+                checkIfUserHasTracker(userId);
+
                 return true;
             }
         } catch (SQLException e) {
@@ -103,6 +107,35 @@ public class LogInController {
         }
         return false;
     }
+
+    private void checkIfUserHasTracker(String userId) {
+        String trackerQuery = "SELECT COUNT(*) FROM trackers WHERE user_id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(trackerQuery)) {
+
+            stmt.setString(1, userId);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next() && rs.getInt(1) == 0) {
+                // If no trackers, create the first tracker
+                createFirstTracker(conn, userId);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void createFirstTracker(Connection connection, String userId) {
+        String insertTrackerQuery = "INSERT INTO trackers (user_id, tracker_name) VALUES (?, ?)";
+        try (PreparedStatement psTracker = connection.prepareStatement(insertTrackerQuery)) {
+            psTracker.setString(1, userId);
+            psTracker.setString(2, "My First Tracker");
+            psTracker.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public String getUserId() {
         return userId;

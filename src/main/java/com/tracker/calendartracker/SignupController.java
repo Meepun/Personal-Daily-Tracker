@@ -16,6 +16,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class SignupController {
@@ -65,6 +66,8 @@ public class SignupController {
             int rowsAffected = statement.executeUpdate();
 
             if (rowsAffected == 1) {
+                // After successful registration, create the first tracker
+                createFirstTracker(connection, username);
                 navigateToHome(event); // Navigate to Home.fxml
             } else {
                 displayErrorMessage("Failed to register user.");
@@ -75,16 +78,33 @@ public class SignupController {
         }
     }
 
+    private void createFirstTracker(Connection connection, String username) {
+        try {
+            // Fetch the user ID based on the username
+            String userIdQuery = "SELECT user_id FROM loginsignup WHERE username = ?";
+            PreparedStatement ps = connection.prepareStatement(userIdQuery);
+            ps.setString(1, username);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                int userId = rs.getInt("user_id");
+
+                // Insert the first tracker for this user
+                String insertTrackerQuery = "INSERT INTO trackers (user_id, tracker_name) VALUES (?, ?)";
+                PreparedStatement psTracker = connection.prepareStatement(insertTrackerQuery);
+                psTracker.setInt(1, userId);
+                psTracker.setString(2, "My First Tracker");
+                psTracker.executeUpdate();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     @FXML
     private void handleMainMenuButton(ActionEvent event) {
         navigateTo(event, "mainmenu.fxml", "Main Menu");
     }
 
-    /**
-     * Displays an error message in the error label.
-     *
-     * @param message The error message to be displayed.
-     */
     private void displayErrorMessage(String message) {
         errorLabel.setText(message);
         errorLabel.setVisible(true);
