@@ -187,9 +187,9 @@ public class HomeController {
         for (int i = 0; i < daysOfWeek.length; i++) {
             Label dayLabel = new Label(daysOfWeek[i]);
             dayLabel.getStyleClass().add("calendar-header");
-            GridPane.setHalignment(dayLabel, HPos.CENTER); // Center horizontally
+            GridPane.setHalignment(dayLabel, HPos.CENTER);
             GridPane.setValignment(dayLabel, VPos.CENTER);
-            calendarGrid.add(dayLabel, i, 0);  // Add labels in the first row
+            calendarGrid.add(dayLabel, i, 0);
         }
 
         // Get the first day of the month
