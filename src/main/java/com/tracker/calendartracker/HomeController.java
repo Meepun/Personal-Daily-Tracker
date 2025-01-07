@@ -233,10 +233,16 @@ public class HomeController {
         return navBar;
     }
 
-    // Updated to no longer require the `navBar` parameter
     private AnchorPane createCalendarContent(Tracker tracker) {
         AnchorPane calendarPane = new AnchorPane();
 
+        // Check if tracker is null
+        if (tracker == null) {
+            System.err.println("Error: Tracker is null. Unable to create calendar content.");
+            return calendarPane; // Return an empty calendar pane or handle the error as needed
+        }
+
+        // Create a GridPane for the calendar
         GridPane calendarGrid = new GridPane();
         calendarGrid.setLayoutX(3.0);
         calendarGrid.setLayoutY(14.0);
@@ -245,9 +251,6 @@ public class HomeController {
         calendarGrid.getStyleClass().add("calendar-grid");
         calendarGrid.setPrefSize(525.0, 374.0);
         calendarGrid.setAlignment(Pos.TOP_CENTER);
-
-        // Update the calendar label
-        updateCalendar(currentMonth.getMonth().toString());
 
         // Add the row for the days of the week (Sun, Mon, Tue, Wed, Thu, Fri, Sat)
         String[] daysOfWeek = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
@@ -261,11 +264,9 @@ public class HomeController {
 
         // Get the first day of the month
         LocalDate firstOfMonth = LocalDate.of(currentMonth.getYear(), currentMonth.getMonth(), 1);
-
-        // Adjust the first day of the week to Sunday as the first day
         int firstDayOfWeek = firstOfMonth.getDayOfWeek().getValue();
-        if (firstDayOfWeek == 7) {
-            firstDayOfWeek = 0;  // Sunday as 0
+        if (firstDayOfWeek == 7) { // If Sunday is the first day
+            firstDayOfWeek = 0; // Adjust for Sunday
         }
 
         int lengthOfMonth = firstOfMonth.lengthOfMonth();
@@ -281,7 +282,9 @@ public class HomeController {
 
             // Create the key for the date (use the full date format to store state)
             String key = currentMonth.getYear() + "-" + currentMonth.getMonth().name() + "-" + day;
-            ButtonState state = loadButtonState(key, tracker.getTrackerId());  // Load the current state of the day
+
+            // Check if trackerId is valid before loading state
+            ButtonState state = loadButtonState(key, tracker.getTrackerId());
             dayButton.setUserData(state);
             applyButtonState(dayButton, state);  // Apply the visual state (checked, crossed, etc.)
 
@@ -294,8 +297,6 @@ public class HomeController {
 
         // Add the calendar grid to the calendar pane
         calendarPane.getChildren().addAll(calendarGrid);
-
-        // No need to pass the navBar anymore, it is added directly to the calendarPane
         return calendarPane;
     }
 
@@ -386,7 +387,32 @@ public class HomeController {
 
     private void updateCalendar(String month) {
         monthLabel.setText(month + " " + currentMonth.getYear());
+
+        // Get the currently selected tab
+        Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();
+
+        // Check if a tab is selected (tracker is loaded)
+        if (selectedTab != null) {
+            // Get the Tracker object associated with the selected tab
+            Tracker tracker = (Tracker) selectedTab.getUserData();
+
+            // Rebuild the calendar grid for the selected tracker
+            AnchorPane newCalendarContent = createCalendarContent(tracker);
+
+            // Get the existing tab content (which should be an AnchorPane)
+            AnchorPane existingTabContent = (AnchorPane) selectedTab.getContent();
+
+            // Clear the existing content and add the new content
+            existingTabContent.getChildren().clear();
+            existingTabContent.getChildren().add(newCalendarContent);
+
+            // Position the new calendar content correctly
+            AnchorPane.setTopAnchor(newCalendarContent, 50.0); // Adjust as needed
+            AnchorPane.setLeftAnchor(newCalendarContent, 0.0);
+            AnchorPane.setRightAnchor(newCalendarContent, 0.0);
+        }
     }
+
 
     @FXML
     private void handleLogout(ActionEvent event) {
