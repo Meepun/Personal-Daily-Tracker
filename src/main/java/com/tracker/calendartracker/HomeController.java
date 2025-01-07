@@ -424,7 +424,6 @@ public class HomeController {
         }
     }
 
-
     @FXML
     private void handleLogout(ActionEvent event) {
         try {
