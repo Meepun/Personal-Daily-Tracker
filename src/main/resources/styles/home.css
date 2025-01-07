@@ -118,3 +118,8 @@
     -fx-background-color: #f79d12; /* Highlight color on hover */
     -fx-text-fill: white; /* White text when highlighted */
 }
+
+.month-list {
+    -fx-background-color: #f79d12;
+
+}

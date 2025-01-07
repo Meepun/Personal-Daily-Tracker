@@ -65,6 +65,16 @@ public class HomeController {
                 "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"
         ));
 
+        // Apply styling to the ListView
+        monthListView.setStyle(
+                "-fx-background-color: orange;" +        // Set background color for the list
+                        "-fx-text-fill: white;" +               // Set text color
+                        "-fx-font-weight: bold;" +              // Make text bold
+                        "-fx-selection-bar: orange;" +          // Set selected item's background color
+                        "-fx-selection-bar-text: white;"        // Set selected item's text color
+        );
+
+        // Add listener to handle month selection changes
         monthListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 updateCalendar(newValue);
