@@ -83,6 +83,16 @@ public class HomeController {
 
         // Load the first tracker after login/signup
         loadUserTrackers();
+
+        // Add double-click event listener to the tabs
+        tabPane.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2) {  // Check if it's a double click
+                Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();  // Get the tab that was double-clicked
+                if (selectedTab != null) {
+                    handleRenameTracker(selectedTab);  // Rename the selected tab's tracker
+                }
+            }
+        });
     }
 
     private String getUserNameFromDatabase(String userId) {
@@ -134,10 +144,12 @@ public class HomeController {
         }
     }
 
-
     private void addTrackerTab(Tracker tracker) {
         // Create a new tab for the tracker
         Tab tab = new Tab(tracker.getTrackerName());
+
+        // Set the tracker as the tab's user data to associate it with the tab
+        tab.setUserData(tracker);  // Link the tab to the Tracker
 
         // Create a new navigation bar for the tab
         AnchorPane tabNavBar = createTabNavBar();
@@ -166,12 +178,28 @@ public class HomeController {
 
         // Add the tab to the TabPane
         tabPane.getTabs().add(tab);
+
+        // Add the mouse event listener to the tab's content (AnchorPane)
+        tabContent.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2) {  // Double-click detection
+                handleRenameTracker(tab);  // Pass the tab to the rename handler
+            }
+        });
     }
 
     @FXML
-    private void handleRenameTracker(Tab tab, Connection connection) {
+    private void handleRenameTracker(Tab tab) {
+        // Get the Tracker object associated with the clicked tab
+        Tracker tracker = (Tracker) tab.getUserData();
+
+        // Check if the tracker is valid
+        if (tracker == null) {
+            showAlert("Error", "Tracker not found.");
+            return;
+        }
+
         // Create the input dialog for renaming the tracker
-        TextInputDialog dialog = new TextInputDialog(tab.getText());
+        TextInputDialog dialog = new TextInputDialog(tracker.getTrackerName());
         dialog.setTitle("Rename Tracker");
         dialog.setHeaderText("Rename the tracker");
         dialog.setContentText("Enter new tracker name:");
@@ -179,22 +207,23 @@ public class HomeController {
         // Show the dialog and process the result if present
         Optional<String> result = dialog.showAndWait();
         result.ifPresent(newName -> {
-            // Get the tracker associated with this tab from the trackerMap
-            Tracker tracker = trackerMap.get(tab);
-
-            // Ensure that the tracker exists before calling the rename method
-            if (tracker != null) {
-                // Attempt to rename the tracker in the database and update UI
+            // Attempt to rename the tracker in the database and update UI
+            try (Connection connection = DBConnection.getConnection()) {
                 if (tracker.renameTracker(newName, connection)) {
+                    // Update the tracker name in the trackerMap and the tab label
+                    tracker.setTrackerName(newName);
                     tab.setText(newName);  // Update the tab label
                 } else {
                     showAlert("Error", "Unable to rename tracker.");
                 }
-            } else {
-                showAlert("Error", "Tracker not found.");
+            } catch (SQLException e) {
+                e.printStackTrace();
+                showAlert("Error", "Database connection error.");
             }
         });
     }
+
+
 
     private AnchorPane createTabNavBar() {
         // Create a new AnchorPane for the navigation bar
