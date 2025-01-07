@@ -2,59 +2,39 @@ package com.tracker.calendartracker;
 
 import java.sql.*;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Tracker {
 
     private LocalDate today = LocalDate.now();
-    private static String userId;
+    private static int userId;
     private String trackerName;
     private int trackerId;
     private LocalDate currentMonth;
 
-    public Tracker(String userId, String trackerName) {
+    public Tracker(int userId, String trackerName) {
         this.userId = userId;
         this.trackerName = trackerName;
         this.trackerId = -1;  // Default value, will be set after adding to DB
         this.currentMonth = today.withDayOfMonth(1);
     }
 
-    public Tracker(String userId, String trackerName, int trackerId) {
+    public Tracker(int userId, String trackerName, int trackerId) {
         this.userId = userId;
         this.trackerName = trackerName;
         this.trackerId = trackerId;  // Set the actual trackerId passed from DB
         this.currentMonth = today.withDayOfMonth(1);
     }
 
-    public static Tracker loadTrackerByName(String trackerName, String userId) {
-        String sql = "SELECT * FROM trackers WHERE user_id = ? AND tracker_name = ?";
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, userId);
-            pstmt.setString(2, trackerName);
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                int trackerId = rs.getInt("tracker_id");  // Retrieve the tracker_id from DB
-                return new Tracker(userId, rs.getString("tracker_name"), trackerId);  // Pass the trackerId
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-
-
-    // Getter and Setter for trackerName
     public String getTrackerName() {
-        return trackerName;
+        return this.trackerName;
     }
 
     public void setTrackerName(String trackerName) {
         this.trackerName = trackerName;
     }
 
-    // Getter and Setter for trackerId
     public int getTrackerId() {
         return trackerId;
     }
@@ -63,67 +43,26 @@ public class Tracker {
         this.trackerId = trackerId;
     }
 
-    // Getter for currentMonth
     public LocalDate getCurrentMonth() {
         return currentMonth;
     }
 
-    public void addNewTracker(String trackerName) {
-        String sql = "INSERT INTO trackers (user_id, tracker_name) VALUES (?, ?)";
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            pstmt.setString(1, userId);
-            pstmt.setString(2, trackerName);
-            pstmt.executeUpdate();
-
-            // Get the generated tracker ID
-            ResultSet rs = pstmt.getGeneratedKeys();
-            if (rs.next()) {
-                trackerId = rs.getInt(1);  // Retrieve the generated tracker ID
-                System.out.println("Tracker added with ID: " + trackerId);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    // Delete Tracker
-    public void deleteTracker() {
-        String sql = "DELETE FROM trackers WHERE tracker_id = ?";
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, trackerId);  // Use trackerId as int
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        // Also delete associated user changes
-        deleteTrackerChanges(trackerId);
-    }
-
-    private void deleteTrackerChanges(int trackerId) {
-        String sql = "DELETE FROM user_changes WHERE tracker_id = ?";
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, trackerId);  // Use trackerId as int
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static List<Tracker> getUserTrackers(String userId) {
+    public static List<Tracker> getTrackersForCurrentUser(int userId) {
         List<Tracker> trackers = new ArrayList<>();
-        String sql = "SELECT * FROM trackers WHERE user_id = ?";
+        String query = "SELECT tracker_id, tracker_name FROM trackers WHERE user_id = ?"; // Filter by user_id
+
+        // Fetch trackers from the database based on user_id
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, userId);
-            ResultSet rs = pstmt.executeQuery();
-            while (rs.next()) {
-                int trackerId = rs.getInt("tracker_id");  // Retrieve the tracker_id from DB
-                trackers.add(new Tracker(userId, rs.getString("tracker_name"), trackerId));  // Pass the trackerId
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setInt(1, userId); // Set the logged-in user's ID
+
+            // Execute the query and process the result set
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    int trackerId = rs.getInt("tracker_id");
+                    String trackerName = rs.getString("tracker_name");
+                    trackers.add(new Tracker(trackerId, trackerName)); // Create Tracker objects
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -131,4 +70,82 @@ public class Tracker {
         return trackers;
     }
 
+    public boolean deleteTracker() {
+        String deleteUserChangesQuery = "DELETE FROM user_changes WHERE tracker_id = ?";
+        String deleteTrackerQuery = "DELETE FROM trackers WHERE tracker_id = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt1 = conn.prepareStatement(deleteUserChangesQuery);
+             PreparedStatement pstmt2 = conn.prepareStatement(deleteTrackerQuery)) {
+
+            // First, delete any entries related to this tracker in the user_changes table
+            pstmt1.setInt(1, this.trackerId);
+            int rowsAffectedChanges = pstmt1.executeUpdate();
+
+            // Then, delete the tracker from the trackers table
+            pstmt2.setInt(1, this.trackerId);
+            int rowsAffectedTracker = pstmt2.executeUpdate();
+
+            // If both deletions are successful, return true
+            return rowsAffectedChanges >= 0 && rowsAffectedTracker > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean addNewTracker(int userId, String trackerName) {
+        String sql = "INSERT INTO trackers (user_id, tracker_name) VALUES (?, ?)";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            pstmt.setInt(1, userId);
+            pstmt.setString(2, trackerName);
+            int affectedRows = pstmt.executeUpdate();
+            if (affectedRows > 0) {
+                ResultSet generatedKeys = pstmt.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    this.trackerId = generatedKeys.getInt(1);
+                    return true;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+
+    public boolean renameTracker(String newName, Connection connection) {
+        String query = "UPDATE trackers SET tracker_name = ? WHERE tracker_id = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, newName);
+            preparedStatement.setInt(2, this.trackerId);
+            int rowsUpdated = preparedStatement.executeUpdate();
+            if (rowsUpdated > 0) {
+                this.trackerName = newName;
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static List<Tracker> getUserTrackers(int userId) {
+        List<Tracker> trackers = new ArrayList<>();
+        String sql = "SELECT * FROM trackers WHERE user_id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, userId);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                int trackerId = rs.getInt("tracker_id");
+                trackers.add(new Tracker(userId, rs.getString("tracker_name"), trackerId));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return trackers;
+    }
 }

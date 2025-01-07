@@ -39,7 +39,7 @@ public class LogInController {
     private ImageView hiLogoImageView;
     @FXML
     private ImageView untitledDesignImageView;
-    private String userId;
+    private int userId;
 
     public void initialize() {
         // Load the logo image
@@ -95,10 +95,10 @@ public class LogInController {
 
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                userId = rs.getString("user_id");  // Store user_id
+                userId = Integer.parseInt(rs.getString("user_id"));  // Store user_id
 
                 // After login, check if the user has any trackers
-                checkIfUserHasTracker(userId);
+                checkIfUserHasTracker(String.valueOf(userId));
 
                 return true;
             }
@@ -137,7 +137,8 @@ public class LogInController {
     }
 
 
-    public String getUserId() {
+    public int getUserId() {
+
         return userId;
     }
 

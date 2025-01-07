@@ -23,6 +23,7 @@ import java.sql.*;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class HomeController {
 
@@ -32,11 +33,15 @@ public class HomeController {
     @FXML private Label monthLabel;
     @FXML private Button previousMonthButton, nextMonthButton;
     @FXML private Button createNewTrackerButton;
+    @FXML public  Button deleteTrackerButton;
     @FXML private Label welcomeLabel;
 
-    private String userId;
+    private int userId;
+    private String trackerName;
     private LocalDate currentMonth = LocalDate.now();
     private LocalDate today = LocalDate.now();
+    private Map<Tab, Tracker> trackerMap = new HashMap<>();
+
 
     private static final String BASE_PATH = "/images/";
     private static final String CHECKED_IMAGE_PATH = "Check.png";
@@ -48,7 +53,7 @@ public class HomeController {
         this.userId = SessionHandler.getInstance().getUserId();
 
         // Retrieve the username from your database or session
-        String username = getUserNameFromDatabase(userId);
+        String username = getUserNameFromDatabase(String.valueOf(userId));
 
         // Set the label text dynamically
         welcomeLabel.setText("Welcome, " + username);
@@ -71,6 +76,7 @@ public class HomeController {
 
         // Handle create new tracker button
         createNewTrackerButton.setOnAction(this::handleCreateNewTracker);
+        deleteTrackerButton.setOnAction(this::handleDeleteTracker);
 
         initializeYearDropdown();
         initializeMonthListView();
@@ -158,6 +164,34 @@ public class HomeController {
         tabPane.getTabs().add(tab);
     }
 
+    @FXML
+    private void handleRenameTracker(Tab tab, Connection connection) {
+        // Create the input dialog for renaming the tracker
+        TextInputDialog dialog = new TextInputDialog(tab.getText());
+        dialog.setTitle("Rename Tracker");
+        dialog.setHeaderText("Rename the tracker");
+        dialog.setContentText("Enter new tracker name:");
+
+        // Show the dialog and process the result if present
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(newName -> {
+            // Get the tracker associated with this tab from the trackerMap
+            Tracker tracker = trackerMap.get(tab);
+
+            // Ensure that the tracker exists before calling the rename method
+            if (tracker != null) {
+                // Attempt to rename the tracker in the database and update UI
+                if (tracker.renameTracker(newName, connection)) {
+                    tab.setText(newName);  // Update the tab label
+                } else {
+                    showAlert("Error", "Unable to rename tracker.");
+                }
+            } else {
+                showAlert("Error", "Tracker not found.");
+            }
+        });
+    }
+
     private AnchorPane createTabNavBar() {
         // Create a new AnchorPane for the navigation bar
         AnchorPane navBar = new AnchorPane();
@@ -233,21 +267,62 @@ public class HomeController {
     }
 
     @FXML
-    public void handleCreateNewTracker(ActionEvent event) {
-        // Create a new tracker
-        String trackerName = "New Tracker";  // You can get this from user input if needed
-        Tracker newTracker = new Tracker(userId, trackerName);
-        newTracker.addNewTracker(trackerName);  // Adds the new tracker to the database
+    private void handleDeleteTracker(ActionEvent actionEvent) {
+        // Assuming `userId` is available and stores the logged-in user ID
+        int currentUserId = userId;
 
-        // Get the generated trackerId (this is done inside addNewTracker method)
-        int trackerId = newTracker.getTrackerId();  // Retrieve the trackerId after insertion
+        // Fetch all trackers for the current user from the database
+        List<Tracker> userTrackers = Tracker.getTrackersForCurrentUser(currentUserId);
 
-        // If the trackerId is valid (not -1), proceed to load user trackers
-        if (trackerId != -1) {
-            loadUserTrackers();  // Reload user trackers to include the new one
-        } else {
-            System.out.println("Failed to create new tracker. Tracker ID is invalid.");
-        }
+        // Extract tracker names from the list of Tracker objects
+        List<String> trackerNames = userTrackers.stream()
+                .map(Tracker::getTrackerName)
+                .collect(Collectors.toList());
+
+        // Show the dialog to choose which tracker to delete
+        ChoiceDialog<String> dialog = new ChoiceDialog<>(null, trackerNames);
+        dialog.setTitle("Delete Tracker");
+        dialog.setHeaderText("Select a tracker to delete");
+        dialog.setContentText("Choose tracker:");
+
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(selectedName -> {
+            // Find the Tracker object corresponding to the selected name
+            Tracker trackerToDelete = userTrackers.stream()
+                    .filter(tracker -> tracker.getTrackerName().equals(selectedName))
+                    .findFirst()
+                    .orElse(null);
+
+            if (trackerToDelete != null) {
+                // Confirm deletion
+                Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
+                confirmAlert.setTitle("Confirmation");
+                confirmAlert.setHeaderText("Are you sure?");
+                confirmAlert.setContentText("Do you really want to delete \"" + selectedName + "\"?");
+
+                Optional<ButtonType> confirmation = confirmAlert.showAndWait();
+                if (confirmation.isPresent() && confirmation.get() == ButtonType.OK) {
+                    // Delete the tracker from the database
+                    boolean success = trackerToDelete.deleteTracker();
+                    if (success) {
+                        // Remove the corresponding tab from the TabPane
+                        Tab tabToRemove = trackerMap.entrySet()
+                                .stream()
+                                .filter(entry -> entry.getValue().equals(trackerToDelete))
+                                .map(Map.Entry::getKey)
+                                .findFirst()
+                                .orElse(null);
+
+                        if (tabToRemove != null) {
+                            tabPane.getTabs().remove(tabToRemove);
+                            trackerMap.remove(tabToRemove);
+                        }
+                    } else {
+                        showAlert("Error", "Unable to delete tracker. It might have related changes or issues.");
+                    }
+                }
+            }
+        });
     }
 
 
@@ -302,23 +377,52 @@ public class HomeController {
         }
     }
 
+    public void handleCreateNewTracker(ActionEvent actionEvent) {
+        // Show a dialog for the user to input the new tracker name
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("New Tracker");
+        dialog.setContentText("Enter tracker name:");
+
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(trackerName -> {
+            // Create a new Tracker object and add it to the database
+            Tracker newTracker = new Tracker(userId, trackerName);  // Create tracker instance
+            newTracker.addNewTracker(userId, trackerName);  // Adds the new tracker to the database
+
+            // Get the generated trackerId after insertion
+            int trackerId = newTracker.getTrackerId();
+
+            if (trackerId != -1) {  // If the trackerId is valid
+                // Add the tracker to the UI (TabPane)
+                Tab newTab = new Tab(trackerName);
+                trackerMap.put(newTab, newTracker);
+                tabPane.getTabs().add(newTab);  // Add the new tracker tab
+
+                // Reload the user trackers to reflect the new one
+                loadUserTrackers();
+            } else {
+                showAlert("Error", "Failed to create new tracker.");
+            }
+        });
+    }
+
     public enum ButtonState { NORMAL, CHECKED, CROSSED }
 
     private ButtonState loadButtonState(String dateKey, int trackerId) {
         String sql = "SELECT state FROM user_changes WHERE user_id = ? AND tracker_id = ? AND datelog = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, userId);      // user_id
-            pstmt.setInt(2, trackerId);      // tracker_id
-            pstmt.setString(3, dateKey);     // datelog (formatted as "YYYY-MM-DD")
+            pstmt.setInt(1, userId);
+            pstmt.setInt(2, trackerId);
+            pstmt.setString(3, dateKey);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                return ButtonState.valueOf(rs.getString("state"));  // Return the stored state
+                return ButtonState.valueOf(rs.getString("state"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return ButtonState.NORMAL;  // Default state if no entry is found
+        return ButtonState.NORMAL;
     }
 
     private void saveButtonState(String dateKey, ButtonState state, int trackerId) {
@@ -328,15 +432,16 @@ public class HomeController {
                 "DO UPDATE SET state = excluded.state";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, userId);      // user_id
-            pstmt.setInt(2, trackerId);      // tracker_id
-            pstmt.setString(3, dateKey);     // datelog (formatted as "YYYY-MM-DD")
-            pstmt.setString(4, state.toString());  // state (e.g., "CHECKED")
+            pstmt.setInt(1, userId);
+            pstmt.setInt(2, trackerId);
+            pstmt.setString(3, dateKey);
+            pstmt.setString(4, state.toString());
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
 
 
     private void applyButtonState(Button button, ButtonState state) {
@@ -388,4 +493,13 @@ public class HomeController {
         applyButtonState(dayButton, nextState);
         saveButtonState(key, nextState, tracker.getTrackerId());
     }
+
+    private void showAlert(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null); // No header text
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+
 }

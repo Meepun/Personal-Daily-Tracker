@@ -2,7 +2,7 @@ package com.tracker.calendartracker;
 
 public class SessionHandler {
     private static SessionHandler instance;
-    private String userId;
+    private int userId;
 
     private SessionHandler() {}
 
@@ -13,15 +13,11 @@ public class SessionHandler {
         return instance;
     }
 
-    public String getUserId() {
+    public int getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(int userId) {
         this.userId = userId;
-    }
-
-    public void clearSession() {
-        this.userId = null;
     }
 }
