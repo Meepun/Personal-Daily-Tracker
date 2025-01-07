@@ -4,10 +4,15 @@ import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.HPos;
+import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
@@ -30,20 +35,42 @@ public class HomeController {
     @FXML private Label welcomeLabel;
 
     private String userId;
-
     private LocalDate currentMonth = LocalDate.now();
+    private LocalDate today = LocalDate.now();
+
+    private static final String BASE_PATH = "/images/";
+    private static final String CHECKED_IMAGE_PATH = "Check.png";
+    private static final String CROSSED_IMAGE_PATH = "X.png";
 
     @FXML
     private void initialize() {
-
         // Retrieve userId from the session
         this.userId = SessionHandler.getInstance().getUserId();
 
         // Retrieve the username from your database or session
-        String username = getUserNameFromDatabase(userId);  // Implement this method as per your logic
+        String username = getUserNameFromDatabase(userId);
 
         // Set the label text dynamically
         welcomeLabel.setText("Welcome, " + username);
+
+        currentMonth = today.withDayOfMonth(1);
+
+        monthListView.setItems(FXCollections.observableArrayList(
+                "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE",
+                "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"
+        ));
+
+        monthListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                updateCalendar(newValue);
+            }
+        });
+
+        // Initialize the calendar with the current month
+        updateCalendar(currentMonth.getMonth().toString());
+
+        // Handle create new tracker button
+        createNewTrackerButton.setOnAction(this::handleCreateNewTracker);
 
         initializeYearDropdown();
         initializeMonthListView();
@@ -100,64 +127,72 @@ public class HomeController {
 
     private void addTrackerTab(Tracker tracker) {
         Tab tab = new Tab(tracker.getTrackerName());
-        tab.setContent(createCalendarContent(tracker));
+        tab.setContent(createCalendarContent(tracker, String.valueOf(currentMonth)));
         tabPane.getTabs().add(tab);
     }
 
-    private AnchorPane createCalendarContent(Tracker tracker) {
+    @FXML
+    private AnchorPane createCalendarContent(Tracker tracker, String month) {
         AnchorPane calendarPane = new AnchorPane();
         GridPane calendarGrid = new GridPane();
         calendarGrid.setHgap(10);
         calendarGrid.setVgap(10);
+        calendarGrid.getStyleClass().add("calendar-grid");
+        calendarGrid.setAlignment(Pos.CENTER);
 
-        // Add weekday headers
-        String[] weekdays = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
-        for (int i = 0; i < weekdays.length; i++) {
-            Label label = new Label(weekdays[i]);
-            label.setStyle("-fx-font-weight: bold;");
-            GridPane.setColumnIndex(label, i);
-            calendarGrid.getChildren().add(label);
+        // Update the calendar label
+        updateCalendar(currentMonth.getMonth().toString());
+
+        // Add the row for the days of the week (Sun, Mon, Tue, Wed, Thu, Fri, Sat)
+        String[] daysOfWeek = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+        for (int i = 0; i < daysOfWeek.length; i++) {
+            Label dayLabel = new Label(daysOfWeek[i]);
+            dayLabel.getStyleClass().add("calendar-header");
+            GridPane.setHalignment(dayLabel, HPos.CENTER); // Center horizontally
+            GridPane.setValignment(dayLabel, VPos.CENTER);
+            calendarGrid.add(dayLabel, i, 0);  // Add labels in the first row
         }
 
-        // Get the first day of the month to start placing dates in the correct column
-        LocalDate firstDayOfMonth = tracker.getCurrentMonth().withDayOfMonth(1);  // Use Tracker's current month
-        int firstDayOfWeek = firstDayOfMonth.getDayOfWeek().getValue();  // 1 = Monday, 7 = Sunday
-        if (firstDayOfWeek == 7) firstDayOfWeek = 0;  // Adjust for Sunday as the start of the week
+        monthLabel.setText(month + " " + currentMonth.getYear());
 
-        // Populate the calendar with days
-        int daysInMonth = firstDayOfMonth.lengthOfMonth();  // Calculate days in the month directly
-        Map<LocalDate, Tracker.ButtonState> dayStates = tracker.getMonthStates(firstDayOfMonth.getMonth());  // Use Tracker's method to get states for the current month
+        // Get the first day of the month
+        LocalDate firstOfMonth = LocalDate.of(currentMonth.getYear(), currentMonth.getMonth(), 1);
 
-        // Loop through the days of the month and add them to the calendar grid
-        for (int day = 1; day <= daysInMonth; day++) {
-            LocalDate currentDay = firstDayOfMonth.withDayOfMonth(day);
+        // Adjust the first day of the week to Sunday as the first day
+        int firstDayOfWeek = firstOfMonth.getDayOfWeek().getValue();
+        if (firstDayOfWeek == 7) {
+            firstDayOfWeek = 0;  // Sunday as 0
+        }
 
-            // Determine the row and column for the current day
-            int row = (firstDayOfWeek + day - 1) / 7;
+        int lengthOfMonth = firstOfMonth.lengthOfMonth();
+
+        // Loop through the days of the month and add buttons
+        for (int day = 1; day <= lengthOfMonth; day++) {
+            int row = (firstDayOfWeek + day - 1) / 7 + 1;
             int col = (firstDayOfWeek + day - 1) % 7;
 
-            // Create a button for each day
             Button dayButton = new Button(String.valueOf(day));
             dayButton.setPrefSize(45, 45);
+            dayButton.setId(String.valueOf(day)); // Assign the day as the button ID
 
-            // Get the state of the day
-            Tracker.ButtonState state = dayStates.getOrDefault(currentDay, Tracker.ButtonState.NORMAL);
+            // Create the key for the date (use the full date format to store state)
+            String key = currentMonth.getYear() + "-" + currentMonth.getMonth().name() + "-" + day;
+            ButtonState state = loadButtonState(key);  // Load the current state of the day
             dayButton.setUserData(state);
-            tracker.applyButtonState(dayButton, state);  // Use Tracker's method to apply the state to the button
+            applyButtonState(dayButton, state);  // Apply the visual state (checked, crossed, etc.)
 
-            // Add action to the button for checking or crossing the day
-            dayButton.setOnAction(e -> tracker.handleDayClick(dayButton, currentDay));
+            // Set action for the button (to handle clicks)
+            dayButton.setOnAction(e -> handleDayClick(dayButton, key));
 
-            // Add the day button to the grid
-            GridPane.setRowIndex(dayButton, row);
-            GridPane.setColumnIndex(dayButton, col);
-            calendarGrid.getChildren().add(dayButton);
+            // Add the button to the grid at the appropriate position
+            calendarGrid.add(dayButton, col, row);
         }
 
-        // Add calendarGrid to the calendarPane
+        // Add the calendar grid to the calendar pane
         calendarPane.getChildren().add(calendarGrid);
         return calendarPane;
     }
+
 
     @FXML
     public void handleCreateNewTracker(ActionEvent event) {
@@ -215,5 +250,90 @@ public class HomeController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    // Relocated Methods
+
+    public enum ButtonState { NORMAL, CHECKED, CROSSED }
+
+    private ButtonState loadButtonState(String dateKey) {
+        String sql = "SELECT state FROM user_changes WHERE user_id = ? AND datelog = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, userId);
+            pstmt.setString(2, dateKey);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return ButtonState.valueOf(rs.getString("state"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return ButtonState.NORMAL;
+    }
+
+    private void saveButtonState(String dateKey, ButtonState state) {
+        String sql = "INSERT INTO user_changes (user_id, datelog, state) " +
+                "VALUES (?, ?, ?) " +
+                "ON CONFLICT(user_id, datelog) DO UPDATE SET state = excluded.state";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, userId);
+            pstmt.setString(2, dateKey);
+            pstmt.setString(3, state.toString());
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void applyButtonState(Button button, ButtonState state) {
+        double imageSize = 20;
+
+        switch (state) {
+            case CHECKED:
+                ImageView checkedImageView = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream(BASE_PATH + CHECKED_IMAGE_PATH))));
+                checkedImageView.setFitWidth(imageSize);
+                checkedImageView.setFitHeight(imageSize);
+                checkedImageView.setPreserveRatio(true);
+                button.setGraphic(checkedImageView);
+                button.setText(""); // Temporarily remove text
+                break;
+            case CROSSED:
+                ImageView crossedImageView = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream(BASE_PATH + CROSSED_IMAGE_PATH))));
+                crossedImageView.setFitWidth(imageSize);
+                crossedImageView.setFitHeight(imageSize);
+                crossedImageView.setPreserveRatio(true);
+                button.setGraphic(crossedImageView);
+                button.setText(""); // Temporarily remove text
+                break;
+            case NORMAL:
+            default:
+                button.setGraphic(null);
+                button.setText(button.getId()); // Restore the number as text
+                break;
+        }
+    }
+
+    public void handleDayClick(Button dayButton, String key) {
+        ButtonState currentState = (ButtonState) dayButton.getUserData();
+
+        ButtonState nextState;
+        switch (currentState) {
+            case NORMAL:
+                nextState = ButtonState.CHECKED;
+                break;
+            case CHECKED:
+                nextState = ButtonState.CROSSED;
+                break;
+            case CROSSED:
+            default:
+                nextState = ButtonState.NORMAL;
+                break;
+        }
+
+        dayButton.setUserData(nextState);
+        applyButtonState(dayButton, nextState);
+        saveButtonState(key, nextState);
     }
 }

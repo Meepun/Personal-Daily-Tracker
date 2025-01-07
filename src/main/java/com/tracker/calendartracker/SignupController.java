@@ -92,7 +92,7 @@ public class SignupController {
                 String insertTrackerQuery = "INSERT INTO trackers (user_id, tracker_name) VALUES (?, ?)";
                 PreparedStatement psTracker = connection.prepareStatement(insertTrackerQuery);
                 psTracker.setInt(1, userId);
-                psTracker.setString(2, "My First Tracker");
+                psTracker.setString(2, "Tracker 1");
                 psTracker.executeUpdate();
             }
         } catch (SQLException e) {
