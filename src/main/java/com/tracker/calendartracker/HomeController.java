@@ -480,14 +480,17 @@ public class HomeController {
     private void saveButtonState(String dateKey, ButtonState state, int trackerId) {
         String sql = "INSERT INTO user_changes (user_id, tracker_id, datelog, state) " +
                 "VALUES (?, ?, ?, ?) " +
-                "ON CONFLICT(user_id, tracker_id, datelog) " +
-                "DO UPDATE SET state = excluded.state";
+                "ON CONFLICT(tracker_id, datelog) " + // Conflict resolution on tracker_id and datelog
+                "DO UPDATE SET state = excluded.state"; // Using ON CONFLICT to update state
+
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, userId);
-            pstmt.setInt(2, trackerId);
-            pstmt.setString(3, dateKey);
-            pstmt.setString(4, state.toString());
+
+            pstmt.setInt(1, userId);           // Set the userId
+            pstmt.setInt(2, trackerId);        // Set the trackerId
+            pstmt.setString(3, dateKey);       // Set the dateKey (e.g., "2025-JAN-15")
+            pstmt.setString(4, state.toString());  // Set the button state (e.g., "CHECKED")
+
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
