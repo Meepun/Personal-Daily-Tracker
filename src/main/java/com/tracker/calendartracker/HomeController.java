@@ -103,7 +103,7 @@ public class HomeController {
         }
         yearDropdown.setItems(FXCollections.observableArrayList(years));
         yearDropdown.setValue(currentYear);
-        yearDropdown.setOnAction(this::handleYearSelection);
+        yearDropdown.setOnMouseClicked(this::handleMonthYearSelection);
     }
 
     // Set up the month list and load initial tracker tabs
@@ -250,26 +250,25 @@ public class HomeController {
         }
     }
 
-
     @FXML
-    private void handleYearSelection(ActionEvent event) {
-        Integer selectedYear = yearDropdown.getValue();
-        currentMonth = currentMonth.withYear(selectedYear);
-        updateCalendar(currentMonth.getMonth().toString());
-    }
-
-    // Handles the month selection from the ListView
-    @FXML
-    public void handleMonthYearSelection(MouseEvent event) {
-        String selectedMonth = monthListView.getSelectionModel().getSelectedItem();
-        if (selectedMonth != null) {
-            currentMonth = LocalDate.now().withMonth(Month.valueOf(selectedMonth.toUpperCase()).getValue()).withDayOfMonth(1);
-
+    private void handleMonthYearSelection(MouseEvent event) {
+        // Check if the event is from the year dropdown or the month list view
+        if (event.getSource() == yearDropdown) {
+            // Handle year selection
             Integer selectedYear = yearDropdown.getValue();
             currentMonth = currentMonth.withYear(selectedYear);
-
-            updateCalendar(currentMonth.getMonth().toString());
+        } else if (event.getSource() == monthListView) {
+            // Handle month selection
+            String selectedMonth = monthListView.getSelectionModel().getSelectedItem();
+            if (selectedMonth != null) {
+                currentMonth = LocalDate.now()
+                        .withMonth(Month.valueOf(selectedMonth.toUpperCase()).getValue())
+                        .withDayOfMonth(1);
+            }
         }
+
+        // After handling both selections, update the calendar
+        updateCalendar(currentMonth.getMonth().toString());
     }
 
     @FXML
