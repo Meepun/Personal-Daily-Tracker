@@ -177,12 +177,12 @@ public class HomeController {
 
             // Create the key for the date (use the full date format to store state)
             String key = currentMonth.getYear() + "-" + currentMonth.getMonth().name() + "-" + day;
-            ButtonState state = loadButtonState(key);  // Load the current state of the day
+            ButtonState state = loadButtonState(key, tracker.getTrackerId());  // Load the current state of the day
             dayButton.setUserData(state);
             applyButtonState(dayButton, state);  // Apply the visual state (checked, crossed, etc.)
 
             // Set action for the button (to handle clicks)
-            dayButton.setOnAction(e -> handleDayClick(dayButton, key));
+            dayButton.setOnAction(e -> handleDayClick(dayButton, key, tracker));
 
             // Add the button to the grid at the appropriate position
             calendarGrid.add(dayButton, col, row);
@@ -192,18 +192,24 @@ public class HomeController {
         calendarPane.getChildren().add(calendarGrid);
         return calendarPane;
     }
-
-
     @FXML
     public void handleCreateNewTracker(ActionEvent event) {
         // Create a new tracker
-        String trackerName = "New Tracker"; // You can get this from user input if needed
+        String trackerName = "New Tracker";  // You can get this from user input if needed
         Tracker newTracker = new Tracker(userId, trackerName);
-        newTracker.addNewTracker(trackerName);
+        newTracker.addNewTracker(trackerName);  // Adds the new tracker to the database
 
-        // Reload user trackers to include the new one
-        loadUserTrackers();
+        // Get the generated trackerId (this is done inside addNewTracker method)
+        int trackerId = newTracker.getTrackerId();  // Retrieve the trackerId after insertion
+
+        // If the trackerId is valid (not -1), proceed to load user trackers
+        if (trackerId != -1) {
+            loadUserTrackers();  // Reload user trackers to include the new one
+        } else {
+            System.out.println("Failed to create new tracker. Tracker ID is invalid.");
+        }
     }
+
 
     @FXML
     private void handleYearSelection(ActionEvent event) {
@@ -252,40 +258,42 @@ public class HomeController {
         }
     }
 
-    // Relocated Methods
-
     public enum ButtonState { NORMAL, CHECKED, CROSSED }
 
-    private ButtonState loadButtonState(String dateKey) {
-        String sql = "SELECT state FROM user_changes WHERE user_id = ? AND datelog = ?";
+    private ButtonState loadButtonState(String dateKey, int trackerId) {
+        String sql = "SELECT state FROM user_changes WHERE user_id = ? AND tracker_id = ? AND datelog = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, userId);
-            pstmt.setString(2, dateKey);
+            pstmt.setString(1, userId);      // user_id
+            pstmt.setInt(2, trackerId);      // tracker_id
+            pstmt.setString(3, dateKey);     // datelog (formatted as "YYYY-MM-DD")
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                return ButtonState.valueOf(rs.getString("state"));
+                return ButtonState.valueOf(rs.getString("state"));  // Return the stored state
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return ButtonState.NORMAL;
+        return ButtonState.NORMAL;  // Default state if no entry is found
     }
 
-    private void saveButtonState(String dateKey, ButtonState state) {
-        String sql = "INSERT INTO user_changes (user_id, datelog, state) " +
-                "VALUES (?, ?, ?) " +
-                "ON CONFLICT(user_id, datelog) DO UPDATE SET state = excluded.state";
+    private void saveButtonState(String dateKey, ButtonState state, int trackerId) {
+        String sql = "INSERT INTO user_changes (user_id, tracker_id, datelog, state) " +
+                "VALUES (?, ?, ?, ?) " +
+                "ON CONFLICT(user_id, tracker_id, datelog) " +
+                "DO UPDATE SET state = excluded.state";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, userId);
-            pstmt.setString(2, dateKey);
-            pstmt.setString(3, state.toString());
+            pstmt.setString(1, userId);      // user_id
+            pstmt.setInt(2, trackerId);      // tracker_id
+            pstmt.setString(3, dateKey);     // datelog (formatted as "YYYY-MM-DD")
+            pstmt.setString(4, state.toString());  // state (e.g., "CHECKED")
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
 
     private void applyButtonState(Button button, ButtonState state) {
         double imageSize = 20;
@@ -315,7 +323,7 @@ public class HomeController {
         }
     }
 
-    public void handleDayClick(Button dayButton, String key) {
+    public void handleDayClick(Button dayButton, String key, Tracker tracker) {
         ButtonState currentState = (ButtonState) dayButton.getUserData();
 
         ButtonState nextState;
@@ -334,6 +342,6 @@ public class HomeController {
 
         dayButton.setUserData(nextState);
         applyButtonState(dayButton, nextState);
-        saveButtonState(key, nextState);
+        saveButtonState(key, nextState, tracker.getTrackerId());
     }
 }
