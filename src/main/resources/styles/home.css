@@ -33,7 +33,6 @@
     -fx-font-size: 14px;
     -fx-font-weight: bold;
     -fx-text-fill: #333333;
-    -fx-alignment: top;
 }
 
 /* Month Navigation Panel */
@@ -44,6 +43,7 @@
 
 .month-label {
     -fx-font-size: 20px;
+    -fx-font-family: "Berlin Sans FB Demi";
     -fx-font-weight: bold;
     -fx-text-fill: #333333;
 }

@@ -18,6 +18,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.sql.*;
@@ -164,19 +165,17 @@ public class HomeController {
         Tab tab = new Tab(tracker.getTrackerName());
         tab.setUserData(tracker); // Associate tracker with tab
 
-        // Initialize and set the month label
-        monthLabel.setText(tracker.getCurrentMonth().getMonth().name() + " " + tracker.getCurrentMonth().getYear());
-
-        // Create an HBox for the navigation bar and center-align the month label
-        HBox tabNavBar = new HBox(monthLabel);
-        tabNavBar.setAlignment(Pos.CENTER); // Center align the label
-        tabNavBar.setAlignment(Pos.CENTER); // Center align the label
-
+        // Create a new month label for this specific tab
+        Label newMonthLabel = new Label(tracker.getCurrentMonth().getMonth().name() + " " + tracker.getCurrentMonth().getYear());
+        // Create an HBox for the navigation bar and center-align the label
+        HBox tabNavBar = new HBox(newMonthLabel);
+        tabNavBar.setAlignment(Pos.CENTER);  // Center align the label
+        newMonthLabel.setFont(Font.font("Berlin Sans FB Demi", 20));
 
         // Create calendar content
         AnchorPane calendarContent = createCalendarContent(tracker);
 
-        // Create a container for navbar and calendar
+        // Create a container for the navbar and calendar
         AnchorPane tabContent = new AnchorPane();
         tabContent.getChildren().addAll(tabNavBar, calendarContent);
 

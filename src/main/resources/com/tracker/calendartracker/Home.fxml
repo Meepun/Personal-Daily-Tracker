@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane prefHeight="599.0" prefWidth="690.0" stylesheets="@../../../styles/home.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tracker.calendartracker.HomeController">
+<BorderPane prefHeight="599.0" prefWidth="690.0" stylesheets="@../../../styles/home.css" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tracker.calendartracker.HomeController">
     <!-- Sidebar -->
     <right>
         <VBox alignment="CENTER" prefHeight="516.0" prefWidth="134.0" spacing="10" styleClass="month-panel">
@@ -68,7 +68,10 @@
                                 <AnchorPane fx:id="navBar" minHeight="0.0" minWidth="0.0" prefHeight="451.0" prefWidth="515.0">
                                     <children>
                                         <!-- Month Label -->
-                                        <Label fx:id="monthLabel" alignment="CENTER" layoutX="171.0" layoutY="-4.0" prefHeight="20.0" prefWidth="180.0" styleClass="month-label" text="JANUARY 2025" />
+                                        <Label fx:id="monthLabel" alignment="CENTER" layoutX="171.0" layoutY="-4.0" prefHeight="23.0" prefWidth="181.0" styleClass="month-label" text="JANUARY 2025">
+                                 <font>
+                                    <Font name="Berlin Sans FB Demi Bold" size="12.0" />
+                                 </font></Label>
                                           <Label style="-fx-font-weight: bold;" text="Tue" />
 
                                         <!-- Calendar Grid with Weekday Headers -->
