@@ -62,7 +62,7 @@
     <left>
         <HBox prefHeight="518.0" prefWidth="555.0" BorderPane.alignment="CENTER">
             <children>
-                <TabPane fx:id="tabPane" prefHeight="494.0" prefWidth="971.0" stylesheets="@../../../styles/style.css" tabClosingPolicy="ALL_TABS">
+                <TabPane fx:id="tabPane" prefHeight="494.0" prefWidth="971.0" stylesheets="@../../../styles/style.css" tabClosingPolicy="UNAVAILABLE">
                     <tabs>
                         <!-- Initial Tracker Tab will be added dynamically -->
                         <Tab text="Tracker 1">
