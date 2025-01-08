@@ -6,7 +6,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -28,16 +27,11 @@ public class SignupController {
     @FXML
     private TextField conpassTextField;
     @FXML
-    private Button signupButton;
-    @FXML
-    private Button mainmenuButton;
-    @FXML
     private ImageView hiLogoNoTextImageView;
     @FXML
-    private Label errorLabel; // Add the error label for displaying error messages
+    private Label errorLabel;
 
     public void initialize() {
-        // Load the logo image
         hiLogoNoTextImageView.setImage(new Image(getClass().getResource("/images/Hi Logo No Text.png").toString()));
     }
 
@@ -47,7 +41,6 @@ public class SignupController {
         String password = passTextField.getText();
         String confirmedPassword = conpassTextField.getText();
 
-        // Basic input validation
         if (username.isEmpty() || password.isEmpty() || confirmedPassword.isEmpty()) {
             displayErrorMessage("Please fill in all fields.");
             return;
@@ -66,10 +59,8 @@ public class SignupController {
             int rowsAffected = statement.executeUpdate();
 
             if (rowsAffected == 1) {
-                // After successful registration, create the first tracker
                 createFirstTracker(connection, username);
 
-                // Update session with the new userId
                 String userIdQuery = "SELECT user_id FROM loginsignup WHERE username = ?";
                 PreparedStatement ps = connection.prepareStatement(userIdQuery);
                 ps.setString(1, username);
@@ -77,11 +68,8 @@ public class SignupController {
                 if (rs.next()) {
                     int userId = rs.getInt("user_id");
 
-                    // Set session with new userId
                     SessionHandler.getInstance().setUserId(userId);
                 }
-
-                // Navigate to Home with updated session
                 navigateToHome(event);
             } else {
                 displayErrorMessage("Failed to register user.");
@@ -92,10 +80,8 @@ public class SignupController {
         }
     }
 
-
     private void createFirstTracker(Connection connection, String username) {
         try {
-            // Fetch the user ID based on the username
             String userIdQuery = "SELECT user_id FROM loginsignup WHERE username = ?";
             PreparedStatement ps = connection.prepareStatement(userIdQuery);
             ps.setString(1, username);
@@ -103,7 +89,6 @@ public class SignupController {
             if (rs.next()) {
                 int userId = rs.getInt("user_id");
 
-                // Insert the first tracker for this user
                 String insertTrackerQuery = "INSERT INTO trackers (user_id, tracker_name) VALUES (?, ?)";
                 PreparedStatement psTracker = connection.prepareStatement(insertTrackerQuery);
                 psTracker.setInt(1, userId);

@@ -16,14 +16,14 @@ public class Tracker {
     public Tracker(int userId, String trackerName) {
         this.userId = userId;
         this.trackerName = trackerName;
-        this.trackerId = -1;  // Default value, will be set after adding to DB
+        this.trackerId = -1;
         this.currentMonth = today.withDayOfMonth(1);
     }
 
     public Tracker(int userId, String trackerName, int trackerId) {
         this.userId = userId;
         this.trackerName = trackerName;
-        this.trackerId = trackerId;  // Set the actual trackerId passed from DB
+        this.trackerId = trackerId;
         this.currentMonth = today.withDayOfMonth(1);
     }
 
@@ -39,32 +39,23 @@ public class Tracker {
         return trackerId;
     }
 
-    public void setTrackerId(int trackerId) {
-        this.trackerId = trackerId;
-    }
-
     public LocalDate getCurrentMonth() {
         return currentMonth;
-    }
-    public void setCurrentMonth(LocalDate currentMonth) {
-        this.currentMonth = currentMonth;
     }
 
     public static List<Tracker> getTrackersForCurrentUser(int userId) {
         List<Tracker> trackers = new ArrayList<>();
-        String query = "SELECT tracker_id, tracker_name FROM trackers WHERE user_id = ?"; // Filter by user_id
+        String query = "SELECT tracker_id, tracker_name FROM trackers WHERE user_id = ?";
 
-        // Fetch trackers from the database based on user_id
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
-            pstmt.setInt(1, userId); // Set the logged-in user's ID
+            pstmt.setInt(1, userId);
 
-            // Execute the query and process the result set
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
                     int trackerId = rs.getInt("tracker_id");
                     String trackerName = rs.getString("tracker_name");
-                    trackers.add(new Tracker(userId, trackerName, trackerId));  // Use constructor with trackerId
+                    trackers.add(new Tracker(userId, trackerName, trackerId));
                 }
             }
         } catch (SQLException e) {
@@ -74,20 +65,16 @@ public class Tracker {
     }
 
     public boolean deleteTracker() {
-        // Queries to delete tracker-related data
         String deleteUserChangesQuery = "DELETE FROM user_changes WHERE tracker_id = ?";
         String deleteTrackerQuery = "DELETE FROM trackers WHERE tracker_id = ?";
 
-        // Use a connection to execute deletion
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt1 = conn.prepareStatement(deleteUserChangesQuery);
              PreparedStatement pstmt2 = conn.prepareStatement(deleteTrackerQuery)) {
 
-            // Ensure foreign key constraints are enabled
             Statement stmt = conn.createStatement();
             stmt.execute("PRAGMA foreign_keys = ON");
 
-            // Log tracker id before attempting deletion
             System.out.println("Attempting to delete tracker with ID: " + this.trackerId);
 
             if (this.trackerId == -1) {
@@ -95,12 +82,10 @@ public class Tracker {
                 return false;
             }
 
-            // First, delete any entries related to this tracker in the user_changes table
             pstmt1.setInt(1, this.trackerId);
             int rowsAffectedChanges = pstmt1.executeUpdate();
             System.out.println("Deleted " + rowsAffectedChanges + " related records from 'user_changes'.");
 
-            // Log the state of tracker reference in user_changes
             String checkUserChanges = "SELECT COUNT(*) FROM user_changes WHERE tracker_id = ?";
             try (PreparedStatement pstmtCheck = conn.prepareStatement(checkUserChanges)) {
                 pstmtCheck.setInt(1, this.trackerId);
@@ -112,7 +97,6 @@ public class Tracker {
                 }
             }
 
-            // Then, delete the tracker from the trackers table
             pstmt2.setInt(1, this.trackerId);
             int rowsAffectedTracker = pstmt2.executeUpdate();
             System.out.println("Rows affected in 'trackers' table: " + rowsAffectedTracker);
@@ -125,7 +109,6 @@ public class Tracker {
             }
 
         } catch (SQLException e) {
-            // Log detailed error
             System.err.println("SQL Error while deleting tracker: " + e.getMessage());
             e.printStackTrace();
         }
