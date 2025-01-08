@@ -164,7 +164,7 @@ public class HomeController {
         tab.setUserData(tracker);  // Link the tab to the Tracker
 
         // Create a new navigation bar for the tab
-        AnchorPane tabNavBar = createTabNavBar();
+        AnchorPane tabNavBar = createTabNavBar(tracker);
 
         // Create the calendar content for this tab
         AnchorPane calendarContent = createCalendarContent(tracker);
@@ -235,11 +235,12 @@ public class HomeController {
         });
     }
 
-
-
-    private AnchorPane createTabNavBar() {
-        // Create a new AnchorPane for the navigation bar
+    private AnchorPane createTabNavBar(Tracker tracker) {
         AnchorPane navBar = new AnchorPane();
+
+        // Add styling or event handlers as needed
+        previousMonthButton.setOnAction(e -> handlePreviousMonth());
+        nextMonthButton.setOnAction(e -> handleNextMonth());
 
         navBar.getChildren().addAll(previousMonthButton, monthLabel, nextMonthButton);
         return navBar;
@@ -308,7 +309,7 @@ public class HomeController {
         }
 
         // Add the calendar grid to the calendar pane
-        calendarPane.getChildren().addAll(calendarGrid);
+        calendarPane.getChildren().addAll(calendarGrid, createTabNavBar(tracker));
         return calendarPane;
     }
 
@@ -385,13 +386,13 @@ public class HomeController {
     }
 
     @FXML
-    private void handlePreviousMonth(ActionEvent event) {
+    private void handlePreviousMonth() {
         currentMonth = currentMonth.minusMonths(1);
         updateCalendar(currentMonth.getMonth().toString());
     }
 
     @FXML
-    private void handleNextMonth(ActionEvent event) {
+    private void handleNextMonth() {
         currentMonth = currentMonth.plusMonths(1);
         updateCalendar(currentMonth.getMonth().toString());
     }

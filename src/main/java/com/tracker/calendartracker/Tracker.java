@@ -149,7 +149,6 @@ public class Tracker {
         return false;
     }
 
-
     public boolean renameTracker(String newName, Connection connection) {
         String query = "UPDATE trackers SET tracker_name = ? WHERE tracker_id = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
