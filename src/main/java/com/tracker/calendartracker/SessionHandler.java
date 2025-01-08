@@ -8,7 +8,6 @@ public class SessionHandler {
     private SessionHandler() {
     }
 
-    // Singleton pattern
     public static SessionHandler getInstance() {
         if (instance == null) {
             instance = new SessionHandler();

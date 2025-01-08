@@ -48,7 +48,6 @@ public class HomeController {
 
     @FXML
     private void initialize() {
-        // Retrieve userId from the session
         this.userId = SessionHandler.getInstance().getUserId();
 
         String username = getUserNameFromDatabase(String.valueOf(userId));
@@ -79,24 +78,21 @@ public class HomeController {
 
         yearDropdown.setOnMouseClicked(this::handleMonthYearSelection);
 
-        // Initialize the calendar with the current month
         updateCalendar(currentMonth.getMonth().toString());
 
-        // Handle create new tracker button
         createNewTrackerButton.setOnAction(this::handleCreateNewTracker);
         deleteTrackerButton.setOnAction(this::handleDeleteTracker);
 
         initializeYearDropdown();
         initializeMonthListView();
 
-        // Load the first tracker after login/signup
         loadUserTrackers();
 
         tabPane.setOnMouseClicked(event -> {
-            if (event.getClickCount() == 2) {  // Check if it's a double click
-                Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();  // Get the tab that was double-clicked
+            if (event.getClickCount() == 2) {
+                Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();
                 if (selectedTab != null) {
-                    handleRenameTracker(selectedTab);  // Rename the selected tab's tracker
+                    handleRenameTracker(selectedTab);
                 }
             }
         });
@@ -153,7 +149,7 @@ public class HomeController {
     // Adds new Trackers with independent contents
     private void addTrackerTab(Tracker tracker) {
         Tab tab = new Tab(tracker.getTrackerName());
-        tab.setUserData(tracker); // Associate tracker with tab
+        tab.setUserData(tracker);
 
         Label newMonthLabel = new Label(tracker.getCurrentMonth().getMonth().name() + " " + tracker.getCurrentMonth().getYear());
         HBox tabNavBar = new HBox(newMonthLabel);
@@ -460,7 +456,7 @@ public class HomeController {
     private void showAlert(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
-        alert.setHeaderText(null); // No header text
+        alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();
     }
