@@ -170,7 +170,8 @@ public class HomeController {
         // Create an HBox for the navigation bar and center-align the month label
         HBox tabNavBar = new HBox(monthLabel);
         tabNavBar.setAlignment(Pos.CENTER); // Center align the label
-        tabNavBar.setPadding(new Insets(10)); // Add padding for spacing
+        tabNavBar.setAlignment(Pos.CENTER); // Center align the label
+
 
         // Create calendar content
         AnchorPane calendarContent = createCalendarContent(tracker);
@@ -238,11 +239,11 @@ public class HomeController {
         // Create a GridPane for the calendar
         GridPane calendarGrid = new GridPane();
         calendarGrid.setLayoutX(3.0);
-        calendarGrid.setLayoutY(14.0);
+        calendarGrid.setLayoutY(-18.0);
         calendarGrid.setHgap(10);
         calendarGrid.setVgap(10);
         calendarGrid.getStyleClass().add("calendar-grid");
-        calendarGrid.setPrefSize(525.0, 387.0);
+        calendarGrid.setPrefSize(525.0, 430.0);
         calendarGrid.setAlignment(Pos.TOP_CENTER);
 
         // Add the row for the days of the week (Sun, Mon, Tue, Wed, Thu, Fri, Sat)
@@ -251,7 +252,7 @@ public class HomeController {
             Label dayLabel = new Label(daysOfWeek[i]);
             dayLabel.getStyleClass().add("calendar-header");
             GridPane.setHalignment(dayLabel, HPos.CENTER);
-            GridPane.setValignment(dayLabel, VPos.CENTER);
+            GridPane.setValignment(dayLabel, VPos.TOP);
             calendarGrid.add(dayLabel, i, 0);
         }
 

@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane prefHeight="583.0" prefWidth="690.0" stylesheets="@../../../styles/home.css" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tracker.calendartracker.HomeController">
+<BorderPane prefHeight="599.0" prefWidth="690.0" stylesheets="@../../../styles/home.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tracker.calendartracker.HomeController">
     <!-- Sidebar -->
     <right>
         <VBox alignment="CENTER" prefHeight="516.0" prefWidth="134.0" spacing="10" styleClass="month-panel">
@@ -65,18 +65,18 @@
                         <!-- Initial Tracker Tab will be added dynamically -->
                         <Tab text="Tracker 1">
                             <content>
-                                <AnchorPane fx:id="navBar" minHeight="0.0" minWidth="0.0" prefHeight="425.0" prefWidth="516.0">
+                                <AnchorPane fx:id="navBar" minHeight="0.0" minWidth="0.0" prefHeight="451.0" prefWidth="515.0">
                                     <children>
                                         <!-- Month Label -->
                                         <Label fx:id="monthLabel" alignment="CENTER" layoutX="171.0" layoutY="-4.0" prefHeight="20.0" prefWidth="180.0" styleClass="month-label" text="JANUARY 2025" />
+                                          <Label style="-fx-font-weight: bold;" text="Tue" />
 
                                         <!-- Calendar Grid with Weekday Headers -->
-                                        <GridPane fx:id="calendarGrid" alignment="TOP_CENTER" hgap="10" layoutX="3.0" layoutY="28.0" prefHeight="418.0" prefWidth="516.0" styleClass="calendar-grid" vgap="10">
+                                        <GridPane fx:id="calendarGrid" alignment="TOP_CENTER" hgap="10" layoutX="3.0" layoutY="22.0" prefHeight="445.0" prefWidth="516.0" styleClass="calendar-grid" vgap="10">
                                             <children>
                                                 <!-- Weekday Headers (Add these manually in SceneBuilder) -->
                                                 <Label style="-fx-font-weight: bold;" text="Sun" GridPane.columnIndex="0" />
                                                 <Label style="-fx-font-weight: bold;" text="Mon" GridPane.columnIndex="1" />
-                                                <Label style="-fx-font-weight: bold;" text="Tue" GridPane.columnIndex="2" />
                                                 <Label style="-fx-font-weight: bold;" text="Wed" GridPane.columnIndex="3" />
                                                 <Label style="-fx-font-weight: bold;" text="Thu" GridPane.columnIndex="4" />
                                                 <Label style="-fx-font-weight: bold;" text="Fri" GridPane.columnIndex="5" />

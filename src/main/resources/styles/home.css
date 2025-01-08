@@ -33,6 +33,7 @@
     -fx-font-size: 14px;
     -fx-font-weight: bold;
     -fx-text-fill: #333333;
+    -fx-alignment: top;
 }
 
 /* Month Navigation Panel */
