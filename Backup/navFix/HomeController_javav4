@@ -106,21 +106,6 @@ public class HomeController {
         });
     }
 
-    private String getUserNameFromDatabase(String userId) {
-        String sql = "SELECT username FROM loginsignup WHERE user_id = ?";
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, userId);
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                return rs.getString("username");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return "User"; // Fallback value if username is not found
-    }
-
     // Initialize the year dropdown
     private void initializeYearDropdown() {
         int currentYear = currentMonth.getYear();
@@ -202,52 +187,14 @@ public class HomeController {
         });
     }
 
-    @FXML
-    private void handleRenameTracker(Tab tab) {
-        // Get the Tracker object associated with the clicked tab
-        Tracker tracker = (Tracker) tab.getUserData();
-
-        // Check if the tracker is valid
-        if (tracker == null) {
-            showAlert("Error", "Tracker not found.");
-            return;
-        }
-
-        // Create the input dialog for renaming the tracker
-        TextInputDialog dialog = new TextInputDialog(tracker.getTrackerName());
-        dialog.setTitle("Rename Tracker");
-        dialog.setHeaderText("Rename the tracker");
-        dialog.setContentText("Enter new tracker name:");
-
-        // Show the dialog and process the result if present
-        Optional<String> result = dialog.showAndWait();
-        result.ifPresent(newName -> {
-            // Attempt to rename the tracker in the database and update UI
-            try (Connection connection = DBConnection.getConnection()) {
-                if (tracker.renameTracker(newName, connection)) {
-                    // Update the tracker name in the trackerMap and the tab label
-                    tracker.setTrackerName(newName);
-                    tab.setText(newName);  // Update the tab label
-                } else {
-                    showAlert("Error", "Unable to rename tracker.");
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-                showAlert("Error", "Database connection error.");
-            }
-        });
-    }
-
     private AnchorPane createTabNavBar(Tracker tracker) {
         AnchorPane navBar = new AnchorPane();
 
-        // Display the current month and year for the tracker tab
-        Label tabMonthLabel = new Label(tracker.getCurrentMonth().getMonth().name() + " " + tracker.getCurrentMonth().getYear());
+        Label monthLabel = new Label(tracker.getCurrentMonth().getMonth().name() + " " + tracker.getCurrentMonth().getYear());
 
-        navBar.getChildren().addAll(tabMonthLabel);
+        navBar.getChildren().addAll(monthLabel);
         return navBar;
     }
-
 
     private AnchorPane createCalendarContent(Tracker tracker) {
         AnchorPane calendarPane = new AnchorPane();
@@ -318,57 +265,6 @@ public class HomeController {
     }
 
     @FXML
-    private void handleDeleteTracker(ActionEvent actionEvent) {
-        // Assuming `userId` is available and stores the logged-in user ID
-        int currentUserId = userId;
-
-        // Fetch all trackers for the current user from the database
-        List<Tracker> userTrackers = Tracker.getTrackersForCurrentUser(currentUserId);
-
-        // Extract tracker names from the list of Tracker objects
-        List<String> trackerNames = userTrackers.stream()
-                .map(Tracker::getTrackerName)
-                .collect(Collectors.toList());
-
-        // Show the dialog to choose which tracker to delete
-        ChoiceDialog<String> dialog = new ChoiceDialog<>(null, trackerNames);
-        dialog.setTitle("Delete Tracker");
-        dialog.setHeaderText("Select a tracker to delete");
-        dialog.setContentText("Choose tracker:");
-
-        Optional<String> result = dialog.showAndWait();
-        result.ifPresent(selectedName -> {
-            // Find the Tracker object corresponding to the selected name
-            Tracker trackerToDelete = userTrackers.stream()
-                    .filter(tracker -> tracker.getTrackerName().equals(selectedName))
-                    .findFirst()
-                    .orElse(null);
-
-            if (trackerToDelete != null) {
-                // Confirm deletion
-                Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
-                confirmAlert.setTitle("Confirmation");
-                confirmAlert.setHeaderText("Are you sure?");
-                confirmAlert.setContentText("Do you really want to delete \"" + selectedName + "\"?");
-
-                Optional<ButtonType> confirmation = confirmAlert.showAndWait();
-                if (confirmation.isPresent() && confirmation.get() == ButtonType.OK) {
-                    // Delete the tracker from the database
-                    boolean success = trackerToDelete.deleteTracker();
-                    if (success) {
-                        // After deletion, clear all tabs
-                        tabPane.getTabs().clear();
-                        // Reload user trackers and update the UI
-                        loadUserTrackers();  // Re-populate the TabPane with the remaining trackers
-                    } else {
-                        showAlert("Error", "Unable to delete tracker. It might have related changes or issues.");
-                    }
-                }
-            }
-        });
-    }
-
-    @FXML
     private void handleYearSelection(ActionEvent event) {
         Integer selectedYear = yearDropdown.getValue();
         currentMonth = currentMonth.withYear(selectedYear);
@@ -378,29 +274,22 @@ public class HomeController {
     // Handles the month selection from the ListView
     @FXML
     public void handleMonthYearSelection(MouseEvent event) {
-        // Get the selected month from the ListView
         String selectedMonth = monthListView.getSelectionModel().getSelectedItem();
-
         if (selectedMonth != null) {
-            // Convert the month name to a Month enum
-            Month monthEnum = Month.valueOf(selectedMonth.toUpperCase());
-
-            // Update the current month with the selected month
-            currentMonth = currentMonth.withMonth(monthEnum.getValue()).withDayOfMonth(1);
-
-            // Get the selected year from the year dropdown
+            currentMonth = LocalDate.now().withMonth(Month.valueOf(selectedMonth.toUpperCase()).getValue()).withDayOfMonth(1);
             Integer selectedYear = yearDropdown.getValue();
-            currentMonth = currentMonth.withYear(selectedYear);  // Update the year as well
+            currentMonth = currentMonth.withYear(selectedYear);
 
-            // Update the month label in the sidebar
+            // Update the calendar label
             monthLabel.setText(currentMonth.getMonth().toString() + " " + currentMonth.getYear());
 
-            // Call the method to update the calendar with the selected month
+            // Update the calendar
             updateCalendar(currentMonth.getMonth().toString());
         }
     }
+
     private void updateCalendar(String month) {
-        // The sidebar monthLabel should already be updated, so no need to update here again.
+        monthLabel.setText(month + " " + currentMonth.getYear());  // Set the current month and year label
 
         // Get the currently selected tab (the tracker)
         Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();
@@ -426,6 +315,7 @@ public class HomeController {
             AnchorPane.setRightAnchor(newCalendarContent, 0.0);
         }
     }
+
 
     public void handleCreateNewTracker(ActionEvent actionEvent) {
         // Show a dialog for the user to input the new tracker name
@@ -456,152 +346,4 @@ public class HomeController {
             }
         });
     }
-
-    public enum ButtonState { NORMAL, CHECKED, CROSSED }
-
-    private ButtonState loadButtonState(String dateKey, int trackerId) {
-        String sql = "SELECT state FROM user_changes WHERE user_id = ? AND tracker_id = ? AND datelog = ?";
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, userId);
-            pstmt.setInt(2, trackerId);
-            pstmt.setString(3, dateKey);
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                return ButtonState.valueOf(rs.getString("state"));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return ButtonState.NORMAL;
-    }
-
-    private void saveButtonState(String dateKey, ButtonState state, int trackerId) {
-        String sql = "INSERT INTO user_changes (user_id, tracker_id, datelog, state) " +
-                "VALUES (?, ?, ?, ?) " +
-                "ON CONFLICT(tracker_id, datelog) " + // Conflict resolution on tracker_id and datelog
-                "DO UPDATE SET state = excluded.state"; // Using ON CONFLICT to update state
-
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setInt(1, userId);           // Set the userId
-            pstmt.setInt(2, trackerId);        // Set the trackerId
-            pstmt.setString(3, dateKey);       // Set the dateKey (e.g., "2025-JAN-15")
-            pstmt.setString(4, state.toString());  // Set the button state (e.g., "CHECKED")
-
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void applyButtonState(Button button, ButtonState state) {
-        double imageSize = 20;
-
-        switch (state) {
-            case CHECKED:
-                ImageView checkedImageView = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream(BASE_PATH + CHECKED_IMAGE_PATH))));
-                checkedImageView.setFitWidth(imageSize);
-                checkedImageView.setFitHeight(imageSize);
-                checkedImageView.setPreserveRatio(true);
-                button.setGraphic(checkedImageView);
-                button.setText(""); // Temporarily remove text
-                break;
-            case CROSSED:
-                ImageView crossedImageView = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream(BASE_PATH + CROSSED_IMAGE_PATH))));
-                crossedImageView.setFitWidth(imageSize);
-                crossedImageView.setFitHeight(imageSize);
-                crossedImageView.setPreserveRatio(true);
-                button.setGraphic(crossedImageView);
-                button.setText(""); // Temporarily remove text
-                break;
-            case NORMAL:
-            default:
-                button.setGraphic(null);
-                button.setText(button.getId()); // Restore the number as text
-                break;
-        }
-    }
-
-    public void handleDayClick(Button dayButton, String key, Tracker tracker) {
-        ButtonState currentState = (ButtonState) dayButton.getUserData();
-
-        ButtonState nextState;
-        switch (currentState) {
-            case NORMAL:
-                nextState = ButtonState.CHECKED;
-                break;
-            case CHECKED:
-                nextState = ButtonState.CROSSED;
-                break;
-            case CROSSED:
-            default:
-                nextState = ButtonState.NORMAL;
-                break;
-        }
-
-        dayButton.setUserData(nextState);
-        applyButtonState(dayButton, nextState);
-        saveButtonState(key, nextState, tracker.getTrackerId());
-    }
-
-    private void showAlert(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null); // No header text
-        alert.setContentText(content);
-        alert.showAndWait();
-    }
-
-    @FXML
-    private void handleLogout(ActionEvent event) {
-        // Create a confirmation dialog
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Confirm Logout");
-        alert.setHeaderText(null);
-        alert.setContentText("Are you sure you want to log out?");
-
-        // Style the dialog pane
-        DialogPane dialogPane = alert.getDialogPane();
-        dialogPane.setStyle("-fx-background-color: #C37B1EFF; -fx-font-size: 14px; -fx-text-fill: white;");
-        dialogPane.lookupAll(".label").forEach(node -> node.setStyle("-fx-text-fill: white;"));
-
-        // Add Yes and No buttons
-        ButtonType yesButton = new ButtonType("Yes", ButtonBar.ButtonData.OK_DONE);
-        ButtonType noButton = new ButtonType("No", ButtonBar.ButtonData.CANCEL_CLOSE);
-        alert.getButtonTypes().setAll(yesButton, noButton);
-
-        // Center-align the buttons
-        Node buttonBar = dialogPane.lookup(".button-bar");
-        if (buttonBar instanceof HBox) {
-            ((HBox) buttonBar).setAlignment(Pos.CENTER); // Center the buttons
-            ((HBox) buttonBar).setSpacing(10);          // Add spacing between buttons
-        }
-
-        // Wait for the user's response
-        Optional<ButtonType> result = alert.showAndWait();
-
-        if (result.isPresent() && result.get() == yesButton) {
-            // Proceed with logout
-
-            // Clear session data
-            SessionHandler.getInstance().clearSession();
-
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/tracker/calendartracker/mainmenu.fxml"));
-                Parent root = loader.load();
-                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                stage.setScene(new Scene(root));
-                stage.setTitle("Main Menu");
-                stage.show();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else {
-            // Do nothing, stay on the current page
-            alert.close();
-        }
-    }
-
 }
