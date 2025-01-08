@@ -68,7 +68,21 @@ public class SignupController {
             if (rowsAffected == 1) {
                 // After successful registration, create the first tracker
                 createFirstTracker(connection, username);
-                navigateToHome(event); // Navigate to Home.fxml
+
+                // Update session with the new userId
+                String userIdQuery = "SELECT user_id FROM loginsignup WHERE username = ?";
+                PreparedStatement ps = connection.prepareStatement(userIdQuery);
+                ps.setString(1, username);
+                ResultSet rs = ps.executeQuery();
+                if (rs.next()) {
+                    int userId = rs.getInt("user_id");
+
+                    // Set session with new userId
+                    SessionHandler.getInstance().setUserId(userId);
+                }
+
+                // Navigate to Home with updated session
+                navigateToHome(event);
             } else {
                 displayErrorMessage("Failed to register user.");
             }
@@ -77,6 +91,7 @@ public class SignupController {
             e.printStackTrace();
         }
     }
+
 
     private void createFirstTracker(Connection connection, String username) {
         try {
