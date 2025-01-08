@@ -19,7 +19,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
-import java.io.IOException;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.Month;
@@ -32,7 +31,6 @@ public class HomeController {
     @FXML private ListView<String> monthListView;
     @FXML private TabPane tabPane;
     @FXML private Label monthLabel;
-    @FXML private Button previousMonthButton, nextMonthButton;
     @FXML private Button createNewTrackerButton;
     @FXML public  Button deleteTrackerButton;
     @FXML private Label welcomeLabel;
@@ -164,19 +162,11 @@ public class HomeController {
         // Set the tracker as the tab's user data to associate it with the tab
         tab.setUserData(tracker);
 
-        // Create a new navigation bar for the tab
-        AnchorPane tabNavBar = createTabNavBar(tracker);
-
         // Create the calendar content for this tab
         AnchorPane calendarContent = createCalendarContent(tracker);
 
         // Create an AnchorPane to hold both the nav bar and the calendar content
         AnchorPane tabContent = new AnchorPane();
-
-        // Position the navigation bar at the top of the tab content
-        AnchorPane.setTopAnchor(tabNavBar, 0.0);
-        AnchorPane.setLeftAnchor(tabNavBar, 0.0);
-        AnchorPane.setRightAnchor(tabNavBar, 0.0);
 
         // Position the calendar content below the navigation bar
         AnchorPane.setTopAnchor(calendarContent, 50.0);
@@ -184,7 +174,7 @@ public class HomeController {
         AnchorPane.setRightAnchor(calendarContent, 0.0);
 
         // Add both the nav bar and the calendar content to the tab content
-        tabContent.getChildren().addAll(tabNavBar, calendarContent);
+        tabContent.getChildren().addAll(calendarContent);
 
         // Set the content of the tab
         tab.setContent(tabContent);
@@ -234,61 +224,6 @@ public class HomeController {
                 showAlert("Error", "Database connection error.");
             }
         });
-    }
-
-    private AnchorPane createTabNavBar(Tracker tracker) {
-        AnchorPane navBar = new AnchorPane();
-
-        // Create unique buttons and label for each tab
-        Button previousMonthButton = new Button("<");
-        Label monthLabel = new Label(tracker.getCurrentMonth().getMonth().name() + " " + tracker.getCurrentMonth().getYear());
-        Button nextMonthButton = new Button(">");
-
-        // Set button actions to update the specific tracker's state
-        previousMonthButton.setOnAction(e -> {
-            tracker.setCurrentMonth(tracker.getCurrentMonth().minusMonths(1));
-            monthLabel.setText(tracker.getCurrentMonth().getMonth().name() + " " + tracker.getCurrentMonth().getYear());
-            refreshCalendar(tracker);
-        });
-
-        nextMonthButton.setOnAction(e -> {
-            tracker.setCurrentMonth(tracker.getCurrentMonth().plusMonths(1));
-            monthLabel.setText(tracker.getCurrentMonth().getMonth().name() + " " + tracker.getCurrentMonth().getYear());
-            refreshCalendar(tracker);
-        });
-
-        // Position the buttons and label on the navigation bar
-        AnchorPane.setLeftAnchor(previousMonthButton, 10.0);
-        AnchorPane.setTopAnchor(previousMonthButton, 10.0);
-
-        AnchorPane.setLeftAnchor(monthLabel, 50.0);
-        AnchorPane.setTopAnchor(monthLabel, 10.0);
-
-        AnchorPane.setLeftAnchor(nextMonthButton, 150.0);
-        AnchorPane.setTopAnchor(nextMonthButton, 10.0);
-
-        navBar.getChildren().addAll(previousMonthButton, monthLabel, nextMonthButton);
-        return navBar;
-    }
-
-    private void refreshCalendar(Tracker tracker) {
-        AnchorPane calendarContent = createCalendarContent(tracker);
-        Tab tab = findTabByTracker(tracker);
-        AnchorPane tabContent = (AnchorPane) tab.getContent();
-
-        // Remove old calendar and add the updated one
-        tabContent.getChildren().removeIf(node -> node instanceof GridPane);
-        AnchorPane.setTopAnchor(calendarContent, 50.0);
-        tabContent.getChildren().add(calendarContent);
-    }
-
-    private Tab findTabByTracker(Tracker tracker) {
-        for (Tab tab : tabPane.getTabs()) {
-            if (tab.getUserData() == tracker) {
-                return tab;
-            }
-        }
-        return null;
     }
 
     private AnchorPane createCalendarContent(Tracker tracker) {
@@ -428,18 +363,6 @@ public class HomeController {
 
             updateCalendar(currentMonth.getMonth().toString());
         }
-    }
-
-    @FXML
-    private void handlePreviousMonth() {
-        currentMonth = currentMonth.minusMonths(1);
-        updateCalendar(currentMonth.getMonth().toString());
-    }
-
-    @FXML
-    private void handleNextMonth() {
-        currentMonth = currentMonth.plusMonths(1);
-        updateCalendar(currentMonth.getMonth().toString());
     }
 
     private void updateCalendar(String month) {

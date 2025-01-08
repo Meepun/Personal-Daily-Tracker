@@ -74,18 +74,6 @@
                                         <!-- Month Label -->
                                         <Label fx:id="monthLabel" alignment="CENTER" layoutX="171.0" layoutY="-4.0" prefHeight="20.0" prefWidth="180.0" styleClass="month-label" text="JANUARY 2025" />
 
-                                        <!-- Navigation Buttons -->
-                                        <Button fx:id="previousMonthButton" layoutX="113.0" layoutY="-4.0" onAction="#handlePreviousMonth" text="&lt;">
-                                            <font>
-                                                <Font name="Yu Gothic Regular" size="12.0" />
-                                            </font>
-                                        </Button>
-                                        <Button fx:id="nextMonthButton" layoutX="384.0" layoutY="-4.0" onAction="#handleNextMonth" text="&gt;">
-                                            <font>
-                                                <Font name="Yu Gothic Regular" size="12.0" />
-                                            </font>
-                                        </Button>
-
                                         <!-- Calendar Grid with Weekday Headers -->
                                         <GridPane fx:id="calendarGrid" alignment="TOP_CENTER" hgap="10" layoutX="3.0" layoutY="28.0" prefHeight="384.0" prefWidth="525.0" styleClass="calendar-grid" vgap="10">
                                             <children>
