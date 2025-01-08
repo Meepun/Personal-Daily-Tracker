@@ -38,6 +38,7 @@ public class HomeController {
     private LocalDate currentMonth = LocalDate.now();
     private LocalDate today = LocalDate.now();
     private Map<Tab, Tracker> trackerMap = new HashMap<>();
+    @FXML
     private Label monthLabel = new Label();
 
     private static final String BASE_PATH = "/images/";
