@@ -164,7 +164,7 @@ public class HomeController {
         tab.setUserData(tracker);  // Link the tab to the Tracker
 
         // Create a new navigation bar for the tab
-        AnchorPane tabNavBar = createTabNavBar(tracker);
+        AnchorPane tabNavBar = createTabNavBar();
 
         // Create the calendar content for this tab
         AnchorPane calendarContent = createCalendarContent(tracker);
@@ -235,12 +235,9 @@ public class HomeController {
         });
     }
 
-    private AnchorPane createTabNavBar(Tracker tracker) {
+    private AnchorPane createTabNavBar() {
+        // Create a new AnchorPane for the navigation bar
         AnchorPane navBar = new AnchorPane();
-
-        // Add styling or event handlers as needed
-        previousMonthButton.setOnAction(e -> handlePreviousMonth());
-        nextMonthButton.setOnAction(e -> handleNextMonth());
 
         navBar.getChildren().addAll(previousMonthButton, monthLabel, nextMonthButton);
         return navBar;
@@ -309,7 +306,7 @@ public class HomeController {
         }
 
         // Add the calendar grid to the calendar pane
-        calendarPane.getChildren().addAll(calendarGrid, createTabNavBar(tracker));
+        calendarPane.getChildren().addAll(calendarGrid);
         return calendarPane;
     }
 
@@ -364,39 +361,6 @@ public class HomeController {
         });
     }
 
-    @FXML
-    private void handleYearSelection(ActionEvent event) {
-        Integer selectedYear = yearDropdown.getValue();
-        currentMonth = currentMonth.withYear(selectedYear);
-        updateCalendar(currentMonth.getMonth().toString());
-    }
-
-    // Handles the month selection from the ListView
-    @FXML
-    public void handleMonthYearSelection(MouseEvent event) {
-        String selectedMonth = monthListView.getSelectionModel().getSelectedItem();
-        if (selectedMonth != null) {
-            currentMonth = LocalDate.now().withMonth(Month.valueOf(selectedMonth.toUpperCase()).getValue()).withDayOfMonth(1);
-
-            Integer selectedYear = yearDropdown.getValue();
-            currentMonth = currentMonth.withYear(selectedYear);
-
-            updateCalendar(currentMonth.getMonth().toString());
-        }
-    }
-
-    @FXML
-    private void handlePreviousMonth() {
-        currentMonth = currentMonth.minusMonths(1);
-        updateCalendar(currentMonth.getMonth().toString());
-    }
-
-    @FXML
-    private void handleNextMonth() {
-        currentMonth = currentMonth.plusMonths(1);
-        updateCalendar(currentMonth.getMonth().toString());
-    }
-
     private void updateCalendar(String month) {
         monthLabel.setText(month + " " + currentMonth.getYear());
 
@@ -427,12 +391,8 @@ public class HomeController {
 
     @FXML
     private void handleLogout(ActionEvent event) {
-
-        // Clear session data
-        SessionHandler.getInstance().clearSession();
-
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/tracker/calendartracker/mainmenu.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/tracker/calendartracker/Login.fxml"));
             Parent root = loader.load();
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Scene scene = new Scene(root);
@@ -471,95 +431,6 @@ public class HomeController {
                 showAlert("Error", "Failed to create new tracker.");
             }
         });
-    }
-
-    public enum ButtonState { NORMAL, CHECKED, CROSSED }
-
-    private ButtonState loadButtonState(String dateKey, int trackerId) {
-        String sql = "SELECT state FROM user_changes WHERE user_id = ? AND tracker_id = ? AND datelog = ?";
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, userId);
-            pstmt.setInt(2, trackerId);
-            pstmt.setString(3, dateKey);
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                return ButtonState.valueOf(rs.getString("state"));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return ButtonState.NORMAL;
-    }
-
-    private void saveButtonState(String dateKey, ButtonState state, int trackerId) {
-        String sql = "INSERT INTO user_changes (user_id, tracker_id, datelog, state) " +
-                "VALUES (?, ?, ?, ?) " +
-                "ON CONFLICT(tracker_id, datelog) " + // Conflict resolution on tracker_id and datelog
-                "DO UPDATE SET state = excluded.state"; // Using ON CONFLICT to update state
-
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setInt(1, userId);           // Set the userId
-            pstmt.setInt(2, trackerId);        // Set the trackerId
-            pstmt.setString(3, dateKey);       // Set the dateKey (e.g., "2025-JAN-15")
-            pstmt.setString(4, state.toString());  // Set the button state (e.g., "CHECKED")
-
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void applyButtonState(Button button, ButtonState state) {
-        double imageSize = 20;
-
-        switch (state) {
-            case CHECKED:
-                ImageView checkedImageView = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream(BASE_PATH + CHECKED_IMAGE_PATH))));
-                checkedImageView.setFitWidth(imageSize);
-                checkedImageView.setFitHeight(imageSize);
-                checkedImageView.setPreserveRatio(true);
-                button.setGraphic(checkedImageView);
-                button.setText(""); // Temporarily remove text
-                break;
-            case CROSSED:
-                ImageView crossedImageView = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream(BASE_PATH + CROSSED_IMAGE_PATH))));
-                crossedImageView.setFitWidth(imageSize);
-                crossedImageView.setFitHeight(imageSize);
-                crossedImageView.setPreserveRatio(true);
-                button.setGraphic(crossedImageView);
-                button.setText(""); // Temporarily remove text
-                break;
-            case NORMAL:
-            default:
-                button.setGraphic(null);
-                button.setText(button.getId()); // Restore the number as text
-                break;
-        }
-    }
-
-    public void handleDayClick(Button dayButton, String key, Tracker tracker) {
-        ButtonState currentState = (ButtonState) dayButton.getUserData();
-
-        ButtonState nextState;
-        switch (currentState) {
-            case NORMAL:
-                nextState = ButtonState.CHECKED;
-                break;
-            case CHECKED:
-                nextState = ButtonState.CROSSED;
-                break;
-            case CROSSED:
-            default:
-                nextState = ButtonState.NORMAL;
-                break;
-        }
-
-        dayButton.setUserData(nextState);
-        applyButtonState(dayButton, nextState);
-        saveButtonState(key, nextState, tracker.getTrackerId());
     }
 
     private void showAlert(String title, String content) {

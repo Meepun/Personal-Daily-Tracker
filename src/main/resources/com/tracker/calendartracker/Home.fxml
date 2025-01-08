@@ -6,6 +6,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
+<?import javafx.geometry.Insets?>
 <BorderPane prefHeight="573.0" prefWidth="690.0" stylesheets="@../../../styles/home.css" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tracker.calendartracker.HomeController">
     <!-- Sidebar -->
     <right>
@@ -124,10 +125,13 @@
     <top>
         <HBox prefHeight="57.0" prefWidth="678.0" style="-fx-background-color: #343434;" BorderPane.alignment="CENTER">
             <children>
-                <Label fx:id="welcomeLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="57.0" prefWidth="180.0" text="Welcome, User" textAlignment="CENTER" textFill="#c37b1e">
+                <Label fx:id="welcomeLabel" alignment="CENTER_LEFT" contentDisplay="CENTER" prefHeight="57.0" prefWidth="450.0" text="Welcome, User" textAlignment="CENTER" textFill="#c37b1e">
                     <font>
                         <Font name="Berlin Sans FB Demi Bold" size="20.0" />
                     </font>
+                    <padding>
+                        <Insets left="18.0" />
+                    </padding>
                 </Label>
             </children>
         </HBox>
