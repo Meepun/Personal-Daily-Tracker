@@ -2,17 +2,17 @@
 
 <?import java.lang.*?>
 <?import javafx.collections.*?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<?import javafx.geometry.Insets?>
 <BorderPane prefHeight="573.0" prefWidth="690.0" stylesheets="@../../../styles/home.css" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tracker.calendartracker.HomeController">
     <!-- Sidebar -->
     <right>
         <VBox alignment="CENTER" prefHeight="474.0" prefWidth="122.0" spacing="10" styleClass="month-panel">
             <children>
-                <SplitPane fx:id="splitPane" dividerPositions="0.07" orientation="VERTICAL" prefHeight="518.0" prefWidth="85.0">
+                <SplitPane fx:id="splitPane" dividerPositions="0.07, 0.5" orientation="VERTICAL" prefHeight="518.0" prefWidth="85.0">
                     <items>
                         <Button fx:id="createNewTrackerButton" alignment="CENTER" layoutX="-1.0" layoutY="-4.0" onAction="#handleCreateNewTracker" prefHeight="38.0" prefWidth="101.0" styleClass="top-nav-button" text="+" textAlignment="CENTER" />
                         <Button fx:id="deleteTrackerButton" alignment="CENTER" layoutX="-1.0" layoutY="-4.0" onAction="#handleDeleteTracker" prefHeight="38.0" prefWidth="101.0" styleClass="top-nav-button" text="-" textAlignment="CENTER" />
@@ -64,7 +64,7 @@
     <left>
         <HBox prefHeight="518.0" prefWidth="555.0" BorderPane.alignment="CENTER">
             <children>
-                <TabPane fx:id="tabPane" prefHeight="494.0" prefWidth="971.0" stylesheets="@../../../styles/style.css" tabClosingPolicy="ALL_TABS">
+                <TabPane fx:id="tabPane" prefHeight="494.0" prefWidth="971.0" stylesheets="@../../../styles/style.css" tabClosingPolicy="UNAVAILABLE">
                     <tabs>
                         <!-- Initial Tracker Tab will be added dynamically -->
                         <Tab text="Tracker 1">

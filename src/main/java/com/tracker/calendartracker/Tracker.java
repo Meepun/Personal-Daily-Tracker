@@ -46,6 +46,9 @@ public class Tracker {
     public LocalDate getCurrentMonth() {
         return currentMonth;
     }
+    public void setCurrentMonth(LocalDate currentMonth) {
+        this.currentMonth = currentMonth;
+    }
 
     public static List<Tracker> getTrackersForCurrentUser(int userId) {
         List<Tracker> trackers = new ArrayList<>();

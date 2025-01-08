@@ -161,7 +161,7 @@ public class HomeController {
         Tab tab = new Tab(tracker.getTrackerName());
 
         // Set the tracker as the tab's user data to associate it with the tab
-        tab.setUserData(tracker);  // Link the tab to the Tracker
+        tab.setUserData(tracker);
 
         // Create a new navigation bar for the tab
         AnchorPane tabNavBar = createTabNavBar(tracker);
@@ -178,7 +178,7 @@ public class HomeController {
         AnchorPane.setRightAnchor(tabNavBar, 0.0);
 
         // Position the calendar content below the navigation bar
-        AnchorPane.setTopAnchor(calendarContent, 50.0); // Adjust the value as necessary
+        AnchorPane.setTopAnchor(calendarContent, 50.0);
         AnchorPane.setLeftAnchor(calendarContent, 0.0);
         AnchorPane.setRightAnchor(calendarContent, 0.0);
 
@@ -191,10 +191,10 @@ public class HomeController {
         // Add the tab to the TabPane
         tabPane.getTabs().add(tab);
 
-        // Add the mouse event listener to the tab's content (AnchorPane)
+        // Add double-click rename listener
         tabContent.setOnMouseClicked(event -> {
-            if (event.getClickCount() == 2) {  // Double-click detection
-                handleRenameTracker(tab);  // Pass the tab to the rename handler
+            if (event.getClickCount() == 2) {
+                handleRenameTracker(tab);
             }
         });
     }
@@ -238,12 +238,56 @@ public class HomeController {
     private AnchorPane createTabNavBar(Tracker tracker) {
         AnchorPane navBar = new AnchorPane();
 
-        // Add styling or event handlers as needed
-        previousMonthButton.setOnAction(e -> handlePreviousMonth());
-        nextMonthButton.setOnAction(e -> handleNextMonth());
+        // Create unique buttons and label for each tab
+        Button previousMonthButton = new Button("<");
+        Label monthLabel = new Label(tracker.getCurrentMonth().getMonth().name() + " " + tracker.getCurrentMonth().getYear());
+        Button nextMonthButton = new Button(">");
+
+        // Set button actions to update the specific tracker's state
+        previousMonthButton.setOnAction(e -> {
+            tracker.setCurrentMonth(tracker.getCurrentMonth().minusMonths(1));
+            monthLabel.setText(tracker.getCurrentMonth().getMonth().name() + " " + tracker.getCurrentMonth().getYear());
+            refreshCalendar(tracker);
+        });
+
+        nextMonthButton.setOnAction(e -> {
+            tracker.setCurrentMonth(tracker.getCurrentMonth().plusMonths(1));
+            monthLabel.setText(tracker.getCurrentMonth().getMonth().name() + " " + tracker.getCurrentMonth().getYear());
+            refreshCalendar(tracker);
+        });
+
+        // Position the buttons and label on the navigation bar
+        AnchorPane.setLeftAnchor(previousMonthButton, 10.0);
+        AnchorPane.setTopAnchor(previousMonthButton, 10.0);
+
+        AnchorPane.setLeftAnchor(monthLabel, 50.0);
+        AnchorPane.setTopAnchor(monthLabel, 10.0);
+
+        AnchorPane.setLeftAnchor(nextMonthButton, 150.0);
+        AnchorPane.setTopAnchor(nextMonthButton, 10.0);
 
         navBar.getChildren().addAll(previousMonthButton, monthLabel, nextMonthButton);
         return navBar;
+    }
+
+    private void refreshCalendar(Tracker tracker) {
+        AnchorPane calendarContent = createCalendarContent(tracker);
+        Tab tab = findTabByTracker(tracker);
+        AnchorPane tabContent = (AnchorPane) tab.getContent();
+
+        // Remove old calendar and add the updated one
+        tabContent.getChildren().removeIf(node -> node instanceof GridPane);
+        AnchorPane.setTopAnchor(calendarContent, 50.0);
+        tabContent.getChildren().add(calendarContent);
+    }
+
+    private Tab findTabByTracker(Tracker tracker) {
+        for (Tab tab : tabPane.getTabs()) {
+            if (tab.getUserData() == tracker) {
+                return tab;
+            }
+        }
+        return null;
     }
 
     private AnchorPane createCalendarContent(Tracker tracker) {
@@ -309,7 +353,7 @@ public class HomeController {
         }
 
         // Add the calendar grid to the calendar pane
-        calendarPane.getChildren().addAll(calendarGrid, createTabNavBar(tracker));
+        calendarPane.getChildren().addAll(calendarGrid);
         return calendarPane;
     }
 
