@@ -5,6 +5,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.HPos;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
@@ -134,7 +135,7 @@ public class HomeController {
 
     // Set up the month list and load initial tracker tabs
     private void initializeMonthListView() {
-        List<String> months = Arrays.asList("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
+        List<String> months = Arrays.asList("JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER");
         monthListView.setItems(FXCollections.observableArrayList(months));
     }
 
@@ -161,24 +162,27 @@ public class HomeController {
     private void addTrackerTab(Tracker tracker) {
         // Create a new tab for the tracker
         Tab tab = new Tab(tracker.getTrackerName());
-        tab.setUserData(tracker);  // Associate tracker with tab
+        tab.setUserData(tracker); // Associate tracker with tab
 
         // Initialize and set the month label
         monthLabel.setText(tracker.getCurrentMonth().getMonth().name() + " " + tracker.getCurrentMonth().getYear());
 
-        // Create navigation bar (or container) to hold the label
-        AnchorPane tabNavBar = new AnchorPane(monthLabel);
-        AnchorPane.setLeftAnchor(monthLabel, 10.0);
-        AnchorPane.setTopAnchor(monthLabel, 10.0);
+        // Create an HBox for the navigation bar and center-align the month label
+        HBox tabNavBar = new HBox(monthLabel);
+        tabNavBar.setAlignment(Pos.CENTER); // Center align the label
+        tabNavBar.setPadding(new Insets(10)); // Add padding for spacing
 
         // Create calendar content
         AnchorPane calendarContent = createCalendarContent(tracker);
 
-        // Create container for navbar and calendar
+        // Create a container for navbar and calendar
         AnchorPane tabContent = new AnchorPane();
         tabContent.getChildren().addAll(tabNavBar, calendarContent);
 
         // Position calendar content below the nav bar
+        AnchorPane.setTopAnchor(tabNavBar, 0.0);
+        AnchorPane.setLeftAnchor(tabNavBar, 0.0);
+        AnchorPane.setRightAnchor(tabNavBar, 0.0); // Ensure the nav bar spans the width
         AnchorPane.setTopAnchor(calendarContent, 50.0);
 
         // Set tab content and add tab to the TabPane
@@ -238,7 +242,7 @@ public class HomeController {
         calendarGrid.setHgap(10);
         calendarGrid.setVgap(10);
         calendarGrid.getStyleClass().add("calendar-grid");
-        calendarGrid.setPrefSize(525.0, 374.0);
+        calendarGrid.setPrefSize(525.0, 387.0);
         calendarGrid.setAlignment(Pos.TOP_CENTER);
 
         // Add the row for the days of the week (Sun, Mon, Tue, Wed, Thu, Fri, Sat)
