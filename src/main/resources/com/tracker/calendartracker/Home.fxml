@@ -7,19 +7,22 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane prefHeight="573.0" prefWidth="690.0" stylesheets="@../../../styles/home.css" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tracker.calendartracker.HomeController">
+<BorderPane prefHeight="599.0" prefWidth="690.0" stylesheets="@../../../styles/home.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tracker.calendartracker.HomeController">
     <!-- Sidebar -->
     <right>
-        <VBox alignment="CENTER" prefHeight="474.0" prefWidth="122.0" spacing="10" styleClass="month-panel">
+        <VBox alignment="CENTER" prefHeight="516.0" prefWidth="134.0" spacing="10" styleClass="month-panel">
             <children>
                 <SplitPane fx:id="splitPane" dividerPositions="0.07, 0.5" orientation="VERTICAL" prefHeight="518.0" prefWidth="85.0">
                     <items>
-                        <Button fx:id="createNewTrackerButton" alignment="CENTER" layoutX="-1.0" layoutY="-4.0" onAction="#handleCreateNewTracker" prefHeight="38.0" prefWidth="101.0" styleClass="top-nav-button" text="+" textAlignment="CENTER" />
-                        <Button fx:id="deleteTrackerButton" alignment="CENTER" layoutX="-1.0" layoutY="-4.0" onAction="#handleDeleteTracker" prefHeight="38.0" prefWidth="101.0" styleClass="top-nav-button" text="-" textAlignment="CENTER" />
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="400.0" prefWidth="100.0">
+
+                        <Button fx:id="createNewTrackerButton" alignment="CENTER" layoutX="-1.0" layoutY="-4.0" onAction="#handleCreateNewTracker" prefHeight="38.0" prefWidth="122.0" styleClass="top-nav-button" text="+" textAlignment="CENTER" />
+                        <Button fx:id="deleteTrackerButton" alignment="CENTER" layoutX="-1.0" layoutY="-4.0" onAction="#handleDeleteTracker" prefHeight="38.0" prefWidth="117.0" styleClass="top-nav-button" text="-" textAlignment="CENTER" />
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="406.0" prefWidth="146.0">
                             <children>
-                                <Label layoutX="12.0" layoutY="14.0" styleClass="calendar-header" text="Calendar" />
-                                <ListView fx:id="monthListView" editable="true" layoutX="-4.0" layoutY="43.0" onMouseClicked="#handleMonthYearSelection" prefHeight="258.0" prefWidth="136.0" styleClass="month-list">
+
+                                <Label layoutX="26.0" layoutY="12.0" styleClass="calendar-header" text="Calendar" />
+
+                                <ListView fx:id="monthListView" editable="true" layoutX="-1.0" layoutY="92.0" onMouseClicked="#handleMonthYearSelection" prefHeight="258.0" prefWidth="119.0" styleClass="month-list">
                                     <items>
                                         <FXCollections fx:factory="observableArrayList">
                                             <String fx:value="JANUARY" />
@@ -39,19 +42,12 @@
                                 </ListView>
 
                                 <!-- Year Selection -->
-                                <HBox layoutX="3" layoutY="310" spacing="10">
-                                    <children>
-                                        <VBox spacing="5">
-                                            <children>
-                                                <Label style="-fx-font-size: 14px;" text="Year:" />
-                                                <ComboBox fx:id="yearDropdown" prefWidth="100" />
-                                            </children>
-                                        </VBox>
-                                    </children>
-                                </HBox>
+                                <HBox layoutX="3" layoutY="310" spacing="10" />
 
                                 <!-- Logout Button at the bottom -->
-                                <Button alignment="CENTER" layoutX="-2.0" layoutY="374.0" mnemonicParsing="false" onAction="#handleLogout" prefHeight="38.0" prefWidth="105.0" styleClass="logout-button" text="LOG OUT" textAlignment="CENTER" />
+                                <Button alignment="CENTER" layoutX="-1.0" layoutY="371.0" mnemonicParsing="false" onAction="#handleLogout" prefHeight="44.0" prefWidth="114.0" styleClass="logout-button" text="LOG OUT" textAlignment="CENTER" />
+                                <Label layoutX="6.0" layoutY="36.0" style="-fx-font-size: 14px;" text="Year:" />
+                                <ComboBox fx:id="yearDropdown" layoutX="6.0" layoutY="55.0" prefWidth="100" />
                             </children>
                         </AnchorPane>
                     </items>
@@ -69,18 +65,18 @@
                         <!-- Initial Tracker Tab will be added dynamically -->
                         <Tab text="Tracker 1">
                             <content>
-                                <AnchorPane fx:id="navBar" minHeight="0.0" minWidth="0.0" prefHeight="425.0" prefWidth="516.0">
+                                <AnchorPane fx:id="navBar" minHeight="0.0" minWidth="0.0" prefHeight="451.0" prefWidth="515.0">
                                     <children>
                                         <!-- Month Label -->
                                         <Label fx:id="monthLabel" alignment="CENTER" layoutX="171.0" layoutY="-4.0" prefHeight="20.0" prefWidth="180.0" styleClass="month-label" text="JANUARY 2025" />
+                                          <Label style="-fx-font-weight: bold;" text="Tue" />
 
                                         <!-- Calendar Grid with Weekday Headers -->
-                                        <GridPane fx:id="calendarGrid" alignment="TOP_CENTER" hgap="10" layoutX="3.0" layoutY="28.0" prefHeight="384.0" prefWidth="525.0" styleClass="calendar-grid" vgap="10">
+                                        <GridPane fx:id="calendarGrid" alignment="TOP_CENTER" hgap="10" layoutX="3.0" layoutY="22.0" prefHeight="445.0" prefWidth="516.0" styleClass="calendar-grid" vgap="10">
                                             <children>
                                                 <!-- Weekday Headers (Add these manually in SceneBuilder) -->
                                                 <Label style="-fx-font-weight: bold;" text="Sun" GridPane.columnIndex="0" />
                                                 <Label style="-fx-font-weight: bold;" text="Mon" GridPane.columnIndex="1" />
-                                                <Label style="-fx-font-weight: bold;" text="Tue" GridPane.columnIndex="2" />
                                                 <Label style="-fx-font-weight: bold;" text="Wed" GridPane.columnIndex="3" />
                                                 <Label style="-fx-font-weight: bold;" text="Thu" GridPane.columnIndex="4" />
                                                 <Label style="-fx-font-weight: bold;" text="Fri" GridPane.columnIndex="5" />

@@ -5,6 +5,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.HPos;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
@@ -30,17 +31,16 @@ public class HomeController {
     @FXML private ComboBox<Integer> yearDropdown;
     @FXML private ListView<String> monthListView;
     @FXML private TabPane tabPane;
-    @FXML private Label monthLabel;
     @FXML private Button createNewTrackerButton;
     @FXML public  Button deleteTrackerButton;
     @FXML private Label welcomeLabel;
 
     private int userId;
-    private String trackerName;
     private LocalDate currentMonth = LocalDate.now();
     private LocalDate today = LocalDate.now();
     private Map<Tab, Tracker> trackerMap = new HashMap<>();
-
+    @FXML
+    private Label monthLabel = new Label();
 
     private static final String BASE_PATH = "/images/";
     private static final String CHECKED_IMAGE_PATH = "Check.png";
@@ -135,7 +135,7 @@ public class HomeController {
 
     // Set up the month list and load initial tracker tabs
     private void initializeMonthListView() {
-        List<String> months = Arrays.asList("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
+        List<String> months = Arrays.asList("JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER");
         monthListView.setItems(FXCollections.observableArrayList(months));
     }
 
@@ -151,43 +151,44 @@ public class HomeController {
 
         // Add each tracker as a new tab
         for (Tracker tracker : trackers) {
-            addTrackerTab(tracker);
+            if (tracker != null) {
+                addTrackerTab(tracker);
+            } else {
+                System.out.println("Warning: Tracker is null. Skipping.");
+            }
         }
     }
 
     private void addTrackerTab(Tracker tracker) {
         // Create a new tab for the tracker
         Tab tab = new Tab(tracker.getTrackerName());
+        tab.setUserData(tracker); // Associate tracker with tab
 
-        // Set the tracker as the tab's user data to associate it with the tab
-        tab.setUserData(tracker);
+        // Initialize and set the month label
+        monthLabel.setText(tracker.getCurrentMonth().getMonth().name() + " " + tracker.getCurrentMonth().getYear());
 
-        // Create the calendar content for this tab
+        // Create an HBox for the navigation bar and center-align the month label
+        HBox tabNavBar = new HBox(monthLabel);
+        tabNavBar.setAlignment(Pos.CENTER); // Center align the label
+        tabNavBar.setAlignment(Pos.CENTER); // Center align the label
+
+
+        // Create calendar content
         AnchorPane calendarContent = createCalendarContent(tracker);
 
-        // Create an AnchorPane to hold both the nav bar and the calendar content
+        // Create a container for navbar and calendar
         AnchorPane tabContent = new AnchorPane();
+        tabContent.getChildren().addAll(tabNavBar, calendarContent);
 
-        // Position the calendar content below the navigation bar
+        // Position calendar content below the nav bar
+        AnchorPane.setTopAnchor(tabNavBar, 0.0);
+        AnchorPane.setLeftAnchor(tabNavBar, 0.0);
+        AnchorPane.setRightAnchor(tabNavBar, 0.0); // Ensure the nav bar spans the width
         AnchorPane.setTopAnchor(calendarContent, 50.0);
-        AnchorPane.setLeftAnchor(calendarContent, 0.0);
-        AnchorPane.setRightAnchor(calendarContent, 0.0);
 
-        // Add both the nav bar and the calendar content to the tab content
-        tabContent.getChildren().addAll(calendarContent);
-
-        // Set the content of the tab
+        // Set tab content and add tab to the TabPane
         tab.setContent(tabContent);
-
-        // Add the tab to the TabPane
         tabPane.getTabs().add(tab);
-
-        // Add double-click rename listener
-        tabContent.setOnMouseClicked(event -> {
-            if (event.getClickCount() == 2) {
-                handleRenameTracker(tab);
-            }
-        });
     }
 
     @FXML
@@ -238,11 +239,11 @@ public class HomeController {
         // Create a GridPane for the calendar
         GridPane calendarGrid = new GridPane();
         calendarGrid.setLayoutX(3.0);
-        calendarGrid.setLayoutY(14.0);
+        calendarGrid.setLayoutY(-18.0);
         calendarGrid.setHgap(10);
         calendarGrid.setVgap(10);
         calendarGrid.getStyleClass().add("calendar-grid");
-        calendarGrid.setPrefSize(525.0, 374.0);
+        calendarGrid.setPrefSize(525.0, 430.0);
         calendarGrid.setAlignment(Pos.TOP_CENTER);
 
         // Add the row for the days of the week (Sun, Mon, Tue, Wed, Thu, Fri, Sat)
@@ -251,7 +252,7 @@ public class HomeController {
             Label dayLabel = new Label(daysOfWeek[i]);
             dayLabel.getStyleClass().add("calendar-header");
             GridPane.setHalignment(dayLabel, HPos.CENTER);
-            GridPane.setValignment(dayLabel, VPos.CENTER);
+            GridPane.setValignment(dayLabel, VPos.TOP);
             calendarGrid.add(dayLabel, i, 0);
         }
 
@@ -366,30 +367,26 @@ public class HomeController {
     }
 
     private void updateCalendar(String month) {
+        // Update the text of the monthLabel
         monthLabel.setText(month + " " + currentMonth.getYear());
 
         // Get the currently selected tab
         Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();
 
-        // Check if a tab is selected (tracker is loaded)
         if (selectedTab != null) {
-            // Get the Tracker object associated with the selected tab
+            // Get the tracker associated with this tab
             Tracker tracker = (Tracker) selectedTab.getUserData();
 
-            // Rebuild the calendar grid for the selected tracker
+            // Rebuild calendar content
             AnchorPane newCalendarContent = createCalendarContent(tracker);
-
-            // Get the existing tab content (which should be an AnchorPane)
             AnchorPane existingTabContent = (AnchorPane) selectedTab.getContent();
 
-            // Clear the existing content and add the new content
+            // Clear the old content but keep the navbar
             existingTabContent.getChildren().clear();
-            existingTabContent.getChildren().add(newCalendarContent);
+            existingTabContent.getChildren().addAll(monthLabel, newCalendarContent);
 
-            // Position the new calendar content correctly
-            AnchorPane.setTopAnchor(newCalendarContent, 50.0); // Adjust as needed
-            AnchorPane.setLeftAnchor(newCalendarContent, 0.0);
-            AnchorPane.setRightAnchor(newCalendarContent, 0.0);
+            // Reposition content
+            AnchorPane.setTopAnchor(newCalendarContent, 50.0);
         }
     }
 

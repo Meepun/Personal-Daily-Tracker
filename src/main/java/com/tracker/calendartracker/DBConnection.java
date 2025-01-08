@@ -8,15 +8,10 @@ import java.util.logging.Logger;
 
 public class DBConnection {
 
-    private static final String URL = "jdbc:sqlite:src/main/java/com/tracker/calendartracker/tracker.db"; // Adjust path if necessary
+    private static final String URL = "jdbc:sqlite:src/main/java/com/tracker/calendartracker/tracker.db";
     private static Connection connection;
     private static final Logger LOGGER = Logger.getLogger(DBConnection.class.getName());
 
-    /**
-     * Establishes and returns the connection to the SQLite database.
-     * It will check if the current connection is open before creating a new one.
-     * @return Connection object to the database
-     */
     public static Connection getConnection() {
         try {
             if (connection == null || connection.isClosed()) {
@@ -27,19 +22,5 @@ public class DBConnection {
             LOGGER.log(Level.SEVERE, "Database connection failed", e);
         }
         return connection;
-    }
-
-    /**
-     * Closes the current database connection (optional, depending sa project natin, eme eme lang tong part nato).
-     */
-    public static void closeConnection() {
-        try {
-            if (connection != null && !connection.isClosed()) {
-                connection.close();
-                LOGGER.info("Database connection closed.");
-            }
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Failed to close the database connection", e);
-        }
     }
 }
