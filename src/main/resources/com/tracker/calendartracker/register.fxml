@@ -30,6 +30,7 @@
          <Font name="Berlin Sans FB Demi Bold" size="12.0" />
       </font>
    </Label>
+   <Label fx:id="errorLabel" layoutX="92.0" layoutY="274.0" textFill="red" visible="false" />
    <Button fx:id="signupButton" layoutX="93.0" layoutY="294.0" mnemonicParsing="false" onAction="#handleSignupButton" prefHeight="25.0" prefWidth="336.0" style="-fx-background-color: #fbaa18;" text="Sign up">
       <font>
          <Font name="Berlin Sans FB Demi Bold" size="13.0" />
@@ -40,6 +41,6 @@
          <Font name="Berlin Sans FB Demi Bold" size="13.0" />
       </font>
    </Button>
-   <PasswordField layoutX="93.0" layoutY="188.0" prefHeight="25.0" prefWidth="336.0" promptText="Type your password..." />
-   <PasswordField layoutX="93.0" layoutY="249.0" prefHeight="25.0" prefWidth="336.0" promptText="Confirm your password..." />
+   <PasswordField fx:id="passTextField" layoutX="93.0" layoutY="188.0" prefHeight="25.0" prefWidth="336.0" promptText="Type your password..." />
+   <PasswordField fx:id="conpassTextField" layoutX="93.0" layoutY="249.0" prefHeight="25.0" prefWidth="336.0" promptText="Confirm your password..." />
 </AnchorPane>

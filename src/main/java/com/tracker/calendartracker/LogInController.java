@@ -8,6 +8,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -32,9 +33,13 @@ public class LogInController {
     private static final Logger LOGGER = Logger.getLogger(LogInController.class.getName());
 
     @FXML
+    private Label errorLabel;
+
+    @FXML
     private ImageView hiLogoImageView;
     @FXML
     private ImageView untitledDesignImageView;
+    private int userId;
 
     public void initialize() {
         // Load the logo image
@@ -51,20 +56,25 @@ public class LogInController {
         String username = usernameTextField.getText().trim();
         String password = passTextField.getText().trim();
 
+        // Clear any previous error messages
+        errorLabel.setVisible(false);
+
         if (username.isEmpty() || password.isEmpty()) {
-            showAlert("Validation Error", "username and password fields cannot be empty.");
+            displayErrorMessage("Username and password fields cannot be empty.");
             return;
         }
 
         // vinavalidate the credentials checking against the database
         if (validateCredentials(username, password)) {
             System.out.println("Login successful!");
-            showAlert("Login Success", "You have logged in successfully!");
 
-            // Navigate to the main menu
+            // Set user ID in session
+            SessionHandler.getInstance().setUserId(userId);
+
+            // Navigate to home screen
             navigateTo(event, "/com/tracker/calendartracker/Home.fxml", "Home");
         } else {
-            showAlert("Login Failed", "Invalid username or password. Please try again.");
+            displayErrorMessage("Invalid username or password. Please try again.");
         }
     }
 
@@ -72,10 +82,10 @@ public class LogInController {
      * Validates the user's credentials against the database.
      *
      * @param username    User's username input
-     * @param password User's password input
+     * @param password    User's password input
      * @return True if credentials are valid, false otherwise
      */
-    private boolean validateCredentials(String username, String password) {
+    public boolean validateCredentials(String username, String password) {
         String query = "SELECT * FROM loginsignup WHERE username = ? AND password = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -85,16 +95,56 @@ public class LogInController {
 
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                return true;
-            } else {
-                return false;
-            }
+                userId = Integer.parseInt(rs.getString("user_id"));  // Store user_id
 
+                // After login, check if the user has any trackers
+                checkIfUserHasTracker(String.valueOf(userId));
+
+                return true;
+            }
         } catch (SQLException e) {
             LOGGER.severe("Database error during login validation: " + e.getMessage());
-            showAlert("Database Error", "Could not connect to the database.");
         }
         return false;
+    }
+
+    private void checkIfUserHasTracker(String userId) {
+        String trackerQuery = "SELECT COUNT(*) FROM trackers WHERE user_id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(trackerQuery)) {
+
+            stmt.setString(1, userId);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next() && rs.getInt(1) == 0) {
+                // If no trackers, create the first tracker
+                createFirstTracker(conn, userId);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void createFirstTracker(Connection connection, String userId) {
+        String insertTrackerQuery = "INSERT INTO trackers (user_id, tracker_name) VALUES (?, ?)";
+        try (PreparedStatement psTracker = connection.prepareStatement(insertTrackerQuery)) {
+            psTracker.setString(1, userId);
+            psTracker.setString(2, "My First Tracker");
+            psTracker.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public int getUserId() {
+
+        return userId;
+    }
+
+    private void displayErrorMessage(String message) {
+        errorLabel.setText(message);
+        errorLabel.setVisible(true);
     }
 
     /**

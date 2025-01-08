@@ -1,0 +1,275 @@
+package com.tracker.calendartracker;
+
+import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
+
+import java.sql.*;
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.*;
+
+public class HomeController {
+
+    // Injected FXML components
+    @FXML private ComboBox<Integer> yearDropdown;
+    @FXML private ListView<String> monthListView;
+    @FXML private TabPane tabPane;
+    @FXML private GridPane calendarGrid;
+    @FXML private Label monthLabel;
+    @FXML private Button previousMonthButton, nextMonthButton;
+    @FXML private Label welcomeLabel;
+    @FXML private Button createNewTrackerButton;
+    @FXML private ListView<String> trackerListView;  // To show list of trackers
+    @FXML private TextField usernameField, passwordField;  // Added for login
+    @FXML private Label errorLabel;  // Label to show error message on login
+
+    private String userId;
+
+    // Tracker reference
+    private Tracker currentTracker;
+    private LocalDate currentMonth = LocalDate.now();
+
+    // Initialize the tracker list view (display available trackers)
+    private void initializeTrackerListView() {
+        List<String> trackerNames = Tracker.getTrackerNamesForUser();  // Get all tracker names for the current user
+        trackerListView.setItems(FXCollections.observableArrayList(trackerNames));
+        trackerListView.setOnMouseClicked(this::handleTrackerSelection);
+
+        List<String> months = new ArrayList<>();
+        for (Month month : Month.values()) {
+            months.add(month.name());
+        }
+        monthListView.setItems(FXCollections.observableArrayList(months));
+    }
+
+    // Handles tracker selection (clicking on a tracker name)
+    private void handleTrackerSelection(MouseEvent event) {
+        String selectedTrackerName = trackerListView.getSelectionModel().getSelectedItem();
+        if (selectedTrackerName != null) {
+            currentTracker = Tracker.loadTrackerByName(selectedTrackerName);
+            updateCalendar(currentMonth.getMonth().toString());
+        }
+    }
+
+    // Initialize year dropdown
+    private void initializeYearDropdown() {
+        int currentYear = currentMonth.getYear();
+        List<Integer> years = new ArrayList<>();
+        for (int year = currentYear - 25; year <= currentYear + 50; year++) {
+            years.add(year);
+        }
+        yearDropdown.setItems(FXCollections.observableArrayList(years));
+        yearDropdown.setValue(currentYear);
+        yearDropdown.setOnAction(this::handleYearSelection);
+    }
+
+    @FXML
+    // Handles year selection from the dropdown
+    private void handleYearSelection(ActionEvent event) {
+        Integer selectedYear = yearDropdown.getValue();
+        currentMonth = currentMonth.withYear(selectedYear);
+        updateCalendar(currentMonth.getMonth().toString());
+    }
+
+    // Handles the "previous month" button click
+    @FXML
+    private void handlePreviousMonth(ActionEvent event) {
+        currentMonth = currentMonth.minusMonths(1);
+        updateCalendar(currentMonth.getMonth().toString());
+    }
+
+    // Handles the "next month" button click
+    @FXML
+    private void handleNextMonth(ActionEvent event) {
+        currentMonth = currentMonth.plusMonths(1);
+        updateCalendar(currentMonth.getMonth().toString());
+    }
+
+    // Handles the month selection from the ListView
+    @FXML
+    public void handleMonthSelection(MouseEvent event) {
+        String selectedMonth = monthListView.getSelectionModel().getSelectedItem();
+        if (selectedMonth != null) {
+            currentMonth = LocalDate.now().withMonth(Month.valueOf(selectedMonth.toUpperCase()).getValue()).withDayOfMonth(1);
+            updateCalendar(selectedMonth);
+        }
+    }
+
+    // Update the calendar based on the month and year
+    private void updateCalendar(String month) {
+        monthLabel.setText(month + " " + currentMonth.getYear());
+
+        if (currentTracker != null) {
+            currentTracker.updateCalendarView(month);
+        }
+    }
+
+    /*
+    @FXML
+    public void createNewTracker() {
+        // Prompt user for tracker name (or use default names like "Tracker N")
+        String trackerName = "New Tracker"; // Replace with user input logic if necessary
+
+        // Create a Tracker instance to handle the database logic
+        Tracker tracker = new Tracker(userId);
+        tracker.addNewTracker(trackerName);
+
+        // Add a new tab to the TabPane
+        Tab newTab = new Tab(trackerName);
+        newTab.setContent(createCalendarContent());
+        tabPane.getTabs().add(newTab);
+    }
+    */
+
+    // This method is called when the 'Create New Tracker' button is clicked
+    @FXML
+    public void handleCreateNewTracker() {
+        String trackerName = "New Tracker";  // Get this from user input, if necessary
+        Tracker newTracker = new Tracker(userId, trackerName);
+        newTracker.addNewTracker(trackerName);
+
+        // Reload the user's trackers
+        loadUserTrackers();
+    }
+
+    /*
+    @FXML
+    public void handleCreateNewTracker() {
+        if (userId == null) {
+            // Handle case where userId is not set
+            System.out.println("Error: User ID is not set.");
+            return;
+        }
+
+        // Name of the new tracker (you could get this dynamically via user input)
+        String trackerName = "New Tracker";  // Replace with dynamic user input logic
+
+        // Create a new Tracker with userId and trackerName
+        Tracker tracker = new Tracker(userId, trackerName);
+
+        // Add the new tracker to the database
+        tracker.addNewTracker(trackerName);  // You may want to adjust this method call to accept only trackerName if necessary
+
+        // Add a new tab to the TabPane to display the tracker
+        Tab newTab = new Tab(trackerName);
+        newTab.setContent(createCalendarContent());
+        tabPane.getTabs().add(newTab);
+    }
+    */
+
+    /*
+    private AnchorPane createCalendarContent() {
+        // Dynamically create the calendar content (replicate initial calendar structure)
+        AnchorPane calendarPane = new AnchorPane();
+        GridPane calendarGrid = new GridPane();
+        calendarGrid.setHgap(10);
+        calendarGrid.setVgap(10);
+
+        // Add weekday headers (Sun, Mon, etc.)
+        String[] weekdays = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+        for (int i = 0; i < weekdays.length; i++) {
+            Label label = new Label(weekdays[i]);
+            label.setStyle("-fx-font-weight: bold;");
+            GridPane.setColumnIndex(label, i);
+            calendarGrid.getChildren().add(label);
+        }
+
+        calendarPane.getChildren().add(calendarGrid);
+        return calendarPane;
+    }
+    */
+
+    /*
+    private AnchorPane createCalendarContent() {
+        // This method dynamically creates the calendar content for the new tab
+        AnchorPane calendarPane = new AnchorPane();
+        GridPane calendarGrid = new GridPane();
+        calendarGrid.setHgap(10);
+        calendarGrid.setVgap(10);
+
+        // Add weekday headers (Sun, Mon, etc.)
+        String[] weekdays = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+        for (int i = 0; i < weekdays.length; i++) {
+            Label label = new Label(weekdays[i]);
+            label.setStyle("-fx-font-weight: bold;");
+            GridPane.setColumnIndex(label, i);
+            calendarGrid.getChildren().add(label);
+        }
+
+        calendarPane.getChildren().add(calendarGrid);
+        return calendarPane;
+    }
+    */
+
+    // This method creates the calendar content for each tracker
+    private AnchorPane createCalendarContent(Tracker tracker) {
+        AnchorPane calendarPane = new AnchorPane();
+        GridPane calendarGrid = new GridPane();
+        calendarGrid.setHgap(10);
+        calendarGrid.setVgap(10);
+
+        // Add weekday headers
+        String[] weekdays = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+        for (int i = 0; i < weekdays.length; i++) {
+            Label label = new Label(weekdays[i]);
+            label.setStyle("-fx-font-weight: bold;");
+            GridPane.setColumnIndex(label, i);
+            calendarGrid.getChildren().add(label);
+        }
+
+        // Add calendar grid (based on the tracker data)
+        // Populate calendar grid with data from tracker
+
+        calendarPane.getChildren().add(calendarGrid);
+        return calendarPane;
+    }
+
+    // Initialize the controller (set up the initial states)
+    @FXML
+    private void initialize() {
+        initializeYearDropdown();
+        initializeTrackerListView();  // Load the list of trackers
+        trackerListView.setItems(FXCollections.observableArrayList("Tracker 1"));
+    }
+
+    // This method will be called to load the trackers from the database
+    public void loadUserTrackers() {
+        // Clear any existing tabs
+        tabPane.getTabs().clear();
+
+        // Fetch user's trackers from the database (you can use a method to do this)
+        List<Tracker> trackers = Tracker.getUserTrackers(userId);
+
+        // Create a tab for each tracker and add it to the TabPane
+        for (Tracker tracker : trackers) {
+            Tab tab = new Tab(tracker.getTrackerName());  // Use the new getter method
+            tab.setContent(createCalendarContent(tracker));
+            tabPane.getTabs().add(tab);
+        }
+    }
+
+    @FXML
+    private void handleLogout(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/tracker/calendartracker/mainmenu.fxml"));
+            Parent root = loader.load();
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Main Menu");
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+}

@@ -16,9 +16,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.Month;
@@ -31,6 +31,7 @@ public class HomeController {
     @FXML private ListView<String> monthListView;
     @FXML private TabPane tabPane;
     @FXML private Label monthLabel;
+    @FXML private Button previousMonthButton, nextMonthButton;
     @FXML private Button createNewTrackerButton;
     @FXML public  Button deleteTrackerButton;
     @FXML private Label welcomeLabel;
@@ -160,7 +161,10 @@ public class HomeController {
         Tab tab = new Tab(tracker.getTrackerName());
 
         // Set the tracker as the tab's user data to associate it with the tab
-        tab.setUserData(tracker);
+        tab.setUserData(tracker);  // Link the tab to the Tracker
+
+        // Create a new navigation bar for the tab
+        AnchorPane tabNavBar = createTabNavBar();
 
         // Create the calendar content for this tab
         AnchorPane calendarContent = createCalendarContent(tracker);
@@ -168,13 +172,18 @@ public class HomeController {
         // Create an AnchorPane to hold both the nav bar and the calendar content
         AnchorPane tabContent = new AnchorPane();
 
+        // Position the navigation bar at the top of the tab content
+        AnchorPane.setTopAnchor(tabNavBar, 0.0);
+        AnchorPane.setLeftAnchor(tabNavBar, 0.0);
+        AnchorPane.setRightAnchor(tabNavBar, 0.0);
+
         // Position the calendar content below the navigation bar
-        AnchorPane.setTopAnchor(calendarContent, 50.0);
+        AnchorPane.setTopAnchor(calendarContent, 50.0); // Adjust the value as necessary
         AnchorPane.setLeftAnchor(calendarContent, 0.0);
         AnchorPane.setRightAnchor(calendarContent, 0.0);
 
         // Add both the nav bar and the calendar content to the tab content
-        tabContent.getChildren().addAll(calendarContent);
+        tabContent.getChildren().addAll(tabNavBar, calendarContent);
 
         // Set the content of the tab
         tab.setContent(tabContent);
@@ -182,10 +191,10 @@ public class HomeController {
         // Add the tab to the TabPane
         tabPane.getTabs().add(tab);
 
-        // Add double-click rename listener
+        // Add the mouse event listener to the tab's content (AnchorPane)
         tabContent.setOnMouseClicked(event -> {
-            if (event.getClickCount() == 2) {
-                handleRenameTracker(tab);
+            if (event.getClickCount() == 2) {  // Double-click detection
+                handleRenameTracker(tab);  // Pass the tab to the rename handler
             }
         });
     }
@@ -224,6 +233,14 @@ public class HomeController {
                 showAlert("Error", "Database connection error.");
             }
         });
+    }
+
+    private AnchorPane createTabNavBar() {
+        // Create a new AnchorPane for the navigation bar
+        AnchorPane navBar = new AnchorPane();
+
+        navBar.getChildren().addAll(previousMonthButton, monthLabel, nextMonthButton);
+        return navBar;
     }
 
     private AnchorPane createCalendarContent(Tracker tracker) {
@@ -344,27 +361,6 @@ public class HomeController {
         });
     }
 
-    @FXML
-    private void handleYearSelection(ActionEvent event) {
-        Integer selectedYear = yearDropdown.getValue();
-        currentMonth = currentMonth.withYear(selectedYear);
-        updateCalendar(currentMonth.getMonth().toString());
-    }
-
-    // Handles the month selection from the ListView
-    @FXML
-    public void handleMonthYearSelection(MouseEvent event) {
-        String selectedMonth = monthListView.getSelectionModel().getSelectedItem();
-        if (selectedMonth != null) {
-            currentMonth = LocalDate.now().withMonth(Month.valueOf(selectedMonth.toUpperCase()).getValue()).withDayOfMonth(1);
-
-            Integer selectedYear = yearDropdown.getValue();
-            currentMonth = currentMonth.withYear(selectedYear);
-
-            updateCalendar(currentMonth.getMonth().toString());
-        }
-    }
-
     private void updateCalendar(String month) {
         monthLabel.setText(month + " " + currentMonth.getYear());
 
@@ -390,6 +386,20 @@ public class HomeController {
             AnchorPane.setTopAnchor(newCalendarContent, 50.0); // Adjust as needed
             AnchorPane.setLeftAnchor(newCalendarContent, 0.0);
             AnchorPane.setRightAnchor(newCalendarContent, 0.0);
+        }
+    }
+
+    @FXML
+    private void handleLogout(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/tracker/calendartracker/Login.fxml"));
+            Parent root = loader.load();
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -423,151 +433,12 @@ public class HomeController {
         });
     }
 
-    public enum ButtonState { NORMAL, CHECKED, CROSSED }
-
-    private ButtonState loadButtonState(String dateKey, int trackerId) {
-        String sql = "SELECT state FROM user_changes WHERE user_id = ? AND tracker_id = ? AND datelog = ?";
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, userId);
-            pstmt.setInt(2, trackerId);
-            pstmt.setString(3, dateKey);
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                return ButtonState.valueOf(rs.getString("state"));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return ButtonState.NORMAL;
-    }
-
-    private void saveButtonState(String dateKey, ButtonState state, int trackerId) {
-        String sql = "INSERT INTO user_changes (user_id, tracker_id, datelog, state) " +
-                "VALUES (?, ?, ?, ?) " +
-                "ON CONFLICT(tracker_id, datelog) " + // Conflict resolution on tracker_id and datelog
-                "DO UPDATE SET state = excluded.state"; // Using ON CONFLICT to update state
-
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setInt(1, userId);           // Set the userId
-            pstmt.setInt(2, trackerId);        // Set the trackerId
-            pstmt.setString(3, dateKey);       // Set the dateKey (e.g., "2025-JAN-15")
-            pstmt.setString(4, state.toString());  // Set the button state (e.g., "CHECKED")
-
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void applyButtonState(Button button, ButtonState state) {
-        double imageSize = 20;
-
-        switch (state) {
-            case CHECKED:
-                ImageView checkedImageView = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream(BASE_PATH + CHECKED_IMAGE_PATH))));
-                checkedImageView.setFitWidth(imageSize);
-                checkedImageView.setFitHeight(imageSize);
-                checkedImageView.setPreserveRatio(true);
-                button.setGraphic(checkedImageView);
-                button.setText(""); // Temporarily remove text
-                break;
-            case CROSSED:
-                ImageView crossedImageView = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream(BASE_PATH + CROSSED_IMAGE_PATH))));
-                crossedImageView.setFitWidth(imageSize);
-                crossedImageView.setFitHeight(imageSize);
-                crossedImageView.setPreserveRatio(true);
-                button.setGraphic(crossedImageView);
-                button.setText(""); // Temporarily remove text
-                break;
-            case NORMAL:
-            default:
-                button.setGraphic(null);
-                button.setText(button.getId()); // Restore the number as text
-                break;
-        }
-    }
-
-    public void handleDayClick(Button dayButton, String key, Tracker tracker) {
-        ButtonState currentState = (ButtonState) dayButton.getUserData();
-
-        ButtonState nextState;
-        switch (currentState) {
-            case NORMAL:
-                nextState = ButtonState.CHECKED;
-                break;
-            case CHECKED:
-                nextState = ButtonState.CROSSED;
-                break;
-            case CROSSED:
-            default:
-                nextState = ButtonState.NORMAL;
-                break;
-        }
-
-        dayButton.setUserData(nextState);
-        applyButtonState(dayButton, nextState);
-        saveButtonState(key, nextState, tracker.getTrackerId());
-    }
-
     private void showAlert(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
         alert.setHeaderText(null); // No header text
         alert.setContentText(content);
         alert.showAndWait();
-    }
-
-    @FXML
-    private void handleLogout(ActionEvent event) {
-        // Create a confirmation dialog
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Confirm Logout");
-        alert.setHeaderText(null);
-        alert.setContentText("Are you sure you want to log out?");
-
-        // Style the dialog pane
-        DialogPane dialogPane = alert.getDialogPane();
-        dialogPane.setStyle("-fx-background-color: #C37B1EFF; -fx-font-size: 14px; -fx-text-fill: white;");
-        dialogPane.lookupAll(".label").forEach(node -> node.setStyle("-fx-text-fill: white;"));
-
-        // Add Yes and No buttons
-        ButtonType yesButton = new ButtonType("Yes", ButtonBar.ButtonData.OK_DONE);
-        ButtonType noButton = new ButtonType("No", ButtonBar.ButtonData.CANCEL_CLOSE);
-        alert.getButtonTypes().setAll(yesButton, noButton);
-
-        // Center-align the buttons
-        Node buttonBar = dialogPane.lookup(".button-bar");
-        if (buttonBar instanceof HBox) {
-            ((HBox) buttonBar).setAlignment(Pos.CENTER); // Center the buttons
-            ((HBox) buttonBar).setSpacing(10);          // Add spacing between buttons
-        }
-
-        // Wait for the user's response
-        Optional<ButtonType> result = alert.showAndWait();
-
-        if (result.isPresent() && result.get() == yesButton) {
-            // Proceed with logout
-
-            // Clear session data
-            SessionHandler.getInstance().clearSession();
-
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/tracker/calendartracker/mainmenu.fxml"));
-                Parent root = loader.load();
-                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                stage.setScene(new Scene(root));
-                stage.setTitle("Main Menu");
-                stage.show();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else {
-            // Do nothing, stay on the current page
-            alert.close();
-        }
     }
 
 }
