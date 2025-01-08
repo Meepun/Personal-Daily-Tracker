@@ -21,7 +21,6 @@ public class MainMenuController {
     private ImageView hiLogoImageView;
 
     public void initialize() {
-        // Load the logo image
         hiLogoImageView.setImage(new Image(getClass().getResource("/images/Hi Logo.png").toString()));
     }
 

@@ -21,7 +21,6 @@
     -fx-background-color: #f79d12;
 }
 
-/* Section Title Styles */
 .section-title {
     -fx-font-size: 16px;
     -fx-font-weight: bold;
@@ -71,7 +70,6 @@
 
 }
 
-/* Styling for the current day in the calendar */
 .current-day {
     -fx-background-color: #f79d12;
     -fx-text-fill: white;
@@ -104,20 +102,19 @@
     -fx-border-color: #f79d12;
     -fx-border-width: 2px;
     -fx-border-radius: 5px;
-    -fx-font-size: 14px; /* Ensure the font size is consistent */
+    -fx-font-size: 14px;
     -fx-text-fill: #333333;
     -fx-margin-top:20px;
-    -fx-layout-x: 0px;  /* Sets x-position */
-    -fx-layout-y: 0px;   /* Sets y-position */
-    /* Dark text for readability */
+    -fx-layout-x: 0px;
+    -fx-layout-y: 0px;
 }
 .combo-box .list-cell {
-    -fx-background-color: #f0f0f0; /* Light background for list items */
-    -fx-text-fill: #333333; /* Dark text for contrast */
+    -fx-background-color: #f0f0f0;
+    -fx-text-fill: #333333;
 }
 .combo-box .list-cell:hover {
-    -fx-background-color: #f79d12; /* Highlight color on hover */
-    -fx-text-fill: white; /* White text when highlighted */
+    -fx-background-color: #f79d12;
+    -fx-text-fill: white;
 }
 
 .month-list {

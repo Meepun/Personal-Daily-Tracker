@@ -26,9 +26,9 @@ public class LogInController {
     public Button loginButton;
     public Button mainmenuButton;
     @FXML
-    private TextField usernameTextField; // User's username input field
+    private TextField usernameTextField;
     @FXML
-    private PasswordField passTextField; // User's password input field
+    private PasswordField passTextField;
 
     private static final Logger LOGGER = Logger.getLogger(LogInController.class.getName());
 
@@ -42,21 +42,15 @@ public class LogInController {
     private int userId;
 
     public void initialize() {
-        // Load the logo image
         hiLogoImageView.setImage(new Image(getClass().getResource("/images/Hi Logo.png").toString()));
         untitledDesignImageView.setImage(new Image(getClass().getResource("/images/Protect.png").toString()));
     }
 
-    /**
-     * Handles the login button click event.
-     * Validates user credentials and navigates to the main menu on success.
-     */
     @FXML
     private void handleLoginButton(ActionEvent event) {
         String username = usernameTextField.getText().trim();
         String password = passTextField.getText().trim();
 
-        // Clear any previous error messages
         errorLabel.setVisible(false);
 
         if (username.isEmpty() || password.isEmpty()) {
@@ -64,27 +58,17 @@ public class LogInController {
             return;
         }
 
-        // vinavalidate the credentials checking against the database
         if (validateCredentials(username, password)) {
             System.out.println("Login successful!");
 
-            // Set user ID in session
             SessionHandler.getInstance().setUserId(userId);
 
-            // Navigate to home screen
             navigateTo(event, "/com/tracker/calendartracker/Home.fxml", "Home");
         } else {
             displayErrorMessage("Invalid username or password. Please try again.");
         }
     }
 
-    /**
-     * Validates the user's credentials against the database.
-     *
-     * @param username    User's username input
-     * @param password    User's password input
-     * @return True if credentials are valid, false otherwise
-     */
     public boolean validateCredentials(String username, String password) {
         String query = "SELECT * FROM loginsignup WHERE username = ? AND password = ?";
         try (Connection conn = DBConnection.getConnection();
@@ -95,9 +79,8 @@ public class LogInController {
 
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                userId = Integer.parseInt(rs.getString("user_id"));  // Store user_id
+                userId = Integer.parseInt(rs.getString("user_id"));
 
-                // After login, check if the user has any trackers
                 checkIfUserHasTracker(String.valueOf(userId));
 
                 return true;
@@ -117,7 +100,6 @@ public class LogInController {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next() && rs.getInt(1) == 0) {
-                // If no trackers, create the first tracker
                 createFirstTracker(conn, userId);
             }
         } catch (SQLException e) {
@@ -147,36 +129,11 @@ public class LogInController {
         errorLabel.setVisible(true);
     }
 
-    /**
-     * Displays an alert with the specified title and message.
-     *
-     * @param title   Alert title
-     * @param message Alert message
-     */
-    private void showAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
-
-    /**
-     * Handles the Main Menu button click event.
-     * Navigates to the main menu screen.
-     */
     @FXML
     private void handleMainMenuButton(ActionEvent event) {
         navigateTo(event, "/com/tracker/calendartracker/mainmenu.fxml", "Main Menu");
     }
 
-    /**
-     * Navigates to the specified FXML file and updates the stage title.
-     *
-     * @param event    The action event that triggered the navigation
-     * @param fxmlFile Path to the FXML file
-     * @param title    Window title for the new scene
-     */
     private void navigateTo(ActionEvent event, String fxmlFile, String title) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
